@@ -314,7 +314,8 @@
             <div class="bg-white dark:bg-[#25282e] rounded-2xl shadow-2xl w-11/12 max-w-sm p-6 transform scale-95 transition-transform duration-300 border border-gray-100 dark:border-gray-700">
                 <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4">관리자 모드</h3>
                 <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">업보를 수정하려면 비밀번호를 입력해주세요.</p>
-                <input type="password" id="admin-pin" class="w-full bg-gray-50 dark:bg-[#16181b] border border-gray-200 dark:border-gray-800 text-gray-900 dark:text-gray-200 rounded-xl focus:ring-brand focus:border-brand p-3 mb-4 outline-none" placeholder="비밀번호 (기본: 0923)">
+                <!-- 수정됨: placeholder에서 '(기본: 0923)' 텍스트 제거 -->
+                <input type="password" id="admin-pin" class="w-full bg-gray-50 dark:bg-[#16181b] border border-gray-200 dark:border-gray-800 text-gray-900 dark:text-gray-200 rounded-xl focus:ring-brand focus:border-brand p-3 mb-4 outline-none" placeholder="비밀번호">
                 <div class="flex justify-end gap-2">
                     <button onclick="closeAdminLoginModal()" class="px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 font-medium hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">취소</button>
                     <button onclick="checkAdminPin()" class="px-4 py-2 rounded-lg bg-brand text-white font-medium hover:bg-brand-dark transition-colors">확인</button>
@@ -953,7 +954,12 @@
 
         function checkAdminPin() {
             const pin = document.getElementById('admin-pin').value;
-            if (pin === '0923') { // 초기 비밀번호: 0923
+            
+            // ==========================================
+            // [비밀번호 변경하는 곳]
+            // 아래의 '1234'를 원하시는 비밀번호로 바꾸시면 됩니다.
+            // ==========================================
+            if (pin === '09230923') { 
                 isAdminMode = true;
                 closeAdminLoginModal();
                 document.getElementById('admin-add-user-btn').classList.remove('hidden');
@@ -971,7 +977,8 @@
                 input.placeholder = '비밀번호가 틀렸습니다!';
                 setTimeout(() => { 
                     input.classList.remove('border-red-500'); 
-                    input.placeholder = '비밀번호 (기본: 0923)'; 
+                    // 수정됨: 틀렸을 때 되돌아오는 문구에서도 '(기본: 0923)' 삭제
+                    input.placeholder = '비밀번호'; 
                 }, 2000);
             }
         }
