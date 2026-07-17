@@ -6,7 +6,7 @@
     <title>연주아 프로필</title>
     
     <!-- 브라우저 탭 아이콘 (파비콘) 연동 -->
-    <link rel="icon" href="https://stimg.afreecatv.com/LOGO/su/sudal0923/sudal0923.jpg">
+    <link class="rounded-full" rel="icon" href="https://stimg.afreecatv.com/LOGO/su/sudal0923/sudal0923.jpg">
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -15,7 +15,7 @@
     <!-- Google Fonts: Noto Sans KR -->
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
     
-    <!-- 🚨 Firebase SDK 추가 (호환 레이어 버전을 사용하여 전역객체 안전성 확보) 🚨 -->
+    <!-- 🚨 Firebase SDK 추가 🚨 -->
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 
@@ -158,22 +158,41 @@
                 </div>
             </div>
 
-            <!-- Intro Card -->
-            <div class="bg-white dark:bg-[#1e2126] rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 p-5 sm:p-6 transition-colors duration-300 relative">
-                <div class="flex items-center justify-between mb-3">
-                    <h3 class="flex items-center gap-2 text-lg font-bold text-gray-900 dark:text-white">
-                        <i class="fa-solid fa-clover text-brand"></i> 주아는 어떤 사람?
-                    </h3>
-                    <button id="admin-profile-edit-btn" onclick="openProfileEditModal()" class="hidden text-gray-400 hover:text-brand transition-colors p-1" title="프로필 정보 수정">
-                        <i class="fa-solid fa-pen-to-square"></i>
-                    </button>
+            <!-- Intro & D-Day 2열 레이아웃 그리드 -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                
+                <!-- Intro Card -->
+                <div class="bg-white dark:bg-[#1e2126] rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 p-5 sm:p-6 transition-colors duration-300 relative flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="flex items-center gap-2 text-lg font-bold text-gray-900 dark:text-white">
+                                <i class="fa-solid fa-clover text-brand"></i> 주아는 어떤 사람?
+                            </h3>
+                            <button id="admin-profile-edit-btn" onclick="openProfileEditModal()" class="hidden text-gray-400 hover:text-brand transition-colors p-1" title="프로필 정보 수정">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </button>
+                        </div>
+                        <p id="profile-intro-text" class="text-gray-700 dark:text-gray-300 text-sm leading-relaxed mb-4 whitespace-pre-wrap">
+                            <!-- JS Rendering -->
+                        </p>
+                    </div>
+                    <div id="profile-tags-container" class="flex flex-wrap gap-2 pt-2 border-t border-gray-50 dark:border-gray-800/50">
+                        <!-- JS Rendering -->
+                    </div>
                 </div>
-                <p id="profile-intro-text" class="text-gray-700 dark:text-gray-300 text-sm leading-relaxed mb-4">
-                    <!-- JS Rendering -->
-                </p>
-                <div id="profile-tags-container" class="flex flex-wrap gap-2">
-                    <!-- JS Rendering -->
+
+                <!-- D-Day & Anniversary Card -->
+                <div class="bg-white dark:bg-[#1e2126] rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 p-5 sm:p-6 transition-colors duration-300 flex flex-col justify-between">
+                    <div>
+                        <h3 class="flex items-center gap-2 text-lg font-bold text-gray-900 dark:text-white mb-4">
+                            <i class="fa-regular fa-clock text-brand"></i> 기념일 & 디데이
+                        </h3>
+                        <div id="dday-container" class="space-y-3">
+                            <!-- JS Rendering -->
+                        </div>
+                    </div>
                 </div>
+
             </div>
 
             <!-- Broadcast Info Card -->
@@ -422,6 +441,21 @@
                         <input type="text" id="edit-profile-tags" class="w-full bg-gray-50 dark:bg-[#16181b] border border-gray-200 dark:border-gray-800 text-gray-900 dark:text-gray-200 text-sm rounded-lg focus:ring-brand focus:border-brand p-3 outline-none">
                     </div>
                     <hr class="border-gray-100 dark:border-gray-800">
+                    
+                    <!-- ⏰ D-Day Edit Section 추가 -->
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <h4 class="text-sm font-bold text-gray-900 dark:text-white"><i class="fa-regular fa-clock text-brand"></i> 기념일 및 디데이 설정</h4>
+                            <button type="button" onclick="addEditDdayRow()" class="text-xs bg-brand/10 text-brand-dark dark:text-brand font-bold px-2.5 py-1 rounded-lg hover:bg-brand/20 transition-colors">
+                                + 추가
+                            </button>
+                        </div>
+                        <div id="edit-dday-list" class="space-y-2">
+                            <!-- JS Dynamic rows -->
+                        </div>
+                    </div>
+                    <hr class="border-gray-100 dark:border-gray-800">
+
                     <div>
                         <h4 class="text-sm font-bold text-gray-900 dark:text-white mb-3"><i class="fa-regular fa-calendar-check text-brand"></i> 방송 정보</h4>
                         <div class="space-y-3">
@@ -483,7 +517,7 @@
             appId: "1:575474141821:web:d1d863dd1d02ea1e8f7f14"
         };
 
-        // 파이어베이스 초기화 함수 (자유롭고 유연한 동적 바인딩)
+        // 파이어베이스 초기화 함수 (비동기 안전 바인딩)
         let db = null;
         function initFirebase() {
             if (typeof firebase !== 'undefined') {
@@ -529,13 +563,21 @@
             { day: '토', content: '랜덤 컨텐츠 (게시판 공지 확인)', color: 'blue', isRest: false },
             { day: '일', content: '노래방 및 주간 소통 🎤', color: 'red', isRest: false }
         ];
-
+        
+        // D-day 데이터 포함된 프로필 기본값 (기존 <br> 태그 대신 키보드 엔터값으로 변경)
         const defaultProfileData = {
-            introText: "언제나 밝은 에너지로 힐링을 주는 버추얼 스트리머 연주아입니다.<br>친근하고 편안한 분위기로 방송을 이끌어가며, 가끔은 허당미 넘치는 모습도 보여드려요!<br>주로 저챗과 다양한 종합게임으로 여러분과 만나고 있습니다.",
+            introText: `언제나 밝은 에너지로 힐링을 주는 버추얼 스트리머 연주아입니다.
+친근하고 편안한 분위기로 방송을 이끌어가며, 가끔은 허당미 넘치는 모습도 보여드려요!
+주로 저챗과 다양한 종합게임으로 여러분과 만나고 있습니다.`,
             tags: ["편안함", "소통왕", "텐션업"],
             broadcast: { time: "주 6일 · 저녁 시간대 · 휴방 1일(수요일)", content: "저챗 · 종합게임 · 마인크래프트 · 시참", game: "배틀그라운드 · 스팀 게임 · 리듬 게임 등" },
             likes: ["네잎이 (팬 애칭💚)", "맛있는 거 먹기", "게임"],
-            dislikes: ["벌레", "갑툭튀 (공포게임)", "매운 음식"]
+            dislikes: ["벌레", "갑툭튀 (공포게임)", "매운 음식"],
+            ddays: [
+                { title: "🎂 생일", type: "birthday", date: "09-23" },
+                { title: "🍀 데뷔", type: "anniversary", date: "2025-05-31" },
+                { title: "🎬 1주년 기념일", type: "anniversary", date: "2026-05-31" }
+            ]
         };
 
         // 전역 상태 변수
@@ -697,15 +739,93 @@
             renderSchedule();
         });
 
-        // 프로필 정보 렌더링
+        // 디데이/기념일 날짜 파싱 및 계산 코어 알고리즘
+        function calculateDDayString(type, dateStr) {
+            const today = new Date();
+            today.setHours(0,0,0,0);
+            
+            if (type === 'birthday') {
+                const cleaned = dateStr.replace(/[^0-9]/g, '-');
+                const parts = cleaned.split('-');
+                if (parts.length < 2) return "날짜 오류";
+                const month = parseInt(parts[0], 10) - 1;
+                const day = parseInt(parts[1], 10);
+                
+                let targetYear = today.getFullYear();
+                let targetDate = new Date(targetYear, month, day);
+                if (targetDate < today) {
+                    targetDate.setFullYear(targetYear + 1);
+                }
+                
+                const diffTime = targetDate - today;
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                if (diffDays === 0 || (today.getMonth() === month && today.getDate() === day)) {
+                    return '<span class="text-brand font-bold animate-bounce block text-sm sm:text-base">Today! 🎉</span>';
+                }
+                return `<span class="text-brand-dark dark:text-brand font-black text-lg">D-${diffDays}</span>`;
+            } else if (type === 'anniversary') {
+                const cleaned = dateStr.replace(/[^0-9]/g, '-');
+                const parts = cleaned.split('-').filter(p => p !== '');
+                if (parts.length < 3) return "날짜 오류";
+                const targetDate = new Date(parts[0], parseInt(parts[1], 10) - 1, parts[2]);
+                
+                const diffTime = today - targetDate;
+                const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1; // 1일차부터 시작
+                if (diffDays <= 0) return `<span class="text-gray-500 text-sm">D-Day 대기</span>`;
+                return `<span class="text-gray-900 dark:text-white font-black text-lg">${diffDays}일째</span>`;
+            } else { // 일반 custom dday
+                const cleaned = dateStr.replace(/[^0-9]/g, '-');
+                const parts = cleaned.split('-').filter(p => p !== '');
+                if (parts.length < 3) return "날짜 오류";
+                const targetDate = new Date(parts[0], parseInt(parts[1], 10) - 1, parts[2]);
+                targetDate.setHours(0,0,0,0);
+                
+                const diffTime = targetDate - today;
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                
+                if (diffDays === 0) {
+                    return '<span class="text-red-500 font-bold animate-pulse text-sm sm:text-base">D-DAY! 🔥</span>';
+                } else if (diffDays > 0) {
+                    return `<span class="text-red-500 font-black text-lg">D-${diffDays}</span>`;
+                } else {
+                    return `<span class="text-gray-400 font-medium text-xs sm:text-sm">종료 (D+${Math.abs(diffDays)})</span>`;
+                }
+            }
+        }
+
+        // 프로필 정보 및 D-Day 영역 렌더링
         function renderProfile() {
             const introEl = document.getElementById('profile-intro-text');
-            if (introEl) introEl.innerHTML = globalProfileData.introText;
+            if (introEl) introEl.textContent = globalProfileData.introText;
             
             const tagsContainer = document.getElementById('profile-tags-container');
             if (tagsContainer) {
                 tagsContainer.innerHTML = globalProfileData.tags.map(tag => `<span class="px-3 py-1 bg-gray-50 dark:bg-[#2a2d33] text-gray-600 dark:text-gray-400 rounded-full text-xs font-bold border border-gray-200 dark:border-gray-700 cursor-default">#${tag.trim()}</span>`).join('');
             }
+            
+            // D-Day 위젯 렌더링
+            const ddayContainer = document.getElementById('dday-container');
+            if (ddayContainer) {
+                ddayContainer.innerHTML = '';
+                const ddays = globalProfileData.ddays || defaultProfileData.ddays;
+                if (ddays.length === 0) {
+                    ddayContainer.innerHTML = `<div class="text-center text-gray-400 text-sm py-8">등록된 디데이가 없습니다.</div>`;
+                } else {
+                    ddays.forEach(dday => {
+                        const ddayResult = calculateDDayString(dday.type, dday.date);
+                        ddayContainer.innerHTML += `
+                            <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-[#16181b] rounded-xl border border-gray-100 dark:border-gray-800/80 hover:scale-[1.01] transition-transform">
+                                <div class="flex flex-col">
+                                    <span class="text-sm font-bold text-gray-800 dark:text-gray-200">${dday.title}</span>
+                                    <span class="text-xs text-gray-400 mt-0.5">${dday.date}</span>
+                                </div>
+                                <div class="text-right">${ddayResult}</div>
+                            </div>
+                        `;
+                    });
+                }
+            }
+
             const timeEl = document.getElementById('profile-broadcast-time');
             if (timeEl) timeEl.innerText = globalProfileData.broadcast.time;
             const contentEl = document.getElementById('profile-broadcast-content');
@@ -945,21 +1065,99 @@
             updateFirestore('schedule', globalScheduleData); renderSchedule(); closeScheduleEditModal();
         }
 
-        // 프로필 관리 액션
+        // 프로필 관리 액션 (D-day 연계 포함)
         function openProfileEditModal() {
             const modal = document.getElementById('profile-edit-modal');
-            document.getElementById('edit-profile-intro').value = globalProfileData.introText; document.getElementById('edit-profile-tags').value = globalProfileData.tags.join(', ');
-            document.getElementById('edit-profile-time').value = globalProfileData.broadcast.time; document.getElementById('edit-profile-content').value = globalProfileData.broadcast.content; document.getElementById('edit-profile-game').value = globalProfileData.broadcast.game;
-            document.getElementById('edit-profile-likes').value = globalProfileData.likes.join(', '); document.getElementById('edit-profile-dislikes').value = globalProfileData.dislikes.join(', ');
-            requestAnimationFrame(() => { modal.classList.remove('opacity-0', 'pointer-events-none'); modal.querySelector('div').classList.remove('scale-95'); modal.querySelector('div').classList.add('scale-100'); });
+            document.getElementById('edit-profile-intro').value = globalProfileData.introText; 
+            document.getElementById('edit-profile-tags').value = globalProfileData.tags.join(', ');
+            document.getElementById('edit-profile-time').value = globalProfileData.broadcast.time; 
+            document.getElementById('edit-profile-content').value = globalProfileData.broadcast.content; 
+            document.getElementById('edit-profile-game').value = globalProfileData.broadcast.game;
+            document.getElementById('edit-profile-likes').value = globalProfileData.likes.join(', '); 
+            document.getElementById('edit-profile-dislikes').value = globalProfileData.dislikes.join(', ');
+            
+            // D-day 목록 입력란 활성화
+            renderEditDdays();
+
+            requestAnimationFrame(() => { 
+                modal.classList.remove('opacity-0', 'pointer-events-none'); 
+                modal.querySelector('div').classList.remove('scale-95'); 
+                modal.querySelector('div').classList.add('scale-100'); 
+            });
         }
-        function closeProfileEditModal() { const modal = document.getElementById('profile-edit-modal'); modal.classList.add('opacity-0', 'pointer-events-none'); modal.querySelector('div').classList.remove('scale-100'); modal.querySelector('div').classList.add('scale-95'); }
+
+        function closeProfileEditModal() { 
+            const modal = document.getElementById('profile-edit-modal'); 
+            modal.classList.add('opacity-0', 'pointer-events-none'); 
+            modal.querySelector('div').classList.remove('scale-100'); 
+            modal.querySelector('div').classList.add('scale-95'); 
+        }
+
+        // 모달 내 D-day 편집 영역 바인딩 및 생성
+        function renderEditDdays() {
+            const list = document.getElementById('edit-dday-list');
+            if (!list) return;
+            list.innerHTML = '';
+            
+            const ddays = globalProfileData.ddays || defaultProfileData.ddays;
+            ddays.forEach((dday, index) => {
+                list.innerHTML += `
+                    <div class="flex items-center gap-2 bg-gray-50 dark:bg-[#16181b] p-2 rounded-lg border border-gray-100 dark:border-gray-800">
+                        <input type="text" id="edit-dday-title-${index}" value="${dday.title}" class="w-1/3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded p-1.5 text-xs text-gray-900 dark:text-gray-200 outline-none" placeholder="타이틀 (예: 생일)">
+                        <select id="edit-dday-type-${index}" class="w-1/4 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded p-1.5 text-xs text-gray-900 dark:text-gray-200 outline-none">
+                            <option value="birthday" ${dday.type === 'birthday' ? 'selected' : ''}>생일(매년)</option>
+                            <option value="anniversary" ${dday.type === 'anniversary' ? 'selected' : ''}>기념일(경과)</option>
+                            <option value="dday" ${dday.type === 'dday' ? 'selected' : ''}>디데이(남은일)</option>
+                        </select>
+                        <input type="text" id="edit-dday-date-${index}" value="${dday.date}" class="w-1/4 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded p-1.5 text-xs text-gray-900 dark:text-gray-200 outline-none" placeholder="YYYY-MM-DD">
+                        <button type="button" onclick="deleteEditDdayRow(${index})" class="text-gray-400 hover:text-red-500 p-1 text-sm"><i class="fa-solid fa-trash-can"></i></button>
+                    </div>
+                `;
+            });
+        }
+
+        function addEditDdayRow() {
+            if (!globalProfileData.ddays) globalProfileData.ddays = [];
+            globalProfileData.ddays.push({ title: "새 디데이", type: "dday", date: "2026-09-23" });
+            renderEditDdays();
+        }
+
+        function deleteEditDdayRow(index) {
+            if (!globalProfileData.ddays) return;
+            globalProfileData.ddays.splice(index, 1);
+            renderEditDdays();
+        }
+
         function saveProfileChanges() {
             const parse = (str) => str.split(',').map(item => item.trim()).filter(item => item !== '');
-            globalProfileData.introText = document.getElementById('edit-profile-intro').value; globalProfileData.tags = parse(document.getElementById('edit-profile-tags').value);
-            globalProfileData.broadcast.time = document.getElementById('edit-profile-time').value; globalProfileData.broadcast.content = document.getElementById('edit-profile-content').value; globalProfileData.broadcast.game = document.getElementById('edit-profile-game').value;
-            globalProfileData.likes = parse(document.getElementById('edit-profile-likes').value); globalProfileData.dislikes = parse(document.getElementById('edit-profile-dislikes').value);
-            updateFirestore('profile', globalProfileData); renderProfile(); closeProfileEditModal();
+            globalProfileData.introText = document.getElementById('edit-profile-intro').value; 
+            globalProfileData.tags = parse(document.getElementById('edit-profile-tags').value);
+            globalProfileData.broadcast.time = document.getElementById('edit-profile-time').value; 
+            globalProfileData.broadcast.content = document.getElementById('edit-profile-content').value; 
+            globalProfileData.broadcast.game = document.getElementById('edit-profile-game').value;
+            globalProfileData.likes = parse(document.getElementById('edit-profile-likes').value); 
+            globalProfileData.dislikes = parse(document.getElementById('edit-profile-dislikes').value);
+            
+            // 편집 화면의 D-day 행 읽어서 배열로 병합
+            const ddaysCount = (globalProfileData.ddays || []).length;
+            const savedDdays = [];
+            for (let i = 0; i < ddaysCount; i++) {
+                const titleEl = document.getElementById(`edit-dday-title-${i}`);
+                if (!titleEl) continue;
+                
+                const title = titleEl.value.trim();
+                const type = document.getElementById(`edit-dday-type-${i}`).value;
+                const date = document.getElementById(`edit-dday-date-${i}`).value.trim();
+                
+                if (title !== '' && date !== '') {
+                    savedDdays.push({ title, type, date });
+                }
+            }
+            globalProfileData.ddays = savedDdays;
+
+            updateFirestore('profile', globalProfileData); 
+            renderProfile(); 
+            closeProfileEditModal();
         }
     </script>
 </body>
