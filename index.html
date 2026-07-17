@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>연주아 프로필</title>
+    <!-- 파비콘 (프로필 사진 연동) -->
+    <link rel="icon" type="image/jpeg" href="https://stimg.afreecatv.com/LOGO/su/sudal0923/sudal0923.jpg">
+    <link rel="shortcut icon" type="image/jpeg" href="https://stimg.afreecatv.com/LOGO/su/sudal0923/sudal0923.jpg">
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome for Icons -->
@@ -38,16 +41,6 @@
         .dark ::-webkit-scrollbar-track { background: #374151; }
         ::-webkit-scrollbar-thumb { background: #4ade80; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #22c55e; }
-        
-        .tab-content { display: none; }
-        .tab-content.active {
-            display: block;
-            animation: fadeIn 0.3s ease-in-out;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
     </style>
 </head>
 <body class="bg-green-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100 font-sans antialiased min-h-screen flex flex-col transition-colors duration-300">
@@ -69,7 +62,6 @@
                     <a href="#notice" class="text-gray-600 dark:text-gray-300 hover:text-brand-dark dark:hover:text-brand px-3 py-2 rounded-md text-sm font-medium transition-colors">공지사항</a>
                     <a href="#schedule" class="text-gray-600 dark:text-gray-300 hover:text-brand-dark dark:hover:text-brand px-3 py-2 rounded-md text-sm font-medium transition-colors">일정</a>
                     <a href="#karma" class="text-gray-600 dark:text-gray-300 hover:text-brand-dark dark:hover:text-brand px-3 py-2 rounded-md text-sm font-medium transition-colors">업보</a>
-                    <a href="#wardrobe" class="text-gray-600 dark:text-gray-300 hover:text-brand-dark dark:hover:text-brand px-3 py-2 rounded-md text-sm font-medium transition-colors">옷장</a>
                     
                     <!-- Dark Mode Toggle Button -->
                     <button id="theme-toggle" class="text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 p-2 rounded-lg transition-colors">
@@ -94,7 +86,6 @@
                 <a href="#notice" class="block text-gray-600 dark:text-gray-300 hover:bg-brand-light dark:hover:bg-gray-700 hover:text-brand-dark dark:hover:text-brand px-3 py-2 rounded-md text-base font-medium">공지사항</a>
                 <a href="#schedule" class="block text-gray-600 dark:text-gray-300 hover:bg-brand-light dark:hover:bg-gray-700 hover:text-brand-dark dark:hover:text-brand px-3 py-2 rounded-md text-base font-medium">일정</a>
                 <a href="#karma" class="block text-gray-600 dark:text-gray-300 hover:bg-brand-light dark:hover:bg-gray-700 hover:text-brand-dark dark:hover:text-brand px-3 py-2 rounded-md text-base font-medium">업보</a>
-                <a href="#wardrobe" class="block text-gray-600 dark:text-gray-300 hover:bg-brand-light dark:hover:bg-gray-700 hover:text-brand-dark dark:hover:text-brand px-3 py-2 rounded-md text-base font-medium">옷장</a>
             </div>
         </div>
     </header>
@@ -109,7 +100,7 @@
             <div class="bg-white dark:bg-[#1e2126] rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 overflow-hidden transition-colors duration-300">
                 <!-- Cover Image (SOOP Banner 연동) -->
                 <div class="h-32 sm:h-48 w-full relative overflow-hidden bg-brand-light dark:bg-gray-700">
-                    <img src="https://cdn.discordapp.com/attachments/1525157421717127394/1527440071471665192/71938f3c4b417597.png" 
+                    <img src="https://cdn.discordapp.com/attachments/1525157421717127394/1527440071471665192/71938f3c4b417597.png?ex=6a5aaaeb&is=6a59596b&hm=d9e05c51c633fc2b17a0879b56c7131810f21145564ec1f7acf8f689843856dc&" 
                          onerror="this.src='https://stitle.afreecatv.com/su/sudal0923/title.jpg'" 
                          class="w-full h-full object-cover absolute inset-0" alt="방송국 배너">
                     <!-- 다크모드 시 이미지 밝기 조절용 오버레이 -->
@@ -151,10 +142,12 @@
                             <a href="https://www.sooplive.com/station/sudal0923" target="_blank" class="w-10 h-10 rounded-full bg-blue-500 text-white flex items-center justify-center hover:bg-blue-600 transition-transform hover:scale-110 shadow-sm" title="SOOP 방송국">
                                 <i class="fa-solid fa-tv"></i>
                             </a>
-                            <a href="#" class="w-10 h-10 rounded-full bg-red-600 text-white flex items-center justify-center hover:bg-red-700 transition-transform hover:scale-110 shadow-sm" title="YouTube">
+                            <!-- 유튜브 링크 적용 -->
+                            <a href="https://www.youtube.com/@zooa_v" target="_blank" class="w-10 h-10 rounded-full bg-red-600 text-white flex items-center justify-center hover:bg-red-700 transition-transform hover:scale-110 shadow-sm" title="YouTube">
                                 <i class="fa-brands fa-youtube"></i>
                             </a>
-                            <a href="#" class="w-10 h-10 rounded-full bg-green-500 text-white flex items-center justify-center hover:bg-green-600 transition-transform hover:scale-110 shadow-sm" title="Naver Cafe">
+                            <!-- 카페 링크 적용 -->
+                            <a href="https://cafe.naver.com/2ooa" target="_blank" class="w-10 h-10 rounded-full bg-green-500 text-white flex items-center justify-center hover:bg-green-600 transition-transform hover:scale-110 shadow-sm" title="Naver Cafe">
                                 <i class="fa-solid fa-mug-hot"></i>
                             </a>
                         </div>
@@ -390,6 +383,9 @@
                                 <option value="일반">일반</option>
                             </select>
                             <input type="text" id="new-notice-content" class="flex-grow bg-white dark:bg-[#16181b] border border-gray-200 dark:border-gray-800 text-gray-900 dark:text-gray-200 text-sm rounded-lg focus:ring-brand focus:border-brand p-2 outline-none" placeholder="공지 내용 입력...">
+                        </div>
+                        <div class="flex gap-2">
+                            <input type="text" id="new-notice-link" class="flex-grow bg-white dark:bg-[#16181b] border border-gray-200 dark:border-gray-800 text-gray-900 dark:text-gray-200 text-sm rounded-lg focus:ring-brand focus:border-brand p-2 outline-none" placeholder="연결할 링크 URL (선택사항 - 예: 카페 주소)">
                             <button onclick="addNewNotice()" class="bg-brand text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-brand-dark transition-colors whitespace-nowrap">추가</button>
                         </div>
                     </div>
@@ -567,32 +563,7 @@
                 });
             });
 
-            // 3. 옷장 탭 기능 (옷장 탭 기능이 HTML 상에 없으나 스크립트는 유지함)
-            const tabBtns = document.querySelectorAll('.tab-btn');
-            const tabContents = document.querySelectorAll('.tab-content');
-
-            tabBtns.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    tabBtns.forEach(b => {
-                        b.classList.remove('bg-brand', 'text-white');
-                        b.classList.add('text-gray-500', 'dark:text-gray-400');
-                    });
-                    
-                    btn.classList.remove('text-gray-500', 'dark:text-gray-400');
-                    btn.classList.add('bg-brand', 'text-white');
-
-                    tabContents.forEach(content => {
-                        content.classList.remove('active');
-                    });
-
-                    const targetId = btn.getAttribute('data-target');
-                    if(document.getElementById(targetId)) {
-                        document.getElementById(targetId).classList.add('active');
-                    }
-                });
-            });
-
-            // 4. UPBO (업보) 초기화 및 이벤트 리스너
+            // 3. UPBO (업보) 초기화 및 이벤트 리스너
             const searchInput = document.getElementById('upbo-search');
             
             // 오늘 날짜로 갱신일 자동 설정
@@ -669,9 +640,9 @@
         
         // 공지사항 데이터
         const defaultNoticeData = [
-            { type: '필독', date: '2026.07.17', content: '오늘 6시 30분에 뱅온 하겠습니다ㅏㅏㅏ 이따 보쟈 !! 🍀', typeColor: 'red' },
-            { type: '안내', date: '2026.07.13', content: 'GOODBYE 크아 신청하러가기 !! 상금 있어요 !!', typeColor: 'blue' },
-            { type: '일반', date: '2026.07.02', content: '팬닉 공모전 결과 발표! 우리는 이제 네잎이 💚', typeColor: 'gray' }
+            { type: '필독', date: '2026.07.17', content: '오늘 6시 30분에 뱅온 하겠습니다ㅏㅏㅏ 이따 보쟈 !! 🍀', typeColor: 'red', link: '' },
+            { type: '안내', date: '2026.07.13', content: 'GOODBYE 크아 신청하러가기 !! 상금 있어요 !!', typeColor: 'blue', link: 'https://cafe.naver.com/2ooa' },
+            { type: '일반', date: '2026.07.02', content: '팬닉 공모전 결과 발표! 우리는 이제 네잎이 💚', typeColor: 'gray', link: '' }
         ];
         let globalNoticeData = safeGetStorage('yeonZooaNoticeData', defaultNoticeData);
 
@@ -756,26 +727,36 @@
 
             globalNoticeData.forEach(notice => {
                 let badgeClass = '';
-                let bgClass = 'p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 border border-transparent hover:border-gray-100 dark:hover:border-gray-600 transition-colors';
+                let bgClass = 'p-3 rounded-lg border transition-colors block w-full text-left';
                 
                 if (notice.typeColor === 'red') {
                     badgeClass = 'bg-red-100 text-red-600 dark:bg-red-900/50 dark:text-red-400';
-                    bgClass = 'bg-brand-light/30 dark:bg-brand-dark/20 p-3 rounded-lg border border-brand-light dark:border-brand-dark/30';
-                } else if (notice.typeColor === 'blue') {
-                    badgeClass = 'bg-blue-100 text-blue-600 dark:bg-blue-900/50 dark:text-blue-400';
+                    bgClass += ' bg-brand-light/30 dark:bg-brand-dark/20 border-brand-light dark:border-brand-dark/30 hover:bg-brand-light/60 dark:hover:bg-brand-dark/40';
                 } else {
-                    badgeClass = 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300';
+                    if (notice.typeColor === 'blue') {
+                        badgeClass = 'bg-blue-100 text-blue-600 dark:bg-blue-900/50 dark:text-blue-400';
+                    } else {
+                        badgeClass = 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300';
+                    }
+                    bgClass += ' bg-transparent border-transparent hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:border-gray-100 dark:hover:border-gray-600';
                 }
 
-                list.innerHTML += `
-                    <li class="${bgClass}">
-                        <div class="flex justify-between items-start mb-1">
-                            <span class="${badgeClass} text-xs font-bold px-2 py-1 rounded">${notice.type}</span>
-                            <span class="text-xs text-gray-500 dark:text-gray-400">${notice.date}</span>
-                        </div>
+                const innerContent = `
+                    <div class="flex justify-between items-start mb-1">
+                        <span class="${badgeClass} text-xs font-bold px-2 py-1 rounded">${notice.type}</span>
+                        <span class="text-xs text-gray-500 dark:text-gray-400">${notice.date}</span>
+                    </div>
+                    <div class="flex items-center justify-between gap-2">
                         <p class="text-sm text-gray-800 dark:text-gray-200 ${notice.typeColor === 'red' ? 'font-medium' : ''}">${notice.content}</p>
-                    </li>
+                        ${notice.link ? '<i class="fa-solid fa-arrow-up-right-from-square text-gray-400 text-xs"></i>' : ''}
+                    </div>
                 `;
+
+                if (notice.link) {
+                    list.innerHTML += `<li><a href="${notice.link}" target="_blank" class="${bgClass} cursor-pointer">${innerContent}</a></li>`;
+                } else {
+                    list.innerHTML += `<li><div class="${bgClass}">${innerContent}</div></li>`;
+                }
             });
         }
 
@@ -1158,6 +1139,9 @@
             document.getElementById('new-notice-content').onkeypress = function(e) {
                 if (e.key === 'Enter') addNewNotice();
             };
+            document.getElementById('new-notice-link').onkeypress = function(e) {
+                if (e.key === 'Enter') addNewNotice();
+            };
         }
 
         function closeNoticeEditModal() {
@@ -1183,6 +1167,7 @@
                             <div class="flex items-center gap-2 mb-1">
                                 <span class="text-xs font-bold bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-2 py-0.5 rounded">${notice.type}</span>
                                 <span class="text-xs text-gray-500">${notice.date}</span>
+                                ${notice.link ? `<a href="${notice.link}" target="_blank" class="text-blue-500 hover:text-blue-600 text-xs" title="링크 열기"><i class="fa-solid fa-link"></i></a>` : ''}
                             </div>
                             <p class="text-sm text-gray-800 dark:text-gray-200 break-all">${notice.content}</p>
                         </div>
@@ -1197,7 +1182,9 @@
         function addNewNotice() {
             const type = document.getElementById('new-notice-type').value;
             const contentInput = document.getElementById('new-notice-content');
+            const linkInput = document.getElementById('new-notice-link');
             const content = contentInput.value.trim();
+            const link = linkInput.value.trim();
             
             if (!content) return;
 
@@ -1212,11 +1199,13 @@
                 type: type,
                 date: dateStr,
                 content: content,
-                typeColor: typeColor
+                typeColor: typeColor,
+                link: link
             });
 
             safeSetStorage('yeonZooaNoticeData', globalNoticeData);
             contentInput.value = '';
+            linkInput.value = '';
             renderNoticeEditList();
             renderNotice(); // 바탕 화면도 즉시 갱신
         }
