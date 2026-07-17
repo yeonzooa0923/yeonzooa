@@ -101,19 +101,18 @@
         <!-- 1. Profile Section -->
         <section id="profile" class="scroll-mt-20 flex flex-col gap-4">
             
-            <!-- Header Card (Cover, Avatar, Basic Info) -->
+            <!-- Header Card -->
             <div class="bg-white dark:bg-[#1e2126] rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 overflow-hidden transition-colors duration-300">
-                <!-- Cover Image (배너 이미지 연동) -->
+                <!-- Cover Image -->
                 <div class="h-32 sm:h-48 w-full relative overflow-hidden bg-brand-light dark:bg-gray-700">
                     <img src="https://cdn.discordapp.com/attachments/1525157421717127394/1527440071471665192/71938f3c4b417597.png?ex=6a5aaaeb&is=6a59596b&hm=d9e05c51c633fc2b17a0879b56c7131810f21145564ec1f7acf8f689843856dc&" 
                          onerror="this.src='https://placehold.co/1200x400/4ade80/ffffff?text=Banner'" 
                          class="w-full h-full object-cover absolute inset-0" alt="방송국 배너">
-                    <!-- 다크모드 시 이미지 밝기 조절용 오버레이 -->
                     <div class="absolute inset-0 bg-black/5 dark:bg-black/30"></div>
                 </div>
                 
                 <div class="px-6 sm:px-10 pb-6 flex flex-col sm:flex-row relative">
-                    <!-- Avatar (SOOP Profile Image 연동) -->
+                    <!-- Avatar -->
                     <div class="-mt-16 sm:-mt-24 mb-4 sm:mb-0 sm:mr-8 flex-shrink-0 flex justify-center sm:block relative z-10">
                         <img class="h-32 w-32 sm:h-48 sm:w-48 rounded-full border-4 border-white dark:border-[#1e2126] shadow-lg object-cover bg-white dark:bg-gray-800" 
                              src="https://stimg.afreecatv.com/LOGO/su/sudal0923/sudal0923.jpg" 
@@ -124,17 +123,14 @@
                     <!-- Info -->
                     <div class="pt-2 sm:pt-4 flex-grow text-center sm:text-left flex flex-col sm:justify-between">
                         <div>
-                            <!-- 카테고리 -->
                             <div class="flex items-center justify-center sm:justify-start gap-2 mb-1">
                                 <span class="text-brand font-bold text-sm"><i class="fa-solid fa-seedling"></i> 버추얼 · 종합게임</span>
                             </div>
-                            <!-- 이름 -->
                             <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-4 flex items-baseline justify-center sm:justify-start gap-2">
                                 연주아
                                 <span class="text-xl text-gray-500 dark:text-gray-400 font-medium tracking-tight">Yeon Zooa</span>
                             </h1>
                             
-                            <!-- 상단 요약 태그 (Pill 형태) -->
                             <div class="flex flex-wrap justify-center sm:justify-start gap-2 mb-5">
                                 <span class="px-3 py-1 bg-gray-100 dark:bg-[#2a2d33] text-gray-700 dark:text-gray-300 rounded-full text-xs font-bold border border-gray-200 dark:border-gray-700">여</span>
                                 <span class="px-3 py-1 bg-brand-light/40 dark:bg-brand/10 text-brand-dark dark:text-brand rounded-full text-xs font-bold border border-brand-light dark:border-brand/30">데뷔 2025.05.31 · 생일 09.23</span>
@@ -311,7 +307,7 @@
                         </div>
                         <input type="text" id="upbo-search" class="w-full bg-gray-50 dark:bg-[#16181b] border border-gray-200 dark:border-gray-800 text-gray-900 dark:text-gray-200 text-sm rounded-xl focus:ring-brand focus:border-brand block pl-10 p-3.5 transition-colors placeholder-gray-400 dark:placeholder-gray-600 outline-none" placeholder="닉네임 또는 아이디 검색...">
                     </div>
-                    <!-- Admin: Add User Button (관리자 모드일 때만 표시) -->
+                    <!-- Admin: Add User Button -->
                     <button id="admin-add-user-btn" onclick="openAddUserModal()" class="hidden items-center justify-center bg-brand hover:bg-brand-dark text-white font-bold py-3 px-5 rounded-xl transition-colors whitespace-nowrap shadow-sm">
                         <i class="fa-solid fa-user-plus mr-2"></i>네잎이 추가
                     </button>
@@ -343,9 +339,15 @@
             <div class="bg-white dark:bg-[#25282e] rounded-2xl shadow-2xl w-11/12 max-w-md overflow-hidden transform scale-95 transition-transform duration-300 border border-gray-100 dark:border-gray-700 flex flex-col max-h-[80vh]">
                 <div class="p-4 flex items-center justify-between border-b border-gray-100 dark:border-gray-800 bg-brand-light/20 dark:bg-brand/10">
                     <div class="flex items-center gap-3" id="edit-modal-header"></div>
-                    <button onclick="closeUpboEditModal()" class="text-gray-400 hover:text-gray-600 dark:hover:text-white transition-colors p-2">
-                        <i class="fa-solid fa-xmark text-xl"></i>
-                    </button>
+                    <!-- Right Actions in Header: Delete + Close -->
+                    <div class="flex items-center gap-2">
+                        <button id="delete-user-confirm-btn" class="hidden text-xs bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 font-bold px-2.5 py-1.5 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/50 transition-all" title="이 네잎이 정보 완전 삭제">
+                            <i class="fa-solid fa-user-minus mr-1"></i>네잎이 삭제
+                        </button>
+                        <button onclick="closeUpboEditModal()" class="text-gray-400 hover:text-gray-600 dark:hover:text-white transition-colors p-2">
+                            <i class="fa-solid fa-xmark text-xl"></i>
+                        </button>
+                    </div>
                 </div>
                 <div class="p-4 flex-grow overflow-y-auto" id="edit-modal-body"></div>
                 <div class="p-4 border-t border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-[#1e2126]">
@@ -393,15 +395,18 @@
                     </button>
                 </div>
                 <div class="p-4 flex-grow overflow-y-auto space-y-3" id="notice-edit-list"></div>
-                <div class="p-4 border-t border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-[#1e2126]">
+                <div class="p-4 border-t border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-[#1e2126] space-y-3">
                     <div class="flex gap-2">
-                        <select id="new-notice-type" class="bg-white dark:bg-[#16181b] border border-gray-200 dark:border-gray-800 text-gray-900 dark:text-gray-200 text-sm rounded-lg focus:ring-brand focus:border-brand p-2 outline-none w-24">
+                        <select id="new-notice-type" class="bg-white dark:bg-[#16181b] border border-gray-200 dark:border-gray-800 text-gray-900 dark:text-gray-200 text-sm rounded-lg focus:ring-brand focus:border-brand p-2.5 outline-none w-24">
                             <option value="필독">필독</option>
                             <option value="안내">안내</option>
                             <option value="일반">일반</option>
                         </select>
-                        <input type="text" id="new-notice-content" class="flex-grow bg-white dark:bg-[#16181b] border border-gray-200 dark:border-gray-800 text-gray-900 dark:text-gray-200 text-sm rounded-lg focus:ring-brand focus:border-brand p-2 outline-none" placeholder="공지 내용 입력...">
-                        <button onclick="addNewNotice()" class="bg-brand text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-brand-dark transition-colors whitespace-nowrap">추가</button>
+                        <input type="text" id="new-notice-content" class="flex-grow bg-white dark:bg-[#16181b] border border-gray-200 dark:border-gray-800 text-gray-900 dark:text-gray-200 text-sm rounded-lg focus:ring-brand focus:border-brand p-2.5 outline-none" placeholder="공지 내용 입력...">
+                    </div>
+                    <div class="flex gap-2">
+                        <input type="text" id="new-notice-link" class="flex-grow bg-white dark:bg-[#16181b] border border-gray-200 dark:border-gray-800 text-gray-900 dark:text-gray-200 text-sm rounded-lg focus:ring-brand focus:border-brand p-2.5 outline-none" placeholder="연동할 바로가기 주소 (선택, 예: https://...)">
+                        <button onclick="addNewNotice()" class="bg-brand text-white px-5 py-2.5 rounded-lg text-sm font-bold hover:bg-brand-dark transition-colors whitespace-nowrap shadow-sm">추가</button>
                     </div>
                 </div>
             </div>
@@ -442,7 +447,6 @@
                     </div>
                     <hr class="border-gray-100 dark:border-gray-800">
                     
-                    <!-- ⏰ D-Day Edit Section 추가 -->
                     <div>
                         <div class="flex items-center justify-between mb-3">
                             <h4 class="text-sm font-bold text-gray-900 dark:text-white"><i class="fa-regular fa-clock text-brand"></i> 기념일 및 디데이 설정</h4>
@@ -517,7 +521,7 @@
             appId: "1:575474141821:web:d1d863dd1d02ea1e8f7f14"
         };
 
-        // 파이어베이스 초기화 함수 (비동기 안전 바인딩)
+        // 파이어베이스 초기화 함수
         let db = null;
         function initFirebase() {
             if (typeof firebase !== 'undefined') {
@@ -549,9 +553,9 @@
         ];
         
         const defaultNoticeData = [
-            { type: '필독', date: '2026.07.17', content: '오늘 6시 30분에 뱅온 하겠습니다ㅏㅏㅏ 이따 보쟈 !! 🍀', typeColor: 'red' },
-            { type: '안내', date: '2026.07.13', content: 'GOODBYE 크아 신청하러가기 !! 상금 있어요 !!', typeColor: 'blue' },
-            { type: '일반', date: '2026.07.02', content: '팬닉 공모전 결과 발표! 우리는 이제 네잎이 💚', typeColor: 'gray' }
+            { type: '필독', date: '2026.07.17', content: '오늘 6시 30분에 뱅온 하겠습니다ㅏㅏㅏ 이따 보쟈 !! 🍀', typeColor: 'red', link: '' },
+            { type: '안내', date: '2026.07.13', content: 'GOODBYE 크아 신청하러가기 !! 상금 있어요 !!', typeColor: 'blue', link: '' },
+            { type: '일반', date: '2026.07.02', content: '팬닉 공모전 결과 발표! 우리는 이제 네잎이 💚', typeColor: 'gray', link: '' }
         ];
 
         const defaultScheduleData = [
@@ -564,7 +568,6 @@
             { day: '일', content: '노래방 및 주간 소통 🎤', color: 'red', isRest: false }
         ];
         
-        // D-day 데이터 포함된 프로필 기본값 (기존 <br> 태그 대신 키보드 엔터값으로 변경)
         const defaultProfileData = {
             introText: `언제나 밝은 에너지로 힐링을 주는 버추얼 스트리머 연주아입니다.
 친근하고 편안한 분위기로 방송을 이끌어가며, 가끔은 허당미 넘치는 모습도 보여드려요!
@@ -588,6 +591,7 @@
         
         let isAdminMode = false;
         let currentEditingUserId = null;
+        let deleteConfirmState = false; // 삭제 버퍼 상태 체크
 
         // 안전한 로컬 스토리지 함수
         function safeGetStorage(key, defaultValue) {
@@ -623,8 +627,11 @@
                         globalNoticeData = data.notice || defaultNoticeData;
                         globalScheduleData = data.schedule || defaultScheduleData;
                         globalProfileData = data.profile || defaultProfileData;
+                        
+                        if (globalProfileData && (!globalProfileData.ddays || globalProfileData.ddays.length === 0)) {
+                            globalProfileData.ddays = JSON.parse(JSON.stringify(defaultProfileData.ddays));
+                        }
                     } else {
-                        // DB가 비어있다면 기본 데이터로 세팅
                         await docRef.set({
                             upbo: defaultUpboData, 
                             notice: defaultNoticeData, 
@@ -651,6 +658,10 @@
             globalNoticeData = safeGetStorage('yeonZooaNoticeData', defaultNoticeData);
             globalScheduleData = safeGetStorage('yeonZooaScheduleData', defaultScheduleData);
             globalProfileData = safeGetStorage('yeonZooaProfileData', defaultProfileData);
+            
+            if (globalProfileData && (!globalProfileData.ddays || globalProfileData.ddays.length === 0)) {
+                globalProfileData.ddays = JSON.parse(JSON.stringify(defaultProfileData.ddays));
+            }
         }
 
         // 파이어베이스 데이터 업로드 공통함수
@@ -668,7 +679,6 @@
 
         // 앱 구동 시점 초기화 핸들러
         document.addEventListener('DOMContentLoaded', async () => {
-            // 다크모드 설정
             const themeToggleBtns = [document.getElementById('theme-toggle'), document.getElementById('mobile-theme-toggle')];
             const html = document.documentElement;
             let savedTheme = 'light';
@@ -700,7 +710,6 @@
                 });
             }
 
-            // 모바일 햄버거 메뉴 제어
             const mobileBtn = document.getElementById('mobile-menu-btn');
             if (mobileBtn) {
                 mobileBtn.addEventListener('click', () => {
@@ -711,14 +720,12 @@
                 link.addEventListener('click', () => document.getElementById('mobile-menu').classList.add('hidden'));
             });
 
-            // 오늘 날짜 세팅
             const today = new Date();
             const dateSpan = document.getElementById('upbo-date');
             if (dateSpan) {
                 dateSpan.innerText = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
             }
 
-            // 업보 실시간 필터 검색
             const searchInput = document.getElementById('upbo-search');
             if (searchInput) {
                 searchInput.addEventListener('input', (e) => {
@@ -728,18 +735,16 @@
                 });
             }
 
-            // 비동기로 데이터 불러오기 수행 후 레이아웃 생성
             initFirebase();
             await fetchSiteData();
             
-            // 화면 UI 렌더링 시작
             renderProfile();
             renderUpbo(globalUpboData);
             renderNotice();
             renderSchedule();
         });
 
-        // 디데이/기념일 날짜 파싱 및 계산 코어 알고리즘
+        // 디데이/기념일 날짜 계산
         function calculateDDayString(type, dateStr) {
             const today = new Date();
             today.setHours(0,0,0,0);
@@ -770,10 +775,10 @@
                 const targetDate = new Date(parts[0], parseInt(parts[1], 10) - 1, parts[2]);
                 
                 const diffTime = today - targetDate;
-                const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1; // 1일차부터 시작
+                const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
                 if (diffDays <= 0) return `<span class="text-gray-500 text-sm">D-Day 대기</span>`;
                 return `<span class="text-gray-900 dark:text-white font-black text-lg">${diffDays}일째</span>`;
-            } else { // 일반 custom dday
+            } else {
                 const cleaned = dateStr.replace(/[^0-9]/g, '-');
                 const parts = cleaned.split('-').filter(p => p !== '');
                 if (parts.length < 3) return "날짜 오류";
@@ -793,7 +798,16 @@
             }
         }
 
-        // 프로필 정보 및 D-Day 영역 렌더링
+        // 인터넷 주소 자동 변환 헬퍼 함수
+        function linkify(text) {
+            if (!text) return '';
+            const urlPattern = /(https?:\/\/[^\s]+)/g;
+            return text.replace(urlPattern, function(url) {
+                return `<a href="${url}" target="_blank" rel="noopener noreferrer" class="text-brand-dark dark:text-brand hover:underline font-bold inline-flex items-center gap-1 bg-brand-light/50 dark:bg-brand/20 px-2.5 py-1 rounded-lg transition-all text-xs" onclick="event.stopPropagation();">바로가기 <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i></a>`;
+            });
+        }
+
+        // 프로필 정보 영역 렌더링
         function renderProfile() {
             const introEl = document.getElementById('profile-intro-text');
             if (introEl) introEl.textContent = globalProfileData.introText;
@@ -803,7 +817,6 @@
                 tagsContainer.innerHTML = globalProfileData.tags.map(tag => `<span class="px-3 py-1 bg-gray-50 dark:bg-[#2a2d33] text-gray-600 dark:text-gray-400 rounded-full text-xs font-bold border border-gray-200 dark:border-gray-700 cursor-default">#${tag.trim()}</span>`).join('');
             }
             
-            // D-Day 위젯 렌더링
             const ddayContainer = document.getElementById('dday-container');
             if (ddayContainer) {
                 ddayContainer.innerHTML = '';
@@ -855,7 +868,27 @@
                 else if (notice.typeColor === 'blue') { badgeClass = 'bg-blue-100 text-blue-600 dark:bg-blue-900/50 dark:text-blue-400'; } 
                 else { badgeClass = 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300'; }
 
-                list.innerHTML += `<li class="${bgClass}"><div class="flex justify-between items-start mb-1"><span class="${badgeClass} text-xs font-bold px-2 py-1 rounded">${notice.type}</span><span class="text-xs text-gray-500 dark:text-gray-400">${notice.date}</span></div><p class="text-sm text-gray-800 dark:text-gray-200 ${notice.typeColor === 'red' ? 'font-medium' : ''}">${notice.content}</p></li>`;
+                let linkHtml = '';
+                if (notice.link && notice.link.trim() !== '') {
+                    linkHtml = `
+                        <div class="mt-2.5">
+                            <a href="${notice.link}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 text-xs font-bold text-white bg-brand hover:bg-brand-dark px-3 py-1.5 rounded-lg shadow-sm transition-all hover:scale-[1.02]">
+                                바로가기 <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                            </a>
+                        </div>
+                    `;
+                }
+
+                list.innerHTML += `
+                    <li class="${bgClass}">
+                        <div class="flex justify-between items-start mb-1">
+                            <span class="${badgeClass} text-xs font-bold px-2 py-1 rounded">${notice.type}</span>
+                            <span class="text-xs text-gray-500 dark:text-gray-400">${notice.date}</span>
+                        </div>
+                        <p class="text-sm text-gray-800 dark:text-gray-200 ${notice.typeColor === 'red' ? 'font-medium' : ''}">${linkify(notice.content)}</p>
+                        ${linkHtml}
+                    </li>
+                `;
             });
         }
 
@@ -878,7 +911,7 @@
             });
         }
 
-        // 유저 아바타 URL 구하기
+        // 유저 아바타 URL
         function getAvatarUrl(user) {
             if (user.id && user.id.trim() !== '') {
                 const prefix = user.id.substring(0, 2);
@@ -911,7 +944,7 @@
             });
         }
 
-        // 일반 업보 조회 모달 열기
+        // 일반 업보 조회 모달
         function openUpboModal(user, avatarUrl) {
             let modal = document.getElementById('upbo-modal');
             if (!modal) {
@@ -930,7 +963,7 @@
             if (modal) { modal.classList.add('opacity-0', 'pointer-events-none'); modal.querySelector('div').classList.remove('scale-100'); modal.querySelector('div').classList.add('scale-95'); }
         }
 
-        // 관리자 인증 처리 제어기
+        // 관리자 인증 처리
         function openAdminLoginModal() {
             if (isAdminMode) {
                 isAdminMode = false;
@@ -963,19 +996,87 @@
             }
         }
 
-        // DB 저장 연결하기
+        // DB 저장 연결
         function saveUpboData() { updateFirestore('upbo', globalUpboData); }
 
+        // 관리자용 업보 편집 창 열기
         function openUpboEditModal(user, avatarUrl) {
-            currentEditingUserId = user.id; const modal = document.getElementById('upbo-edit-modal');
-            document.getElementById('edit-modal-header').innerHTML = `<img src="${avatarUrl}" onerror="this.src='https://placehold.co/100x100/e2e8f0/64748b?text=${user.nickname.substring(0,2)}'" class="w-10 h-10 rounded-full border border-gray-200 dark:border-gray-700 object-cover"><div><div class="text-gray-900 dark:text-white font-bold text-sm">${user.nickname} <span class="text-xs text-brand font-normal bg-brand/10 px-2 py-0.5 rounded ml-1">수정 모드</span></div><div class="text-gray-500 dark:text-gray-400 text-xs">(${user.id})</div></div>`;
+            currentEditingUserId = user.id; 
+            const modal = document.getElementById('upbo-edit-modal');
+            
+            // 헤더 정보 로딩
+            document.getElementById('edit-modal-header').innerHTML = `
+                <img src="${avatarUrl}" onerror="this.src='https://placehold.co/100x100/e2e8f0/64748b?text=${user.nickname.substring(0,2)}'" class="w-10 h-10 rounded-full border border-gray-200 dark:border-gray-700 object-cover">
+                <div>
+                    <div class="text-gray-900 dark:text-white font-bold text-sm">
+                        ${user.nickname} 
+                        <span class="text-xs text-brand font-normal bg-brand/10 px-2 py-0.5 rounded ml-1">수정 모드</span>
+                    </div>
+                    <div class="text-gray-500 dark:text-gray-400 text-xs">(${user.id})</div>
+                </div>
+            `;
+            
+            // 네잎이 삭제 버튼 바인딩 및 상태 복원
+            const deleteUserBtn = document.getElementById('delete-user-confirm-btn');
+            if (deleteUserBtn) {
+                deleteUserBtn.classList.remove('hidden');
+                deleteUserBtn.classList.add('block');
+                deleteConfirmState = false; // 안전 장치 초기화
+                deleteUserBtn.innerHTML = `<i class="fa-solid fa-user-minus mr-1"></i>네잎이 삭제`;
+                deleteUserBtn.className = "text-xs bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 font-bold px-2.5 py-1.5 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/50 transition-all";
+                deleteUserBtn.onclick = () => handleDeleteUser(user.id);
+            }
+
             renderEditItems();
-            requestAnimationFrame(() => { modal.classList.remove('opacity-0', 'pointer-events-none'); modal.querySelector('div').classList.remove('scale-95'); modal.querySelector('div').classList.add('scale-100'); });
+            requestAnimationFrame(() => { 
+                modal.classList.remove('opacity-0', 'pointer-events-none'); 
+                modal.querySelector('div').classList.remove('scale-95'); 
+                modal.querySelector('div').classList.add('scale-100'); 
+            });
             document.getElementById('new-item-name').onkeypress = function(e) { if (e.key === 'Enter') addNewItem(); };
         }
 
         function closeUpboEditModal() {
-            const modal = document.getElementById('upbo-edit-modal'); modal.classList.add('opacity-0', 'pointer-events-none'); modal.querySelector('div').classList.remove('scale-100'); modal.querySelector('div').classList.add('scale-95'); currentEditingUserId = null;
+            const modal = document.getElementById('upbo-edit-modal'); 
+            modal.classList.add('opacity-0', 'pointer-events-none'); 
+            modal.querySelector('div').classList.remove('scale-100'); 
+            modal.querySelector('div').classList.add('scale-95'); 
+            currentEditingUserId = null;
+            
+            const deleteUserBtn = document.getElementById('delete-user-confirm-btn');
+            if (deleteUserBtn) {
+                deleteUserBtn.classList.add('hidden');
+                deleteUserBtn.classList.remove('block');
+            }
+        }
+
+        // 안전 유저(네잎이) 제거 제어 시스템 (confirm 경고 우회)
+        function handleDeleteUser(userId) {
+            const btn = document.getElementById('delete-user-confirm-btn');
+            if (!btn) return;
+
+            if (!deleteConfirmState) {
+                // 1차 터치: 경고 상태로 변환
+                deleteConfirmState = true;
+                btn.innerHTML = `<i class="fa-solid fa-triangle-exclamation mr-1"></i>진짜 삭제?`;
+                btn.className = "text-xs bg-red-600 text-white font-bold px-2.5 py-1.5 rounded-lg hover:bg-red-700 transition-all animate-pulse";
+                
+                // 3초간 반응 없으면 원복
+                setTimeout(() => {
+                    if (deleteConfirmState && currentEditingUserId === userId) {
+                        btn.innerHTML = `<i class="fa-solid fa-user-minus mr-1"></i>네잎이 삭제`;
+                        btn.className = "text-xs bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 font-bold px-2.5 py-1.5 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/50 transition-all";
+                        deleteConfirmState = false;
+                    }
+                }, 3000);
+            } else {
+                // 2차 터치: 진짜 삭제 처리 완료
+                globalUpboData = globalUpboData.filter(u => u.id !== userId);
+                saveUpboData();
+                closeUpboEditModal();
+                document.getElementById('upbo-search').dispatchEvent(new Event('input'));
+                deleteConfirmState = false;
+            }
         }
 
         function renderEditItems() {
@@ -1032,15 +1133,58 @@
             const list = document.getElementById('notice-edit-list'); list.innerHTML = '';
             if (globalNoticeData.length === 0) { list.innerHTML = '<div class="text-center text-gray-500 py-4">공지사항이 없습니다.</div>'; return; }
             globalNoticeData.forEach((notice, index) => {
-                list.innerHTML += `<div class="bg-gray-50 dark:bg-[#1e2126] border border-gray-200 dark:border-gray-800 p-3 rounded-lg flex justify-between items-start gap-3"><div class="flex-grow"><div class="flex items-center gap-2 mb-1"><span class="text-xs font-bold bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-2 py-0.5 rounded">${notice.type}</span><span class="text-xs text-gray-500">${notice.date}</span></div><p class="text-sm text-gray-800 dark:text-gray-200 break-all">${notice.content}</p></div><button onclick="deleteNotice(${index})" class="text-gray-400 hover:text-red-500 p-1 flex-shrink-0 transition-colors"><i class="fa-solid fa-trash-can"></i></button></div>`;
+                let linkBadge = '';
+                if (notice.link && notice.link.trim() !== '') {
+                    linkBadge = `<span class="text-[10px] bg-brand/10 text-brand-dark dark:text-brand font-semibold px-1.5 py-0.5 rounded border border-brand/20 truncate max-w-[120px]" title="${notice.link}"><i class="fa-solid fa-link mr-1"></i>${notice.link}</span>`;
+                }
+                list.innerHTML += `
+                    <div class="bg-gray-50 dark:bg-[#1e2126] border border-gray-200 dark:border-gray-800 p-3 rounded-lg flex justify-between items-start gap-3">
+                        <div class="flex-grow min-w-0">
+                            <div class="flex items-center gap-2 mb-1 flex-wrap">
+                                <span class="text-xs font-bold bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-2 py-0.5 rounded">${notice.type}</span>
+                                <span class="text-xs text-gray-500">${notice.date}</span>
+                                ${linkBadge}
+                            </div>
+                            <p class="text-sm text-gray-800 dark:text-gray-200 break-all">${linkify(notice.content)}</p>
+                        </div>
+                        <button onclick="deleteNotice(${index})" class="text-gray-400 hover:text-red-500 p-1 flex-shrink-0 transition-colors"><i class="fa-solid fa-trash-can"></i></button>
+                    </div>
+                `;
             });
         }
         function addNewNotice() {
-            const type = document.getElementById('new-notice-type').value; const contentInput = document.getElementById('new-notice-content'); const content = contentInput.value.trim();
-            if (!content) return; let typeColor = 'gray'; if (type === '필독') typeColor = 'red'; if (type === '안내') typeColor = 'blue';
-            const today = new Date(); const dateStr = `${today.getFullYear()}.${String(today.getMonth() + 1).padStart(2, '0')}.${String(today.getDate()).padStart(2, '0')}`;
-            globalNoticeData.unshift({ type: type, date: dateStr, content: content, typeColor: typeColor });
-            updateFirestore('notice', globalNoticeData); contentInput.value = ''; renderNoticeEditList(); renderNotice();
+            const type = document.getElementById('new-notice-type').value; 
+            const contentInput = document.getElementById('new-notice-content'); 
+            const linkInput = document.getElementById('new-notice-link');
+            const content = contentInput.value.trim();
+            let link = linkInput.value.trim();
+            
+            if (!content) return; 
+            
+            if (link && !/^https?:\/\//i.test(link)) {
+                link = 'https://' + link;
+            }
+            
+            let typeColor = 'gray'; 
+            if (type === '필독') typeColor = 'red'; 
+            if (type === '안내') typeColor = 'blue';
+            
+            const today = new Date(); 
+            const dateStr = `${today.getFullYear()}.${String(today.getMonth() + 1).padStart(2, '0')}.${String(today.getDate()).padStart(2, '0')}`;
+            
+            globalNoticeData.unshift({ 
+                type: type, 
+                date: dateStr, 
+                content: content, 
+                link: link, 
+                typeColor: typeColor 
+            });
+            
+            updateFirestore('notice', globalNoticeData); 
+            contentInput.value = ''; 
+            linkInput.value = '';
+            renderNoticeEditList(); 
+            renderNotice();
         }
         function deleteNotice(index) { globalNoticeData.splice(index, 1); updateFirestore('notice', globalNoticeData); renderNoticeEditList(); renderNotice(); }
 
@@ -1065,7 +1209,7 @@
             updateFirestore('schedule', globalScheduleData); renderSchedule(); closeScheduleEditModal();
         }
 
-        // 프로필 관리 액션 (D-day 연계 포함)
+        // 프로필 관리 액션
         function openProfileEditModal() {
             const modal = document.getElementById('profile-edit-modal');
             document.getElementById('edit-profile-intro').value = globalProfileData.introText; 
@@ -1076,7 +1220,10 @@
             document.getElementById('edit-profile-likes').value = globalProfileData.likes.join(', '); 
             document.getElementById('edit-profile-dislikes').value = globalProfileData.dislikes.join(', ');
             
-            // D-day 목록 입력란 활성화
+            if (!globalProfileData.ddays || globalProfileData.ddays.length === 0) {
+                globalProfileData.ddays = JSON.parse(JSON.stringify(defaultProfileData.ddays));
+            }
+
             renderEditDdays();
 
             requestAnimationFrame(() => { 
@@ -1093,7 +1240,6 @@
             modal.querySelector('div').classList.add('scale-95'); 
         }
 
-        // 모달 내 D-day 편집 영역 바인딩 및 생성
         function renderEditDdays() {
             const list = document.getElementById('edit-dday-list');
             if (!list) return;
@@ -1138,7 +1284,6 @@
             globalProfileData.likes = parse(document.getElementById('edit-profile-likes').value); 
             globalProfileData.dislikes = parse(document.getElementById('edit-profile-dislikes').value);
             
-            // 편집 화면의 D-day 행 읽어서 배열로 병합
             const ddaysCount = (globalProfileData.ddays || []).length;
             const savedDdays = [];
             for (let i = 0; i < ddaysCount; i++) {
