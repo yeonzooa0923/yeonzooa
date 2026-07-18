@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>연주아 프로필</title>
+    <title>연주아 프로필 🍀</title>
     
     <!-- 브라우저 탭 아이콘 (파비콘) 연동 -->
     <link class="rounded-full" rel="icon" href="https://stimg.afreecatv.com/LOGO/su/sudal0923/sudal0923.jpg">
@@ -12,10 +12,10 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts: Noto Sans KR -->
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- Google Fonts: Gowun Dodum (Body) & Gaegu (Title/Cute Accent) -->
+    <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Gaegu:wght@400;700&display=swap" rel="stylesheet">
     
-    <!-- 🚨 Firebase SDK 추가 🚨 -->
+    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 
@@ -25,129 +25,166 @@
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['Noto Sans KR', 'sans-serif'],
+                        sans: ['Gowun Dodum', 'sans-serif'],
+                        cute: ['Gaegu', 'cursive'],
                     },
                     colors: {
                         brand: {
-                            light: '#dcfce7', // 연두색 (green-100)
-                            DEFAULT: '#4ade80', // 기본 연두 (green-400)
-                            dark: '#22c55e',  // 진한 연두 (green-500)
+                            light: '#e6f9ed', // 아주 연하고 말랑한 파스텔 연두
+                            DEFAULT: '#86efac', // 부드러운 멜론연두 (green-300)
+                            dark: '#10b981',  // 포인트 에메랄드 그린
+                            deep: '#065f46',  // 깊은 숲속 연두
+                        },
+                        warm: {
+                            cream: '#fefcf9',  // 따뜻한 바닐라 크림 배경
+                            cocoa: '#4338ca', // 초콜릿 브라운 코코아 (텍스트용)
                         }
                     }
                 }
             }
         }
     </script>
+    
     <style>
         html { scroll-behavior: smooth; }
-        /* 스크롤바 커스텀 (다크모드 대응) */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #f1f1f1; }
-        .dark ::-webkit-scrollbar-track { background: #374151; }
-        ::-webkit-scrollbar-thumb { background: #4ade80; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #22c55e; }
+        /* 스크롤바 커스텀 (말랑말랑한 디자인) */
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: #fdfbf7; border-radius: 10px; }
+        .dark ::-webkit-scrollbar-track { background: #1e1b18; }
+        ::-webkit-scrollbar-thumb { background: #a7f3d0; border-radius: 10px; border: 2px solid #fdfbf7; }
+        .dark ::-webkit-scrollbar-thumb { background: #047857; border: 2px solid #1e1b18; }
+        ::-webkit-scrollbar-thumb:hover { background: #34d399; }
+
+        /* 말랑말랑 바운스 효과 클래스 */
+        .squishy {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .squishy:hover {
+            transform: translateY(-5px) scale(1.03);
+        }
+        .squishy:active {
+            transform: translateY(1px) scale(0.97);
+        }
+
+        /* 둥둥 떠 있는 귀여운 모션 */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-8px) rotate(1deg); }
+        }
+        .floating-soft {
+            animation: float 4s ease-in-out infinite;
+        }
+
+        /* 반짝이는 효과 */
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+        .sparkle-slow {
+            animation: twinkle 3s ease-in-out infinite;
+        }
     </style>
 </head>
-<body class="bg-green-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100 font-sans antialiased min-h-screen flex flex-col transition-colors duration-300">
+<body class="bg-[#fefcf9] dark:bg-[#181614] text-[#4b453d] dark:text-[#ebdcd0] font-sans antialiased min-h-screen flex flex-col transition-colors duration-300">
 
     <!-- Header / Navigation -->
-    <header class="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-50 transition-colors duration-300">
+    <header class="bg-[#fefcf9]/95 dark:bg-[#181614]/95 backdrop-blur-md sticky top-0 z-50 transition-colors duration-300 border-b-4 border-dashed border-[#f1ebd9] dark:border-[#2e2620]">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
+            <div class="flex justify-between items-center h-18 py-3">
                 <!-- Logo/Name -->
                 <div class="flex-shrink-0 flex items-center">
-                    <a href="#" class="text-xl font-bold text-brand-dark flex items-center gap-2">
-                        <i class="fa-solid fa-clover text-brand"></i>
-                        <span class="dark:text-white">연주아</span>
+                    <a href="#" class="text-2xl font-bold font-cute text-brand-dark flex items-center gap-2 squishy">
+                        <span class="w-9 h-9 rounded-full bg-brand-light dark:bg-brand-deep/30 flex items-center justify-center text-xl floating-soft">🍀</span>
+                        <span class="dark:text-white tracking-wide">연주아</span>
                     </a>
                 </div>
                 <!-- Desktop Menu -->
-                <nav class="hidden md:flex space-x-8 items-center">
-                    <a href="#profile" class="text-gray-600 dark:text-gray-300 hover:text-brand-dark dark:hover:text-brand px-3 py-2 rounded-md text-sm font-medium transition-colors">프로필</a>
-                    <a href="#notice" class="text-gray-600 dark:text-gray-300 hover:text-brand-dark dark:hover:text-brand px-3 py-2 rounded-md text-sm font-medium transition-colors">공지사항</a>
-                    <a href="#schedule" class="text-gray-600 dark:text-gray-300 hover:text-brand-dark dark:hover:text-brand px-3 py-2 rounded-md text-sm font-medium transition-colors">일정</a>
-                    <a href="#karma" class="text-gray-600 dark:text-gray-300 hover:text-brand-dark dark:hover:text-brand px-3 py-2 rounded-md text-sm font-medium transition-colors">업보</a>
+                <nav class="hidden md:flex space-x-6 items-center">
+                    <a href="#profile" class="text-gray-600 dark:text-gray-300 hover:text-brand-dark hover:bg-brand-light/50 dark:hover:bg-brand-deep/20 px-3.5 py-2 rounded-2xl text-sm font-bold transition-all">프로필</a>
+                    <a href="#notice" class="text-gray-600 dark:text-gray-300 hover:text-brand-dark hover:bg-brand-light/50 dark:hover:bg-brand-deep/20 px-3.5 py-2 rounded-2xl text-sm font-bold transition-all">공지사항</a>
+                    <a href="#schedule" class="text-gray-600 dark:text-gray-300 hover:text-brand-dark hover:bg-brand-light/50 dark:hover:bg-brand-deep/20 px-3.5 py-2 rounded-2xl text-sm font-bold transition-all">일정</a>
+                    <a href="#karma" class="text-gray-600 dark:text-gray-300 hover:text-brand-dark hover:bg-brand-light/50 dark:hover:bg-brand-deep/20 px-3.5 py-2 rounded-2xl text-sm font-bold transition-all">업보</a>
                     
                     <!-- Dark Mode Toggle Button -->
-                    <button id="theme-toggle" class="text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 p-2 rounded-lg transition-colors">
+                    <button id="theme-toggle" class="text-gray-500 dark:text-gray-400 hover:bg-brand-light dark:hover:bg-[#25211e] p-2.5 rounded-2xl transition-all squishy">
                         <i class="fa-solid fa-moon text-lg w-5 h-5 flex items-center justify-center"></i>
                     </button>
                 </nav>
                 <!-- Mobile Menu & Theme Button -->
                 <div class="md:hidden flex items-center gap-2">
-                    <button id="mobile-theme-toggle" class="text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 p-2 rounded-lg transition-colors">
+                    <button id="mobile-theme-toggle" class="text-gray-500 dark:text-gray-400 hover:bg-brand-light dark:hover:bg-[#25211e] p-2.5 rounded-2xl transition-colors squishy">
                         <i class="fa-solid fa-moon text-lg w-5 h-5 flex items-center justify-center"></i>
                     </button>
-                    <button id="mobile-menu-btn" class="text-gray-600 dark:text-gray-300 focus:outline-none p-2">
+                    <button id="mobile-menu-btn" class="text-gray-600 dark:text-gray-300 focus:outline-none p-2.5 hover:bg-brand-light dark:hover:bg-[#25211e] rounded-2xl transition-colors">
                         <i class="fa-solid fa-bars text-xl"></i>
                     </button>
                 </div>
             </div>
         </div>
         <!-- Mobile Menu Panel -->
-        <div id="mobile-menu" class="hidden md:hidden bg-white dark:bg-gray-800 border-t border-gray-100 dark:border-gray-700">
-            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-                <a href="#profile" class="block text-gray-600 dark:text-gray-300 hover:bg-brand-light dark:hover:bg-gray-700 hover:text-brand-dark dark:hover:text-brand px-3 py-2 rounded-md text-base font-medium">프로필</a>
-                <a href="#notice" class="block text-gray-600 dark:text-gray-300 hover:bg-brand-light dark:hover:bg-gray-700 hover:text-brand-dark dark:hover:text-brand px-3 py-2 rounded-md text-base font-medium">공지사항</a>
-                <a href="#schedule" class="block text-gray-600 dark:text-gray-300 hover:bg-brand-light dark:hover:bg-gray-700 hover:text-brand-dark dark:hover:text-brand px-3 py-2 rounded-md text-base font-medium">일정</a>
-                <a href="#karma" class="block text-gray-600 dark:text-gray-300 hover:bg-brand-light dark:hover:bg-gray-700 hover:text-brand-dark dark:hover:text-brand px-3 py-2 rounded-md text-base font-medium">업보</a>
-            </div>
+        <div id="mobile-menu" class="hidden md:hidden bg-[#fefcf9] dark:bg-[#181614] border-t border-gray-100 dark:border-gray-800 p-3 space-y-2">
+            <a href="#profile" class="block text-gray-600 dark:text-gray-300 hover:bg-brand-light dark:hover:bg-[#25211e] hover:text-brand-dark px-4 py-2.5 rounded-2xl text-base font-bold transition-all">프로필</a>
+            <a href="#notice" class="block text-gray-600 dark:text-gray-300 hover:bg-brand-light dark:hover:bg-[#25211e] hover:text-brand-dark px-4 py-2.5 rounded-2xl text-base font-bold transition-all">공지사항</a>
+            <a href="#schedule" class="block text-gray-600 dark:text-gray-300 hover:bg-brand-light dark:hover:bg-[#25211e] hover:text-brand-dark px-4 py-2.5 rounded-2xl text-base font-bold transition-all">일정</a>
+            <a href="#karma" class="block text-gray-600 dark:text-gray-300 hover:bg-brand-light dark:hover:bg-[#25211e] hover:text-brand-dark px-4 py-2.5 rounded-2xl text-base font-bold transition-all">업보</a>
         </div>
     </header>
 
     <!-- Main Content -->
-    <main class="flex-grow w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-16">
+    <main class="flex-grow w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
 
         <!-- 1. Profile Section -->
-        <section id="profile" class="scroll-mt-20 flex flex-col gap-4">
+        <section id="profile" class="scroll-mt-24 flex flex-col gap-6">
             
-            <!-- Header Card -->
-            <div class="bg-white dark:bg-[#1e2126] rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 overflow-hidden transition-colors duration-300">
+            <!-- Header Card (Cloud-like bubbly shape) -->
+            <div class="bg-white dark:bg-[#201d1a] rounded-3xl shadow-[0_12px_40px_rgba(241,235,217,0.5)] dark:shadow-none border-4 border-[#f1ebd9] dark:border-[#2e2620] overflow-hidden transition-all duration-300">
                 <!-- Cover Image -->
-                <div class="h-32 sm:h-48 w-full relative overflow-hidden bg-brand-light dark:bg-gray-700">
-                    <img src="https://cdn.discordapp.com/attachments/1525157421717127394/1527440071471665192/71938f3c4b417597.png?ex=6a5aaaeb&is=6a59596b&hm=d9e05c51c633fc2b17a0879b56c7131810f21145564ec1f7acf8f689843856dc&" 
-                         onerror="this.src='https://placehold.co/1200x400/4ade80/ffffff?text=Banner'" 
+                <div class="h-36 sm:h-56 w-full relative overflow-hidden bg-brand-light dark:bg-[#2a2521]">
+                    <img id="profile-banner-img" src="" 
+                         onerror="this.src='https://placehold.co/1200x400/a7f3d0/047857?text=🍀+Zooa+Station'" 
                          class="w-full h-full object-cover absolute inset-0" alt="방송국 배너">
-                    <div class="absolute inset-0 bg-black/5 dark:bg-black/30"></div>
+                    <div class="absolute inset-0 bg-gradient-to-t from-white/30 dark:from-black/30"></div>
                 </div>
                 
-                <div class="px-6 sm:px-10 pb-6 flex flex-col sm:flex-row relative">
-                    <!-- Avatar -->
+                <div class="px-6 sm:px-10 pb-8 flex flex-col sm:flex-row relative">
+                    <!-- Avatar with Fluffy Border -->
                     <div class="-mt-16 sm:-mt-24 mb-4 sm:mb-0 sm:mr-8 flex-shrink-0 flex justify-center sm:block relative z-10">
-                        <img class="h-32 w-32 sm:h-48 sm:w-48 rounded-full border-4 border-white dark:border-[#1e2126] shadow-lg object-cover bg-white dark:bg-gray-800" 
+                        <img class="h-32 w-32 sm:h-48 sm:w-48 rounded-full border-8 border-white dark:border-[#201d1a] shadow-[0_8px_24px_rgba(0,0,0,0.12)] object-cover bg-white dark:bg-gray-800 transition-transform hover:rotate-6 duration-300" 
                              src="https://stimg.afreecatv.com/LOGO/su/sudal0923/sudal0923.jpg" 
                              onerror="this.src='https://placehold.co/400x400/86efac/ffffff?text=Avatar'" 
                              alt="연주아 아바타">
+                        <!-- Tiny badge decoration -->
+                        <span class="absolute bottom-2 right-2 bg-yellow-300 text-yellow-800 text-xs px-2 py-0.5 rounded-full font-bold shadow-md transform rotate-12 animate-pulse">LIVE ✨</span>
                     </div>
                     
                     <!-- Info -->
-                    <div class="pt-2 sm:pt-4 flex-grow text-center sm:text-left flex flex-col sm:justify-between">
+                    <div class="pt-4 flex-grow text-center sm:text-left flex flex-col sm:justify-between">
                         <div>
-                            <div class="flex items-center justify-center sm:justify-start gap-2 mb-1">
-                                <span class="text-brand font-bold text-sm"><i class="fa-solid fa-seedling"></i> 버추얼 · 종합게임</span>
+                            <div class="flex items-center justify-center sm:justify-start gap-1.5 mb-1.5">
+                                <span class="text-brand-dark dark:text-brand font-bold text-xs bg-brand-light dark:bg-brand-deep/30 px-3 py-1 rounded-full"><i class="fa-solid fa-seedling animate-bounce"></i> 버추얼 · 종합게임</span>
                             </div>
-                            <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-4 flex items-baseline justify-center sm:justify-start gap-2">
+                            <h1 class="text-4xl font-black font-cute text-gray-900 dark:text-white mb-3 flex items-baseline justify-center sm:justify-start gap-2.5">
                                 연주아
-                                <span class="text-xl text-gray-500 dark:text-gray-400 font-medium tracking-tight">Yeon Zooa</span>
+                                <span class="text-lg font-sans text-gray-400 font-medium tracking-tight">Yeon Zooa</span>
                             </h1>
                             
-                            <div class="flex flex-wrap justify-center sm:justify-start gap-2 mb-5">
-                                <span class="px-3 py-1 bg-gray-100 dark:bg-[#2a2d33] text-gray-700 dark:text-gray-300 rounded-full text-xs font-bold border border-gray-200 dark:border-gray-700">여</span>
-                                <span class="px-3 py-1 bg-brand-light/40 dark:bg-brand/10 text-brand-dark dark:text-brand rounded-full text-xs font-bold border border-brand-light dark:border-brand/30">데뷔 2025.05.31 · 생일 09.23</span>
-                                <span class="px-3 py-1 bg-brand-light/40 dark:bg-brand/10 text-brand-dark dark:text-brand rounded-full text-xs font-bold border border-brand-light dark:border-brand/30">팬닉 네잎이</span>
+                            <div class="flex flex-wrap justify-center sm:justify-start gap-2 mb-6">
+                                <span class="px-3.5 py-1 bg-[#faf8f4] dark:bg-[#2b2723] text-gray-700 dark:text-gray-300 rounded-full text-xs font-bold border border-[#f1ebd9] dark:border-[#3d332a]">여성</span>
+                                <span class="px-3.5 py-1 bg-brand-light/60 dark:bg-brand-deep/20 text-brand-dark dark:text-brand rounded-full text-xs font-bold border border-brand/30">데뷔 2025.05.31 · 생일 09.23</span>
+                                <span class="px-3.5 py-1 bg-[#fffbe6] dark:bg-yellow-950/20 text-yellow-600 dark:text-yellow-400 rounded-full text-xs font-bold border border-yellow-200 dark:border-yellow-950">팬닉 네잎이 🍀</span>
                             </div>
                         </div>
 
-                        <!-- Social Links -->
-                        <div class="flex justify-center sm:justify-start gap-3">
-                            <a href="https://www.sooplive.com/station/sudal0923" target="_blank" class="w-10 h-10 rounded-full bg-blue-500 text-white flex items-center justify-center hover:bg-blue-600 transition-transform hover:scale-110 shadow-sm" title="SOOP 방송국">
-                                <i class="fa-solid fa-tv"></i>
+                        <!-- Social Links with bouncy circular bubbles -->
+                        <div class="flex justify-center sm:justify-start gap-4">
+                            <a href="https://www.sooplive.com/station/sudal0923" target="_blank" class="w-12 h-12 rounded-full bg-sky-400 text-white flex items-center justify-center hover:bg-sky-500 transition-all hover:scale-110 active:scale-90 shadow-md squishy" title="SOOP 방송국">
+                                <i class="fa-solid fa-tv text-lg"></i>
                             </a>
-                            <a href="https://www.youtube.com/@zooa_v" target="_blank" class="w-10 h-10 rounded-full bg-red-600 text-white flex items-center justify-center hover:bg-red-700 transition-transform hover:scale-110 shadow-sm" title="YouTube">
-                                <i class="fa-brands fa-youtube"></i>
+                            <a href="https://www.youtube.com/@zooa_v" target="_blank" class="w-12 h-12 rounded-full bg-rose-500 text-white flex items-center justify-center hover:bg-rose-600 transition-all hover:scale-110 active:scale-90 shadow-md squishy" title="YouTube">
+                                <i class="fa-brands fa-youtube text-lg"></i>
                             </a>
-                            <a href="https://cafe.naver.com/2ooa" target="_blank" class="w-10 h-10 rounded-full bg-green-500 text-white flex items-center justify-center hover:bg-green-600 transition-transform hover:scale-110 shadow-sm" title="Naver Cafe">
-                                <i class="fa-solid fa-mug-hot"></i>
+                            <a href="https://cafe.naver.com/2ooa" target="_blank" class="w-12 h-12 rounded-full bg-emerald-500 text-white flex items-center justify-center hover:bg-emerald-600 transition-all hover:scale-110 active:scale-90 shadow-md squishy" title="Naver Cafe">
+                                <i class="fa-solid fa-mug-hot text-lg"></i>
                             </a>
                         </div>
                     </div>
@@ -155,35 +192,35 @@
             </div>
 
             <!-- Intro & D-Day 2열 레이아웃 그리드 -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 
-                <!-- Intro Card -->
-                <div class="bg-white dark:bg-[#1e2126] rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 p-5 sm:p-6 transition-colors duration-300 relative flex flex-col justify-between">
+                <!-- Intro Card (Wobbly Cloud card) -->
+                <div class="bg-white dark:bg-[#201d1a] rounded-3xl shadow-[0_8px_30px_rgba(241,235,217,0.4)] dark:shadow-none border-4 border-[#f1ebd9] dark:border-[#2e2620] p-6 transition-colors duration-300 relative flex flex-col justify-between">
                     <div>
-                        <div class="flex items-center justify-between mb-3">
-                            <h3 class="flex items-center gap-2 text-lg font-bold text-gray-900 dark:text-white">
-                                <i class="fa-solid fa-clover text-brand"></i> 주아는 어떤 사람?
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="flex items-center gap-2 text-xl font-bold font-cute text-gray-900 dark:text-white">
+                                <span class="text-xl">🍀</span> 주아는 어떤 사람?
                             </h3>
-                            <button id="admin-profile-edit-btn" onclick="openProfileEditModal()" class="hidden text-gray-400 hover:text-brand transition-colors p-1" title="프로필 정보 수정">
+                            <button id="admin-profile-edit-btn" onclick="openProfileEditModal()" class="hidden text-gray-400 hover:text-brand-dark transition-colors p-1" title="프로필 정보 수정">
                                 <i class="fa-solid fa-pen-to-square"></i>
                             </button>
                         </div>
-                        <p id="profile-intro-text" class="text-gray-700 dark:text-gray-300 text-sm leading-relaxed mb-4 whitespace-pre-wrap">
+                        <p id="profile-intro-text" class="text-[#5c5449] dark:text-[#ebdcd0] text-sm leading-relaxed mb-6 whitespace-pre-wrap">
                             <!-- JS Rendering -->
                         </p>
                     </div>
-                    <div id="profile-tags-container" class="flex flex-wrap gap-2 pt-2 border-t border-gray-50 dark:border-gray-800/50">
+                    <div id="profile-tags-container" class="flex flex-wrap gap-2 pt-4 border-t-2 border-dashed border-[#f1ebd9] dark:border-[#2e2620]">
                         <!-- JS Rendering -->
                     </div>
                 </div>
 
-                <!-- D-Day & Anniversary Card -->
-                <div class="bg-white dark:bg-[#1e2126] rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 p-5 sm:p-6 transition-colors duration-300 flex flex-col justify-between">
+                <!-- D-Day & Anniversary Card (Cute pastel yellow accent) -->
+                <div class="bg-white dark:bg-[#201d1a] rounded-3xl shadow-[0_8px_30px_rgba(241,235,217,0.4)] dark:shadow-none border-4 border-[#f1ebd9] dark:border-[#2e2620] p-6 transition-colors duration-300 flex flex-col justify-between">
                     <div>
-                        <h3 class="flex items-center gap-2 text-lg font-bold text-gray-900 dark:text-white mb-4">
-                            <i class="fa-regular fa-clock text-brand"></i> 기념일 & 디데이
+                        <h3 class="flex items-center gap-2 text-xl font-bold font-cute text-gray-900 dark:text-white mb-4">
+                            <span class="text-xl">⏰</span> 기념일 & 디데이
                         </h3>
-                        <div id="dday-container" class="space-y-3">
+                        <div id="dday-container" class="space-y-3.5">
                             <!-- JS Rendering -->
                         </div>
                     </div>
@@ -191,43 +228,41 @@
 
             </div>
 
-            <!-- Broadcast Info Card -->
-            <div class="bg-white dark:bg-[#1e2126] rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 p-5 sm:p-6 transition-colors duration-300">
-                <h3 class="flex items-center gap-2 text-lg font-bold text-gray-900 dark:text-white mb-4">
-                    <i class="fa-regular fa-calendar-check text-brand"></i> 방송
+            <!-- Broadcast Info Card (Cozy green style) -->
+            <div class="bg-white dark:bg-[#201d1a] rounded-3xl shadow-[0_8px_30px_rgba(241,235,217,0.4)] dark:shadow-none border-4 border-[#f1ebd9] dark:border-[#2e2620] p-6 transition-colors duration-300">
+                <h3 class="flex items-center gap-2 text-xl font-bold font-cute text-gray-900 dark:text-white mb-5">
+                    <span class="text-xl">📺</span> 방송 안내판
                 </h3>
-                <div class="space-y-3">
-                    <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4">
-                        <span class="text-brand font-bold text-sm w-16 flex-shrink-0">방송</span>
-                        <span id="profile-broadcast-time" class="text-gray-700 dark:text-gray-300 text-sm"><!-- JS --></span>
+                <div class="space-y-4">
+                    <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 p-3 bg-brand-light/40 dark:bg-brand-deep/10 rounded-2xl">
+                        <span class="text-brand-dark dark:text-brand font-black text-sm w-20 flex-shrink-0"><i class="fa-solid fa-clock mr-1"></i> 방송 시간</span>
+                        <span id="profile-broadcast-time" class="text-gray-700 dark:text-gray-300 text-sm font-semibold"><!-- JS --></span>
                     </div>
-                    <div class="border-b border-dashed border-gray-200 dark:border-gray-700"></div>
-                    <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4">
-                        <span class="text-brand font-bold text-sm w-16 flex-shrink-0">콘텐츠</span>
-                        <span id="profile-broadcast-content" class="text-gray-700 dark:text-gray-300 text-sm"><!-- JS --></span>
+                    <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 p-3 bg-brand-light/40 dark:bg-brand-deep/10 rounded-2xl">
+                        <span class="text-brand-dark dark:text-brand font-black text-sm w-20 flex-shrink-0"><i class="fa-solid fa-heart mr-1"></i> 방송 콘텐츠</span>
+                        <span id="profile-broadcast-content" class="text-gray-700 dark:text-gray-300 text-sm font-semibold"><!-- JS --></span>
                     </div>
-                    <div class="border-b border-dashed border-gray-200 dark:border-gray-700"></div>
-                    <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4">
-                        <span class="text-brand font-bold text-sm w-16 flex-shrink-0">게임</span>
-                        <span id="profile-broadcast-game" class="text-gray-700 dark:text-gray-300 text-sm"><!-- JS --></span>
+                    <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 p-3 bg-brand-light/40 dark:bg-brand-deep/10 rounded-2xl">
+                        <span class="text-brand-dark dark:text-brand font-black text-sm w-20 flex-shrink-0"><i class="fa-solid fa-gamepad mr-1"></i> 주요 게임</span>
+                        <span id="profile-broadcast-game" class="text-gray-700 dark:text-gray-300 text-sm font-semibold"><!-- JS --></span>
                     </div>
                 </div>
             </div>
 
             <!-- Likes & Dislikes Card -->
-            <div class="bg-white dark:bg-[#1e2126] rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 p-5 sm:p-6 transition-colors duration-300">
-                <h3 class="flex items-center gap-2 text-lg font-bold text-gray-900 dark:text-white mb-5">
-                    <i class="fa-solid fa-heart text-brand"></i> 좋아요 & 싫어요
+            <div class="bg-white dark:bg-[#201d1a] rounded-3xl shadow-[0_8px_30px_rgba(241,235,217,0.4)] dark:shadow-none border-4 border-[#f1ebd9] dark:border-[#2e2620] p-6 transition-colors duration-300">
+                <h3 class="flex items-center gap-2 text-xl font-bold font-cute text-gray-900 dark:text-white mb-6">
+                    <span class="text-xl">🌸</span> 주아의 취향 저격!
                 </h3>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    <div>
-                        <p class="text-sm font-bold text-gray-900 dark:text-white mb-3">좋아하는 거</p>
+                    <div class="bg-[#fcfbf9] dark:bg-[#262320] p-5 rounded-2xl border-2 border-dashed border-emerald-100 dark:border-emerald-950">
+                        <p class="text-base font-black text-[#047857] dark:text-brand mb-3 flex items-center gap-1.5 font-cute"><span class="text-lg">💚</span> 좋아하는 거</p>
                         <div id="profile-likes-container" class="flex flex-wrap gap-2">
                             <!-- JS Rendering -->
                         </div>
                     </div>
-                    <div>
-                        <p class="text-sm font-bold text-gray-900 dark:text-white mb-3">싫어하는 거</p>
+                    <div class="bg-[#fcfbf9] dark:bg-[#262320] p-5 rounded-2xl border-2 border-dashed border-rose-100 dark:border-rose-950">
+                        <p class="text-base font-black text-rose-600 dark:text-rose-400 mb-3 flex items-center gap-1.5 font-cute"><span class="text-lg">💔</span> 싫어하는 거</p>
                         <div id="profile-dislikes-container" class="flex flex-wrap gap-2">
                             <!-- JS Rendering -->
                         </div>
@@ -237,16 +272,16 @@
 
         </section>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <!-- 2. Notice Section -->
-            <section id="notice" class="scroll-mt-20">
-                <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-6 h-full border-t-4 border-brand transition-colors duration-300 relative">
-                    <div class="flex items-center justify-between mb-4 border-b dark:border-gray-700 pb-2">
+            <section id="notice" class="scroll-mt-24">
+                <div class="bg-white dark:bg-[#201d1a] rounded-3xl shadow-[0_8px_30px_rgba(241,235,217,0.4)] dark:shadow-none p-6 h-full border-4 border-brand dark:border-brand-deep/50 transition-colors duration-300 relative">
+                    <div class="flex items-center justify-between mb-5 border-b-2 border-dashed border-[#f1ebd9] dark:border-[#2e2620] pb-3">
                         <div class="flex items-center gap-2">
-                            <i class="fa-solid fa-bullhorn text-brand text-xl"></i>
-                            <h2 class="text-xl font-bold text-gray-800 dark:text-white">공지사항</h2>
+                            <span class="text-2xl animate-bounce">📢</span>
+                            <h2 class="text-2xl font-black font-cute text-gray-800 dark:text-white">공지사항</h2>
                         </div>
-                        <button id="admin-notice-edit-btn" onclick="openNoticeEditModal()" class="hidden text-gray-400 hover:text-brand transition-colors p-1" title="공지사항 수정">
+                        <button id="admin-notice-edit-btn" onclick="openNoticeEditModal()" class="hidden text-gray-400 hover:text-brand-dark transition-colors p-1" title="공지사항 수정">
                             <i class="fa-solid fa-pen-to-square"></i>
                         </button>
                     </div>
@@ -257,14 +292,14 @@
             </section>
 
             <!-- 3. Schedule Section -->
-            <section id="schedule" class="scroll-mt-20">
-                <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-6 h-full border-t-4 border-green-500 transition-colors duration-300 relative">
-                    <div class="flex items-center justify-between mb-4 border-b dark:border-gray-700 pb-2">
+            <section id="schedule" class="scroll-mt-24">
+                <div class="bg-white dark:bg-[#201d1a] rounded-3xl shadow-[0_8px_30px_rgba(241,235,217,0.4)] dark:shadow-none p-6 h-full border-4 border-[#86efac] dark:border-emerald-800/50 transition-colors duration-300 relative">
+                    <div class="flex items-center justify-between mb-5 border-b-2 border-dashed border-[#f1ebd9] dark:border-[#2e2620] pb-3">
                         <div class="flex items-center gap-2">
-                            <i class="fa-regular fa-calendar-check text-green-500 text-xl"></i>
-                            <h2 class="text-xl font-bold text-gray-800 dark:text-white">주간 일정</h2>
+                            <span class="text-2xl">🗓️</span>
+                            <h2 class="text-2xl font-black font-cute text-gray-800 dark:text-white">주간 일정</h2>
                         </div>
-                        <button id="admin-schedule-edit-btn" onclick="openScheduleEditModal()" class="hidden text-gray-400 hover:text-green-500 transition-colors p-1" title="주간 일정 수정">
+                        <button id="admin-schedule-edit-btn" onclick="openScheduleEditModal()" class="hidden text-gray-400 hover:text-green-600 transition-colors p-1" title="주간 일정 수정">
                             <i class="fa-solid fa-pen-to-square"></i>
                         </button>
                     </div>
@@ -277,23 +312,23 @@
         </div>
 
         <!-- 4. Karma (업보) Section -->
-        <section id="karma" class="scroll-mt-20">
-            <div class="bg-white dark:bg-[#1e2126] rounded-2xl shadow-md p-6 border-t-4 border-brand transition-colors duration-300">
+        <section id="karma" class="scroll-mt-24">
+            <div class="bg-white dark:bg-[#201d1a] rounded-3xl shadow-[0_12px_40px_rgba(241,235,217,0.5)] dark:shadow-none p-6 border-4 border-brand transition-colors duration-300">
                 
                 <!-- Header -->
-                <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-6 gap-4 border-b border-gray-100 dark:border-gray-800 pb-4">
+                <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-6 gap-4 border-b-2 border-dashed border-[#f1ebd9] dark:border-[#2e2620] pb-4">
                     <div>
-                        <div class="text-brand font-bold tracking-widest text-xs mb-1 flex items-center gap-2">
-                            UPBO
-                            <button onclick="openAdminLoginModal()" class="text-gray-300 hover:text-brand transition-colors" title="관리자 모드 켜기">
+                        <div class="text-brand-dark dark:text-brand font-bold tracking-widest text-xs mb-1.5 flex items-center gap-2">
+                            🍀 NEIPY UPBO
+                            <button onclick="openAdminLoginModal()" class="text-gray-300 hover:text-brand-dark transition-all duration-300 hover:rotate-90" title="관리자 모드 켜기">
                                 <i class="fa-solid fa-gear"></i>
                             </button>
                         </div>
-                        <h2 class="text-2xl font-black text-gray-800 dark:text-white tracking-tight">업보 현황</h2>
+                        <h2 class="text-3xl font-black font-cute text-gray-800 dark:text-white tracking-tight">네잎이 업보 현황</h2>
                     </div>
                     <div class="flex items-center gap-3">
-                        <div id="loading-indicator" class="hidden text-brand text-sm font-bold animate-pulse">데이터 연동 중...</div>
-                        <div class="bg-gray-100 dark:bg-[#2a2d33] text-gray-500 dark:text-gray-400 text-xs px-3 py-1.5 rounded-full font-medium">
+                        <div id="loading-indicator" class="hidden text-brand-dark dark:text-brand text-xs font-bold animate-pulse bg-brand-light dark:bg-brand-deep/30 px-3 py-1 rounded-full">데이터 동기화 중...</div>
+                        <div class="bg-[#faf8f4] dark:bg-[#2b2723] text-gray-500 dark:text-gray-400 text-xs px-4 py-2 rounded-full font-bold border border-[#f1ebd9] dark:border-[#3d332a]">
                             마지막 갱신일: <span id="upbo-date"></span>
                         </div>
                     </div>
@@ -303,12 +338,12 @@
                 <div class="flex flex-col sm:flex-row gap-3 mb-6">
                     <div class="relative flex-grow">
                         <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                            <i class="fa-solid fa-magnifying-glass text-gray-400 dark:text-gray-500"></i>
+                            <i class="fa-solid fa-magnifying-glass text-brand-dark dark:text-brand"></i>
                         </div>
-                        <input type="text" id="upbo-search" class="w-full bg-gray-50 dark:bg-[#16181b] border border-gray-200 dark:border-gray-800 text-gray-900 dark:text-gray-200 text-sm rounded-xl focus:ring-brand focus:border-brand block pl-10 p-3.5 transition-colors placeholder-gray-400 dark:placeholder-gray-600 outline-none" placeholder="닉네임 또는 아이디 검색...">
+                        <input type="text" id="upbo-search" class="w-full bg-[#faf8f4] dark:bg-[#181614] border-2 border-[#f1ebd9] dark:border-[#3d332a] text-gray-900 dark:text-gray-200 text-sm rounded-2xl focus:ring-2 focus:ring-brand focus:border-brand-dark block pl-11 p-3.5 outline-none font-bold" placeholder="닉네임 또는 아이디 검색...">
                     </div>
                     <!-- Admin: Add User Button -->
-                    <button id="admin-add-user-btn" onclick="openAddUserModal()" class="hidden items-center justify-center bg-brand hover:bg-brand-dark text-white font-bold py-3 px-5 rounded-xl transition-colors whitespace-nowrap shadow-sm">
+                    <button id="admin-add-user-btn" onclick="openAddUserModal()" class="hidden items-center justify-center bg-brand hover:bg-brand-dark text-emerald-900 hover:text-white font-black py-3 px-6 rounded-2xl transition-all shadow-md hover:shadow-lg whitespace-nowrap transform hover:-translate-y-0.5 squishy">
                         <i class="fa-solid fa-user-plus mr-2"></i>네잎이 추가
                     </button>
                 </div>
@@ -322,117 +357,117 @@
         </section>
 
         <!-- Admin Login Modal -->
-        <div id="admin-login-modal" class="fixed inset-0 z-[110] flex items-center justify-center bg-black/60 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300">
-            <div class="bg-white dark:bg-[#25282e] rounded-2xl shadow-2xl w-11/12 max-w-sm p-6 transform scale-95 transition-transform duration-300 border border-gray-100 dark:border-gray-700">
-                <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4">관리자 모드</h3>
+        <div id="admin-login-modal" class="fixed inset-0 z-[110] flex items-center justify-center bg-black/50 backdrop-blur-sm opacity-0 pointer-events-none transition-all duration-300">
+            <div class="bg-[#fefcf9] dark:bg-[#25211e] rounded-3xl shadow-2xl w-11/12 max-w-sm p-6 transform scale-95 transition-all duration-300 border-4 border-brand">
+                <h3 class="text-xl font-bold font-cute text-gray-900 dark:text-white mb-2">관리자 모드</h3>
                 <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">업보를 수정하려면 비밀번호를 입력해주세요.</p>
-                <input type="password" id="admin-pin" class="w-full bg-gray-50 dark:bg-[#16181b] border border-gray-200 dark:border-gray-800 text-gray-900 dark:text-gray-200 rounded-xl focus:ring-brand focus:border-brand p-3 mb-4 outline-none" placeholder="비밀번호">
-                <div class="flex justify-end gap-2">
-                    <button onclick="closeAdminLoginModal()" class="px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 font-medium hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">취소</button>
-                    <button onclick="checkAdminPin()" class="px-4 py-2 rounded-lg bg-brand text-white font-medium hover:bg-brand-dark transition-colors">확인</button>
+                <input type="password" id="admin-pin" class="w-full bg-white dark:bg-[#181614] border-2 border-[#f1ebd9] dark:border-[#3d332a] text-gray-900 dark:text-gray-200 rounded-2xl p-3 mb-4 outline-none font-bold text-center tracking-widest focus:border-brand" placeholder="PIN 번호 입력">
+                <div class="flex justify-end gap-2.5">
+                    <button onclick="closeAdminLoginModal()" class="px-5 py-2.5 rounded-2xl bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-bold hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">취소</button>
+                    <button onclick="checkAdminPin()" class="px-5 py-2.5 rounded-2xl bg-brand text-emerald-900 font-bold hover:bg-brand-dark hover:text-white transition-colors">확인</button>
                 </div>
             </div>
         </div>
 
         <!-- Upbo Edit Modal -->
-        <div id="upbo-edit-modal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300">
-            <div class="bg-white dark:bg-[#25282e] rounded-2xl shadow-2xl w-11/12 max-w-md overflow-hidden transform scale-95 transition-transform duration-300 border border-gray-100 dark:border-gray-700 flex flex-col max-h-[80vh]">
-                <div class="p-4 flex items-center justify-between border-b border-gray-100 dark:border-gray-800 bg-brand-light/20 dark:bg-brand/10">
+        <div id="upbo-edit-modal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm opacity-0 pointer-events-none transition-all duration-300">
+            <div class="bg-[#fefcf9] dark:bg-[#25211e] rounded-3xl shadow-2xl w-11/12 max-w-md overflow-hidden transform scale-95 transition-all duration-300 border-4 border-brand flex flex-col max-h-[80vh]">
+                <div class="p-4 flex items-center justify-between border-b-2 border-dashed border-[#f1ebd9] dark:border-[#3d332a] bg-brand-light/35 dark:bg-brand-deep/20">
                     <div class="flex items-center gap-3" id="edit-modal-header"></div>
                     <!-- Right Actions in Header: Delete + Close -->
                     <div class="flex items-center gap-2">
-                        <button id="delete-user-confirm-btn" class="hidden text-xs bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 font-bold px-2.5 py-1.5 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/50 transition-all" title="이 네잎이 정보 완전 삭제">
-                            <i class="fa-solid fa-user-minus mr-1"></i>네잎이 삭제
+                        <button id="delete-user-confirm-btn" class="hidden text-xs bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-400 font-bold px-3 py-1.5 rounded-xl hover:bg-red-100 transition-all" title="이 네잎이 정보 완전 삭제">
+                            <i class="fa-solid fa-user-minus mr-1"></i>삭제
                         </button>
                         <button onclick="closeUpboEditModal()" class="text-gray-400 hover:text-gray-600 dark:hover:text-white transition-colors p-2">
                             <i class="fa-solid fa-xmark text-xl"></i>
                         </button>
                     </div>
                 </div>
-                <div class="p-4 flex-grow overflow-y-auto" id="edit-modal-body"></div>
-                <div class="p-4 border-t border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-[#1e2126]">
+                <div class="p-5 flex-grow overflow-y-auto" id="edit-modal-body"></div>
+                <div class="p-4 border-t-2 border-dashed border-[#f1ebd9] dark:border-[#3d332a] bg-[#faf8f4] dark:bg-[#181614]">
                     <div class="flex gap-2">
-                        <input type="text" id="new-item-name" class="flex-grow bg-white dark:bg-[#16181b] border border-gray-200 dark:border-gray-800 text-gray-900 dark:text-gray-200 text-sm rounded-lg focus:ring-brand focus:border-brand p-2 outline-none" placeholder="추가할 업보 이름">
-                        <button onclick="addNewItem()" class="bg-brand text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-brand-dark transition-colors whitespace-nowrap">추가</button>
+                        <input type="text" id="new-item-name" class="flex-grow bg-white dark:bg-[#25211e] border-2 border-[#f1ebd9] dark:border-[#3d332a] text-gray-900 dark:text-gray-200 text-sm rounded-xl p-2.5 outline-none font-bold focus:border-brand" placeholder="추가할 업보 이름">
+                        <button onclick="addNewItem()" class="bg-brand text-emerald-900 hover:text-white px-5 py-2.5 rounded-xl text-sm font-black hover:bg-brand-dark transition-colors whitespace-nowrap">추가</button>
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- Add User Modal -->
-        <div id="add-user-modal" class="fixed inset-0 z-[110] flex items-center justify-center bg-black/60 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300">
-            <div class="bg-white dark:bg-[#25282e] rounded-2xl shadow-2xl w-11/12 max-w-sm p-6 transform scale-95 transition-transform duration-300 border border-gray-100 dark:border-gray-700">
-                <div class="flex justify-between items-center mb-4 border-b border-gray-100 dark:border-gray-800 pb-3">
-                    <h3 class="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2"><i class="fa-solid fa-clover text-brand"></i> 새 네잎이 추가</h3>
+        <div id="add-user-modal" class="fixed inset-0 z-[110] flex items-center justify-center bg-black/50 backdrop-blur-sm opacity-0 pointer-events-none transition-all duration-300">
+            <div class="bg-[#fefcf9] dark:bg-[#25211e] rounded-3xl shadow-2xl w-11/12 max-w-sm p-6 transform scale-95 transition-all duration-300 border-4 border-brand">
+                <div class="flex justify-between items-center mb-4 border-b-2 border-dashed border-[#f1ebd9] dark:border-[#3d332a] pb-3">
+                    <h3 class="text-xl font-bold font-cute text-gray-900 dark:text-white flex items-center gap-2"><span class="text-xl">🍀</span> 새 네잎이 추가</h3>
                     <button onclick="closeAddUserModal()" class="text-gray-400 hover:text-gray-600 dark:hover:text-white transition-colors">
                         <i class="fa-solid fa-xmark text-xl"></i>
                     </button>
                 </div>
                 <div class="space-y-4">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">SOOP 아이디 (선택)</label>
-                        <input type="text" id="new-user-id" class="w-full bg-gray-50 dark:bg-[#16181b] border border-gray-200 dark:border-gray-800 text-gray-900 dark:text-gray-200 rounded-xl focus:ring-brand focus:border-brand p-3 outline-none" placeholder="프사 연동용">
+                        <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1.5">SOOP 아이디 (선택)</label>
+                        <input type="text" id="new-user-id" class="w-full bg-white dark:bg-[#181614] border-2 border-[#f1ebd9] dark:border-[#3d332a] text-gray-900 dark:text-gray-200 rounded-2xl p-3 outline-none font-semibold focus:border-brand" placeholder="프사 자동 로딩용">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">닉네임 (필수)</label>
-                        <input type="text" id="new-user-nickname" class="w-full bg-gray-50 dark:bg-[#16181b] border border-gray-200 dark:border-gray-800 text-gray-900 dark:text-gray-200 rounded-xl focus:ring-brand focus:border-brand p-3 outline-none" placeholder="닉네임 입력">
+                        <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1.5">닉네임 (필수)</label>
+                        <input type="text" id="new-user-nickname" class="w-full bg-white dark:bg-[#181614] border-2 border-[#f1ebd9] dark:border-[#3d332a] text-gray-900 dark:text-gray-200 rounded-2xl p-3 outline-none font-semibold focus:border-brand" placeholder="닉네임 입력">
                     </div>
                 </div>
-                <div class="mt-6 flex justify-end gap-2">
-                    <button onclick="closeAddUserModal()" class="px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 font-medium hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">취소</button>
-                    <button onclick="submitNewUser()" class="px-4 py-2 rounded-lg bg-brand text-white font-medium hover:bg-brand-dark transition-colors">추가하기</button>
+                <div class="mt-6 flex justify-end gap-2.5">
+                    <button onclick="closeAddUserModal()" class="px-5 py-2.5 rounded-2xl bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-bold hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">취소</button>
+                    <button onclick="submitNewUser()" class="px-5 py-2.5 rounded-2xl bg-brand text-emerald-900 font-bold hover:bg-brand-dark hover:text-white transition-colors">추가하기</button>
                 </div>
             </div>
         </div>
 
         <!-- Notice Edit Modal -->
-        <div id="notice-edit-modal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300">
-            <div class="bg-white dark:bg-[#25282e] rounded-2xl shadow-2xl w-11/12 max-w-lg overflow-hidden transform scale-95 transition-transform duration-300 border border-gray-100 dark:border-gray-700 flex flex-col max-h-[85vh]">
-                <div class="p-4 flex items-center justify-between border-b border-gray-100 dark:border-gray-800 bg-brand-light/20 dark:bg-brand/10">
-                    <h3 class="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2"><i class="fa-solid fa-bullhorn text-brand"></i> 공지사항 관리</h3>
+        <div id="notice-edit-modal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm opacity-0 pointer-events-none transition-all duration-300">
+            <div class="bg-[#fefcf9] dark:bg-[#25211e] rounded-3xl shadow-2xl w-11/12 max-w-lg overflow-hidden transform scale-95 transition-all duration-300 border-4 border-brand flex flex-col max-h-[85vh]">
+                <div class="p-4 flex items-center justify-between border-b-2 border-dashed border-[#f1ebd9] dark:border-[#3d332a] bg-brand-light/35 dark:bg-brand-deep/20">
+                    <h3 class="text-xl font-bold font-cute text-gray-900 dark:text-white flex items-center gap-2">📢 공지사항 관리</h3>
                     <button onclick="closeNoticeEditModal()" class="text-gray-400 hover:text-gray-600 dark:hover:text-white transition-colors p-2">
                         <i class="fa-solid fa-xmark text-xl"></i>
                     </button>
                 </div>
-                <div class="p-4 flex-grow overflow-y-auto space-y-3" id="notice-edit-list"></div>
-                <div class="p-4 border-t border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-[#1e2126] space-y-3">
+                <div class="p-5 flex-grow overflow-y-auto space-y-3" id="notice-edit-list"></div>
+                <div class="p-4 border-t-2 border-dashed border-[#f1ebd9] dark:border-[#3d332a] bg-[#faf8f4] dark:bg-[#181614] space-y-3">
                     <div class="flex gap-2">
-                        <select id="new-notice-type" class="bg-white dark:bg-[#16181b] border border-gray-200 dark:border-gray-800 text-gray-900 dark:text-gray-200 text-sm rounded-lg focus:ring-brand focus:border-brand p-2.5 outline-none w-24">
+                        <select id="new-notice-type" class="bg-white dark:bg-[#25211e] border-2 border-[#f1ebd9] dark:border-[#3d332a] text-gray-900 dark:text-gray-200 text-sm rounded-xl p-2.5 outline-none w-24 font-bold">
                             <option value="필독">필독</option>
                             <option value="안내">안내</option>
                             <option value="일반">일반</option>
                         </select>
-                        <input type="text" id="new-notice-content" class="flex-grow bg-white dark:bg-[#16181b] border border-gray-200 dark:border-gray-800 text-gray-900 dark:text-gray-200 text-sm rounded-lg focus:ring-brand focus:border-brand p-2.5 outline-none" placeholder="공지 내용 입력...">
+                        <input type="text" id="new-notice-content" class="flex-grow bg-white dark:bg-[#25211e] border-2 border-[#f1ebd9] dark:border-[#3d332a] text-gray-900 dark:text-gray-200 text-sm rounded-xl p-2.5 outline-none font-semibold focus:border-brand" placeholder="공지 내용 입력...">
                     </div>
                     <div class="flex gap-2">
-                        <input type="text" id="new-notice-link" class="flex-grow bg-white dark:bg-[#16181b] border border-gray-200 dark:border-gray-800 text-gray-900 dark:text-gray-200 text-sm rounded-lg focus:ring-brand focus:border-brand p-2.5 outline-none" placeholder="연동할 바로가기 주소 (선택, 예: https://...)">
-                        <button onclick="addNewNotice()" class="bg-brand text-white px-5 py-2.5 rounded-lg text-sm font-bold hover:bg-brand-dark transition-colors whitespace-nowrap shadow-sm">추가</button>
+                        <input type="text" id="new-notice-link" class="flex-grow bg-white dark:bg-[#25211e] border-2 border-[#f1ebd9] dark:border-[#3d332a] text-gray-900 dark:text-gray-200 text-sm rounded-xl p-2.5 outline-none font-semibold focus:border-brand" placeholder="바로가기 주소 (선택)">
+                        <button onclick="addNewNotice()" class="bg-brand text-emerald-900 hover:text-white px-5 py-2.5 rounded-xl text-sm font-black hover:bg-brand-dark transition-colors whitespace-nowrap shadow-sm">추가</button>
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- Schedule Edit Modal -->
-        <div id="schedule-edit-modal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300">
-            <div class="bg-white dark:bg-[#25282e] rounded-2xl shadow-2xl w-11/12 max-w-sm overflow-hidden transform scale-95 transition-transform duration-300 border border-gray-100 dark:border-gray-700 flex flex-col max-h-[85vh]">
-                <div class="p-4 flex items-center justify-between border-b border-gray-100 dark:border-gray-800 bg-green-50 dark:bg-green-900/20">
-                    <h3 class="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2"><i class="fa-regular fa-calendar-check text-green-500"></i> 주간 일정 관리</h3>
+        <div id="schedule-edit-modal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm opacity-0 pointer-events-none transition-all duration-300">
+            <div class="bg-[#fefcf9] dark:bg-[#25211e] rounded-3xl shadow-2xl w-11/12 max-w-sm overflow-hidden transform scale-95 transition-all duration-300 border-4 border-[#86efac] flex flex-col max-h-[85vh]">
+                <div class="p-4 flex items-center justify-between border-b-2 border-dashed border-[#f1ebd9] dark:border-[#2e2620] bg-emerald-50 dark:bg-emerald-950/20">
+                    <h3 class="text-xl font-bold font-cute text-gray-900 dark:text-white flex items-center gap-2">🗓️ 주간 일정 관리</h3>
                     <button onclick="closeScheduleEditModal()" class="text-gray-400 hover:text-gray-600 dark:hover:text-white transition-colors p-2">
                         <i class="fa-solid fa-xmark text-xl"></i>
                     </button>
                 </div>
-                <div class="p-4 flex-grow overflow-y-auto space-y-3" id="schedule-edit-list"></div>
-                <div class="p-4 border-t border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-[#1e2126] flex justify-end">
-                    <button onclick="saveScheduleChanges()" class="bg-green-500 text-white px-6 py-2 rounded-lg font-bold hover:bg-green-600 transition-colors">저장하기</button>
+                <div class="p-5 flex-grow overflow-y-auto space-y-3.5" id="schedule-edit-list"></div>
+                <div class="p-4 border-t-2 border-dashed border-[#f1ebd9] dark:border-[#2e2620] bg-[#faf8f4] dark:bg-[#181614] flex justify-end">
+                    <button onclick="saveScheduleChanges()" class="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-2.5 rounded-2xl font-black shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 active:translate-y-0">저장하기</button>
                 </div>
             </div>
         </div>
 
         <!-- Profile Edit Modal -->
-        <div id="profile-edit-modal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300">
-            <div class="bg-white dark:bg-[#25282e] rounded-2xl shadow-2xl w-11/12 max-w-lg overflow-hidden transform scale-95 transition-transform duration-300 border border-gray-100 dark:border-gray-700 flex flex-col max-h-[90vh]">
-                <div class="p-4 flex items-center justify-between border-b border-gray-100 dark:border-gray-800 bg-brand-light/20 dark:bg-brand/10">
-                    <h3 class="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2"><i class="fa-solid fa-address-card text-brand"></i> 프로필 정보 관리</h3>
+        <div id="profile-edit-modal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm opacity-0 pointer-events-none transition-all duration-300">
+            <div class="bg-[#fefcf9] dark:bg-[#25211e] rounded-3xl shadow-2xl w-11/12 max-w-lg overflow-hidden transform scale-95 transition-all duration-300 border-4 border-brand flex flex-col max-h-[90vh]">
+                <div class="p-4 flex items-center justify-between border-b-2 border-dashed border-[#f1ebd9] dark:border-[#3d332a] bg-brand-light/35 dark:bg-brand-deep/20">
+                    <h3 class="text-xl font-bold font-cute text-gray-900 dark:text-white flex items-center gap-2">🍀 프로필 정보 관리</h3>
                     <button onclick="closeProfileEditModal()" class="text-gray-400 hover:text-gray-600 dark:hover:text-white transition-colors p-2">
                         <i class="fa-solid fa-xmark text-xl"></i>
                     </button>
@@ -440,61 +475,65 @@
                 
                 <div class="p-5 flex-grow overflow-y-auto space-y-6">
                     <div>
-                        <h4 class="text-sm font-bold text-gray-900 dark:text-white mb-2"><i class="fa-solid fa-clover text-brand"></i> 소개글</h4>
-                        <textarea id="edit-profile-intro" rows="3" class="w-full bg-gray-50 dark:bg-[#16181b] border border-gray-200 dark:border-gray-800 text-gray-900 dark:text-gray-200 text-sm rounded-lg focus:ring-brand focus:border-brand p-3 outline-none resize-none mb-2"></textarea>
-                        <label class="block text-sm font-bold text-gray-900 dark:text-white mb-2 mt-3">해시태그 (쉼표로 구분)</label>
-                        <input type="text" id="edit-profile-tags" class="w-full bg-gray-50 dark:bg-[#16181b] border border-gray-200 dark:border-gray-800 text-gray-900 dark:text-gray-200 text-sm rounded-lg focus:ring-brand focus:border-brand p-3 outline-none">
+                        <h4 class="text-base font-bold text-gray-900 dark:text-white mb-2"><i class="fa-solid fa-image text-brand-dark"></i> 배너 이미지 URL</h4>
+                        <input type="text" id="edit-profile-banner" class="w-full bg-white dark:bg-[#181614] border-2 border-[#f1ebd9] dark:border-[#3d332a] text-gray-900 dark:text-gray-200 text-sm rounded-2xl p-3 outline-none font-semibold focus:border-brand" placeholder="배너 이미지의 직접 인터넷 주소(URL)를 입력해주세요.">
                     </div>
-                    <hr class="border-gray-100 dark:border-gray-800">
+                    <div>
+                        <h4 class="text-base font-bold text-gray-900 dark:text-white mb-2"><i class="fa-solid fa-seedling text-brand-dark"></i> 소개글</h4>
+                        <textarea id="edit-profile-intro" rows="3" class="w-full bg-white dark:bg-[#181614] border-2 border-[#f1ebd9] dark:border-[#3d332a] text-gray-900 dark:text-gray-200 text-sm rounded-2xl p-3 outline-none resize-none mb-2 font-semibold focus:border-brand"></textarea>
+                        <label class="block text-sm font-bold text-gray-900 dark:text-white mb-2 mt-3">해시태그 (쉼표로 구분)</label>
+                        <input type="text" id="edit-profile-tags" class="w-full bg-white dark:bg-[#181614] border-2 border-[#f1ebd9] dark:border-[#3d332a] text-gray-900 dark:text-gray-200 text-sm rounded-2xl p-3 outline-none font-semibold focus:border-brand">
+                    </div>
+                    <hr class="border-dashed border-[#f1ebd9] dark:border-[#3d332a]">
                     
                     <div>
                         <div class="flex items-center justify-between mb-3">
-                            <h4 class="text-sm font-bold text-gray-900 dark:text-white"><i class="fa-regular fa-clock text-brand"></i> 기념일 및 디데이 설정</h4>
-                            <button type="button" onclick="addEditDdayRow()" class="text-xs bg-brand/10 text-brand-dark dark:text-brand font-bold px-2.5 py-1 rounded-lg hover:bg-brand/20 transition-colors">
-                                + 추가
+                            <h4 class="text-base font-bold text-gray-900 dark:text-white"><i class="fa-regular fa-clock text-brand-dark"></i> 기념일 및 디데이 설정</h4>
+                            <button type="button" onclick="addEditDdayRow()" class="text-xs bg-brand/25 text-brand-deep dark:text-brand font-black px-3 py-1.5 rounded-xl hover:bg-brand/40 transition-colors">
+                                + 새 기념일 추가
                             </button>
                         </div>
-                        <div id="edit-dday-list" class="space-y-2">
+                        <div id="edit-dday-list" class="space-y-2.5">
                             <!-- JS Dynamic rows -->
                         </div>
                     </div>
-                    <hr class="border-gray-100 dark:border-gray-800">
+                    <hr class="border-dashed border-[#f1ebd9] dark:border-[#3d332a]">
 
                     <div>
-                        <h4 class="text-sm font-bold text-gray-900 dark:text-white mb-3"><i class="fa-regular fa-calendar-check text-brand"></i> 방송 정보</h4>
+                        <h4 class="text-base font-bold text-gray-900 dark:text-white mb-3"><i class="fa-regular fa-calendar-check text-brand-dark"></i> 방송 정보</h4>
                         <div class="space-y-3">
                             <div class="flex items-center gap-3">
-                                <span class="text-sm font-medium text-gray-600 dark:text-gray-400 w-12 flex-shrink-0">방송</span>
-                                <input type="text" id="edit-profile-time" class="flex-grow bg-gray-50 dark:bg-[#16181b] border border-gray-200 dark:border-gray-800 text-gray-900 dark:text-gray-200 text-sm rounded-lg focus:ring-brand focus:border-brand p-2 outline-none">
+                                <span class="text-sm font-bold text-gray-600 dark:text-gray-400 w-16 flex-shrink-0">방송 시간</span>
+                                <input type="text" id="edit-profile-time" class="flex-grow bg-white dark:bg-[#181614] border-2 border-[#f1ebd9] dark:border-[#3d332a] text-gray-900 dark:text-gray-200 text-sm rounded-xl p-2.5 outline-none font-semibold focus:border-brand">
                             </div>
                             <div class="flex items-center gap-3">
-                                <span class="text-sm font-medium text-gray-600 dark:text-gray-400 w-12 flex-shrink-0">콘텐츠</span>
-                                <input type="text" id="edit-profile-content" class="flex-grow bg-gray-50 dark:bg-[#16181b] border border-gray-200 dark:border-gray-800 text-gray-900 dark:text-gray-200 text-sm rounded-lg focus:ring-brand focus:border-brand p-2 outline-none">
+                                <span class="text-sm font-bold text-gray-600 dark:text-gray-400 w-16 flex-shrink-0">콘텐츠</span>
+                                <input type="text" id="edit-profile-content" class="flex-grow bg-white dark:bg-[#181614] border-2 border-[#f1ebd9] dark:border-[#3d332a] text-gray-900 dark:text-gray-200 text-sm rounded-xl p-2.5 outline-none font-semibold focus:border-brand">
                             </div>
                             <div class="flex items-center gap-3">
-                                <span class="text-sm font-medium text-gray-600 dark:text-gray-400 w-12 flex-shrink-0">게임</span>
-                                <input type="text" id="edit-profile-game" class="flex-grow bg-gray-50 dark:bg-[#16181b] border border-gray-200 dark:border-gray-800 text-gray-900 dark:text-gray-200 text-sm rounded-lg focus:ring-brand focus:border-brand p-2 outline-none">
+                                <span class="text-sm font-bold text-gray-600 dark:text-gray-400 w-16 flex-shrink-0">주요 게임</span>
+                                <input type="text" id="edit-profile-game" class="flex-grow bg-white dark:bg-[#181614] border-2 border-[#f1ebd9] dark:border-[#3d332a] text-gray-900 dark:text-gray-200 text-sm rounded-xl p-2.5 outline-none font-semibold focus:border-brand">
                             </div>
                         </div>
                     </div>
-                    <hr class="border-gray-100 dark:border-gray-800">
+                    <hr class="border-dashed border-[#f1ebd9] dark:border-[#3d332a]">
                     <div>
-                        <h4 class="text-sm font-bold text-gray-900 dark:text-white mb-3"><i class="fa-solid fa-heart text-brand"></i> 호불호 (쉼표로 구분)</h4>
+                        <h4 class="text-base font-bold text-gray-900 dark:text-white mb-3"><i class="fa-solid fa-heart text-brand-dark"></i> 취향 목록 (쉼표 구분)</h4>
                         <div class="space-y-3">
                             <div>
-                                <label class="block text-xs font-medium text-gray-500 mb-1">좋아하는 거</label>
-                                <input type="text" id="edit-profile-likes" class="w-full bg-gray-50 dark:bg-[#16181b] border border-gray-200 dark:border-gray-800 text-gray-900 dark:text-gray-200 text-sm rounded-lg focus:ring-brand focus:border-brand p-3 outline-none">
+                                <label class="block text-xs font-bold text-gray-500 mb-1">좋아하는 것들</label>
+                                <input type="text" id="edit-profile-likes" class="w-full bg-white dark:bg-[#181614] border-2 border-[#f1ebd9] dark:border-[#3d332a] text-gray-900 dark:text-gray-200 text-sm rounded-xl p-3 outline-none font-semibold focus:border-brand">
                             </div>
                             <div>
-                                <label class="block text-xs font-medium text-gray-500 mb-1">싫어하는 거</label>
-                                <input type="text" id="edit-profile-dislikes" class="w-full bg-gray-50 dark:bg-[#16181b] border border-gray-200 dark:border-gray-800 text-gray-900 dark:text-gray-200 text-sm rounded-lg focus:ring-brand focus:border-brand p-3 outline-none">
+                                <label class="block text-xs font-bold text-gray-500 mb-1">싫어하는 것들</label>
+                                <input type="text" id="edit-profile-dislikes" class="w-full bg-white dark:bg-[#181614] border-2 border-[#f1ebd9] dark:border-[#3d332a] text-gray-900 dark:text-gray-200 text-sm rounded-xl p-3 outline-none font-semibold focus:border-brand">
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="p-4 border-t border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-[#1e2126] flex justify-end gap-2">
-                    <button onclick="closeProfileEditModal()" class="px-4 py-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 font-medium hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">취소</button>
-                    <button onclick="saveProfileChanges()" class="bg-brand text-white px-6 py-2 rounded-lg font-bold hover:bg-brand-dark transition-colors">저장하기</button>
+                <div class="p-4 border-t-2 border-dashed border-[#f1ebd9] dark:border-[#3d332a] bg-[#faf8f4] dark:bg-[#181614] flex justify-end gap-2.5">
+                    <button onclick="closeProfileEditModal()" class="px-5 py-2.5 rounded-2xl bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-bold hover:bg-gray-300 dark:hover:bg-gray-700 transition-colors">취소</button>
+                    <button onclick="saveProfileChanges()" class="bg-brand text-emerald-900 hover:text-white px-6 py-2.5 rounded-2xl font-black shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 active:translate-y-0">저장하기</button>
                 </div>
             </div>
         </div>
@@ -502,9 +541,12 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-green-900 dark:bg-black text-white py-6 text-center mt-auto transition-colors duration-300">
-        <p class="text-sm text-green-100 dark:text-gray-400">© 2026 연주아. All rights reserved.</p>
-        <p class="text-xs text-green-300 dark:text-gray-500 mt-1">이메일 문의: yeonzooa0923@gmail.com</p>
+    <footer class="bg-brand-light dark:bg-[#12100f] text-[#5c5449] dark:text-[#a09489] py-8 text-center mt-auto border-t-4 border-dashed border-[#f1ebd9] dark:border-[#2e2620]">
+        <div class="max-w-4xl mx-auto px-4">
+            <p class="text-base font-black font-cute text-brand-dark dark:text-brand tracking-wide mb-1 flex items-center justify-center gap-1.5"><span class="text-base">🍀</span> 연주아 공식 프로필</p>
+            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">© 2026 연주아. All rights reserved.</p>
+            <p class="text-[11px] text-gray-400 dark:text-gray-500 mt-1.5 font-semibold">이메일 문의: yeonzooa0923@gmail.com</p>
+        </div>
     </footer>
 
     <!-- JavaScript -->
@@ -569,6 +611,7 @@
         ];
         
         const defaultProfileData = {
+            bannerUrl: "https://cdn.discordapp.com/attachments/1525157421717127394/1527440071471665192/71938f3c4b417597.png?ex=6a5aaaeb&is=6a59596b&hm=d9e05c51c633fc2b17a0879b56c7131810f21145564ec1f7acf8f689843856dc&",
             introText: `언제나 밝은 에너지로 힐링을 주는 버추얼 스트리머 연주아입니다.
 친근하고 편안한 분위기로 방송을 이끌어가며, 가끔은 허당미 넘치는 모습도 보여드려요!
 주로 저챗과 다양한 종합게임으로 여러분과 만나고 있습니다.`,
@@ -765,9 +808,9 @@
                 const diffTime = targetDate - today;
                 const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
                 if (diffDays === 0 || (today.getMonth() === month && today.getDate() === day)) {
-                    return '<span class="text-brand font-bold animate-bounce block text-sm sm:text-base">Today! 🎉</span>';
+                    return '<span class="text-brand-dark dark:text-brand font-black animate-bounce block text-base font-cute">오늘 생일! 🎉</span>';
                 }
-                return `<span class="text-brand-dark dark:text-brand font-black text-lg">D-${diffDays}</span>`;
+                return `<span class="text-brand-dark dark:text-brand font-black text-xl font-cute">D-${diffDays}</span>`;
             } else if (type === 'anniversary') {
                 const cleaned = dateStr.replace(/[^0-9]/g, '-');
                 const parts = cleaned.split('-').filter(p => p !== '');
@@ -777,7 +820,7 @@
                 const diffTime = today - targetDate;
                 const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
                 if (diffDays <= 0) return `<span class="text-gray-500 text-sm">D-Day 대기</span>`;
-                return `<span class="text-gray-900 dark:text-white font-black text-lg">${diffDays}일째</span>`;
+                return `<span class="text-emerald-800 dark:text-emerald-300 font-black text-xl font-cute">${diffDays}일째</span>`;
             } else {
                 const cleaned = dateStr.replace(/[^0-9]/g, '-');
                 const parts = cleaned.split('-').filter(p => p !== '');
@@ -789,11 +832,11 @@
                 const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
                 
                 if (diffDays === 0) {
-                    return '<span class="text-red-500 font-bold animate-pulse text-sm sm:text-base">D-DAY! 🔥</span>';
+                    return '<span class="text-red-500 font-bold animate-pulse text-base font-cute">오늘! 🔥</span>';
                 } else if (diffDays > 0) {
-                    return `<span class="text-red-500 font-black text-lg">D-${diffDays}</span>`;
+                    return `<span class="text-rose-500 font-black text-xl font-cute">D-${diffDays}</span>`;
                 } else {
-                    return `<span class="text-gray-400 font-medium text-xs sm:text-sm">종료 (D+${Math.abs(diffDays)})</span>`;
+                    return `<span class="text-gray-400 font-medium text-xs">종료 (D+${Math.abs(diffDays)})</span>`;
                 }
             }
         }
@@ -803,18 +846,23 @@
             if (!text) return '';
             const urlPattern = /(https?:\/\/[^\s]+)/g;
             return text.replace(urlPattern, function(url) {
-                return `<a href="${url}" target="_blank" rel="noopener noreferrer" class="text-brand-dark dark:text-brand hover:underline font-bold inline-flex items-center gap-1 bg-brand-light/50 dark:bg-brand/20 px-2.5 py-1 rounded-lg transition-all text-xs" onclick="event.stopPropagation();">바로가기 <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i></a>`;
+                return `<a href="${url}" target="_blank" rel="noopener noreferrer" class="text-brand-dark dark:text-brand hover:underline font-black inline-flex items-center gap-1 bg-brand-light dark:bg-brand-deep/30 px-3 py-1 rounded-full transition-all text-xs" onclick="event.stopPropagation();">바로가기 <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i></a>`;
             });
         }
 
         // 프로필 정보 영역 렌더링
         function renderProfile() {
+            const bannerEl = document.getElementById('profile-banner-img');
+            if (bannerEl) {
+                bannerEl.src = globalProfileData.bannerUrl || "https://cdn.discordapp.com/attachments/1525157421717127394/1527440071471665192/71938f3c4b417597.png?ex=6a5aaaeb&is=6a59596b&hm=d9e05c51c633fc2b17a0879b56c7131810f21145564ec1f7acf8f689843856dc&";
+            }
+
             const introEl = document.getElementById('profile-intro-text');
             if (introEl) introEl.textContent = globalProfileData.introText;
             
             const tagsContainer = document.getElementById('profile-tags-container');
             if (tagsContainer) {
-                tagsContainer.innerHTML = globalProfileData.tags.map(tag => `<span class="px-3 py-1 bg-gray-50 dark:bg-[#2a2d33] text-gray-600 dark:text-gray-400 rounded-full text-xs font-bold border border-gray-200 dark:border-gray-700 cursor-default">#${tag.trim()}</span>`).join('');
+                tagsContainer.innerHTML = globalProfileData.tags.map(tag => `<span class="px-3.5 py-1.5 bg-[#faf8f4] dark:bg-[#2b2723] text-gray-600 dark:text-gray-400 rounded-2xl text-xs font-bold border border-[#f1ebd9] dark:border-[#3d332a] cursor-default squishy">#${tag.trim()}</span>`).join('');
             }
             
             const ddayContainer = document.getElementById('dday-container');
@@ -822,12 +870,12 @@
                 ddayContainer.innerHTML = '';
                 const ddays = globalProfileData.ddays || defaultProfileData.ddays;
                 if (ddays.length === 0) {
-                    ddayContainer.innerHTML = `<div class="text-center text-gray-400 text-sm py-8">등록된 디데이가 없습니다.</div>`;
+                    ddayContainer.innerHTML = `<div class="text-center text-gray-400 text-sm py-8">등록된 기념일이 없습니다.</div>`;
                 } else {
                     ddays.forEach(dday => {
                         const ddayResult = calculateDDayString(dday.type, dday.date);
                         ddayContainer.innerHTML += `
-                            <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-[#16181b] rounded-xl border border-gray-100 dark:border-gray-800/80 hover:scale-[1.01] transition-transform">
+                            <div class="flex items-center justify-between p-3.5 bg-[#faf8f4] dark:bg-[#1e1a17] rounded-2xl border-2 border-[#f1ebd9] dark:border-[#2e2620] hover:scale-[1.02] transition-transform duration-300">
                                 <div class="flex flex-col">
                                     <span class="text-sm font-bold text-gray-800 dark:text-gray-200">${dday.title}</span>
                                     <span class="text-xs text-gray-400 mt-0.5">${dday.date}</span>
@@ -847,11 +895,11 @@
             if (gameEl) gameEl.innerText = globalProfileData.broadcast.game;
             const likesContainer = document.getElementById('profile-likes-container');
             if (likesContainer) {
-                likesContainer.innerHTML = globalProfileData.likes.map(like => `<span class="px-3 py-1.5 bg-brand-light/40 dark:bg-brand/10 text-brand-dark dark:text-brand rounded-full text-xs font-bold border border-brand-light dark:border-brand/30">${like.trim()}</span>`).join('');
+                likesContainer.innerHTML = globalProfileData.likes.map(like => `<span class="px-3.5 py-2 bg-brand-light/60 dark:bg-brand-deep/30 text-brand-dark dark:text-brand rounded-2xl text-xs font-bold border border-brand/30 hover:-rotate-2 transition-transform duration-300 cursor-default">${like.trim()}</span>`).join('');
             }
             const dislikesContainer = document.getElementById('profile-dislikes-container');
             if (dislikesContainer) {
-                dislikesContainer.innerHTML = globalProfileData.dislikes.map(dislike => `<span class="px-3 py-1.5 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-full text-xs font-bold border border-red-100 dark:border-red-900/50">${dislike.trim()}</span>`).join('');
+                dislikesContainer.innerHTML = globalProfileData.dislikes.map(dislike => `<span class="px-3.5 py-2 bg-rose-50 dark:bg-rose-950/20 text-rose-600 dark:text-rose-400 rounded-2xl text-xs font-bold border border-rose-100 dark:border-rose-950/50 hover:rotate-2 transition-transform duration-300 cursor-default">${dislike.trim()}</span>`).join('');
             }
         }
 
@@ -863,16 +911,16 @@
             if (globalNoticeData.length === 0) { list.innerHTML = '<li class="text-center text-gray-500 py-4">등록된 공지사항이 없습니다.</li>'; return; }
 
             globalNoticeData.forEach(notice => {
-                let badgeClass = '', bgClass = 'p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 border border-transparent hover:border-gray-100 dark:hover:border-gray-600 transition-colors';
-                if (notice.typeColor === 'red') { badgeClass = 'bg-red-100 text-red-600 dark:bg-red-900/50 dark:text-red-400'; bgClass = 'bg-brand-light/30 dark:bg-brand-dark/20 p-3 rounded-lg border border-brand-light dark:border-brand-dark/30'; } 
-                else if (notice.typeColor === 'blue') { badgeClass = 'bg-blue-100 text-blue-600 dark:bg-blue-900/50 dark:text-blue-400'; } 
-                else { badgeClass = 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300'; }
+                let badgeClass = '', bgClass = 'p-4 rounded-2xl hover:bg-brand-light/30 dark:hover:bg-[#2c2621] border-2 border-dashed border-[#f1ebd9] dark:border-[#2e2620] transition-all duration-300';
+                if (notice.typeColor === 'red') { badgeClass = 'bg-rose-100 text-rose-600 dark:bg-rose-950/40 dark:text-rose-300'; bgClass = 'bg-brand-light/40 dark:bg-brand-deep/20 p-4 rounded-2xl border-2 border-brand/40'; } 
+                else if (notice.typeColor === 'blue') { badgeClass = 'bg-sky-100 text-sky-600 dark:bg-sky-950/40 dark:text-sky-300'; } 
+                else { badgeClass = 'bg-gray-100 text-gray-600 dark:bg-[#3d332a] dark:text-gray-300'; }
 
                 let linkHtml = '';
                 if (notice.link && notice.link.trim() !== '') {
                     linkHtml = `
                         <div class="mt-2.5">
-                            <a href="${notice.link}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 text-xs font-bold text-white bg-brand hover:bg-brand-dark px-3 py-1.5 rounded-lg shadow-sm transition-all hover:scale-[1.02]">
+                            <a href="${notice.link}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-900 bg-brand hover:bg-brand-dark hover:text-white px-3.5 py-2 rounded-xl shadow-sm transition-all hover:scale-[1.03]">
                                 바로가기 <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
                             </a>
                         </div>
@@ -881,11 +929,11 @@
 
                 list.innerHTML += `
                     <li class="${bgClass}">
-                        <div class="flex justify-between items-start mb-1">
-                            <span class="${badgeClass} text-xs font-bold px-2 py-1 rounded">${notice.type}</span>
-                            <span class="text-xs text-gray-500 dark:text-gray-400">${notice.date}</span>
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="${badgeClass} text-xs font-bold px-2.5 py-1 rounded-xl">${notice.type}</span>
+                            <span class="text-xs text-gray-400">${notice.date}</span>
                         </div>
-                        <p class="text-sm text-gray-800 dark:text-gray-200 ${notice.typeColor === 'red' ? 'font-medium' : ''}">${linkify(notice.content)}</p>
+                        <p class="text-sm text-[#4b453d] dark:text-[#ebdcd0] ${notice.typeColor === 'red' ? 'font-bold' : 'font-medium'}">${linkify(notice.content)}</p>
                         ${linkHtml}
                     </li>
                 `;
@@ -898,16 +946,23 @@
             if (!list) return;
             list.innerHTML = '';
             const colorMap = {
-                gray: { text: 'text-gray-700 dark:text-gray-300', dayText: 'text-gray-700 dark:text-gray-300' },
-                green: { text: 'text-green-800 dark:text-green-300 font-semibold', dayText: 'text-green-600 dark:text-green-400' },
-                blue: { text: 'dark:text-gray-300', dayText: 'text-blue-600 dark:text-blue-400' },
-                red: { text: 'dark:text-gray-300', dayText: 'text-red-500 dark:text-red-400' }
+                gray: { text: 'text-[#4b453d] dark:text-gray-300', dayText: 'text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-[#2b2723]' },
+                green: { text: 'text-emerald-800 dark:text-emerald-300 font-bold', dayText: 'text-white bg-emerald-500' },
+                blue: { text: 'text-[#4b453d] dark:text-gray-300', dayText: 'text-white bg-sky-500' },
+                red: { text: 'text-[#4b453d] dark:text-gray-300', dayText: 'text-white bg-rose-500' }
             };
 
             globalScheduleData.forEach(schedule => {
                 const colors = colorMap[schedule.color] || colorMap.gray;
-                const bgClass = schedule.isRest ? 'bg-green-50/50 dark:bg-green-900/20 border border-green-100 dark:border-green-800' : 'hover:bg-gray-50 dark:hover:bg-gray-700 border border-transparent';
-                list.innerHTML += `<div class="flex items-center justify-between p-2 rounded ${bgClass} transition-colors"><div class="flex items-center gap-3"><div class="w-10 text-center font-bold ${colors.dayText}">${schedule.day}</div><div class="text-sm ${colors.text}">${schedule.content}</div></div></div>`;
+                const bgClass = schedule.isRest ? 'bg-emerald-50/60 dark:bg-emerald-950/20 border-2 border-emerald-100 dark:border-emerald-900' : 'hover:bg-[#faf8f4] dark:hover:bg-[#2c2621] border-2 border-transparent';
+                list.innerHTML += `
+                    <div class="flex items-center justify-between p-2.5 rounded-2xl ${bgClass} transition-all duration-300">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 flex items-center justify-center rounded-xl font-black text-sm ${colors.dayText} font-cute shadow-sm">${schedule.day}</div>
+                            <div class="text-sm font-semibold ${colors.text}">${schedule.content}</div>
+                        </div>
+                    </div>
+                `;
             });
         }
 
@@ -935,11 +990,16 @@
                 const avatarUrl = getAvatarUrl(user);
                 const safeName = user.nickname.length >= 2 ? user.nickname.substring(0,2) : user.nickname;
                 const card = document.createElement('div');
-                card.className = 'bg-gray-50 dark:bg-[#25282e] border border-gray-100 dark:border-gray-800 rounded-xl p-5 flex flex-col items-center justify-center cursor-pointer hover:bg-gray-100 dark:hover:bg-[#2a2d33] transition-colors shadow-sm relative group';
+                card.className = 'bg-[#faf8f4] dark:bg-[#25211e] border-2 border-[#f1ebd9] dark:border-[#3d332a] rounded-3xl p-5 flex flex-col items-center justify-center cursor-pointer hover:bg-brand-light dark:hover:bg-[#2c2621] transition-all shadow-sm relative group squishy';
                 card.onclick = () => { if (isAdminMode) openUpboEditModal(user, avatarUrl); else openUpboModal(user, avatarUrl); };
-                const adminBadge = isAdminMode ? `<div class="absolute top-2 right-2 text-gray-400 group-hover:text-brand transition-colors"><i class="fa-solid fa-pen-to-square"></i></div>` : '';
+                const adminBadge = isAdminMode ? `<div class="absolute top-3 right-3 text-gray-400 group-hover:text-brand-dark transition-colors"><i class="fa-solid fa-pen-to-square"></i></div>` : '';
 
-                card.innerHTML = `${adminBadge}<img src="${avatarUrl}" onerror="this.src='https://placehold.co/100x100/e2e8f0/64748b?text=${encodeURIComponent(safeName)}'" alt="${user.nickname}" class="w-16 h-16 rounded-full object-cover mb-3 shadow-inner bg-white dark:bg-gray-800 border-2 border-white dark:border-gray-700"><div class="text-gray-900 dark:text-gray-100 font-bold text-sm mb-3 truncate w-full text-center">${user.nickname}</div><div class="bg-brand text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm">업보 ${totalItems}</div>`;
+                card.innerHTML = `
+                    ${adminBadge}
+                    <img src="${avatarUrl}" onerror="this.src='https://placehold.co/100x100/e2e8f0/64748b?text=${encodeURIComponent(safeName)}'" alt="${user.nickname}" class="w-16 h-16 rounded-full object-cover mb-3 shadow-[0_4px_12px_rgba(0,0,0,0.08)] bg-white dark:bg-gray-800 border-4 border-white dark:border-gray-700">
+                    <div class="text-gray-900 dark:text-gray-100 font-bold text-sm mb-3 truncate w-full text-center">${user.nickname}</div>
+                    <div class="bg-brand text-emerald-900 font-black text-xs px-3.5 py-1.5 rounded-full shadow-sm">업보 ${totalItems}</div>
+                `;
                 grid.appendChild(card);
             });
         }
@@ -948,12 +1008,33 @@
         function openUpboModal(user, avatarUrl) {
             let modal = document.getElementById('upbo-modal');
             if (!modal) {
-                modal = document.createElement('div'); modal.id = 'upbo-modal'; modal.className = 'fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300';
+                modal = document.createElement('div'); modal.id = 'upbo-modal'; modal.className = 'fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm opacity-0 pointer-events-none transition-all duration-300';
                 document.body.appendChild(modal);
             }
-            const itemsHtml = user.items.length > 0 ? user.items.map(item => `<div class="flex justify-between items-center bg-gray-50 dark:bg-[#1e2126] border border-gray-100 dark:border-gray-800 rounded-xl p-4 mb-2"><span class="text-gray-800 dark:text-gray-200 font-medium">${item.name}</span><span class="text-brand font-bold bg-brand-light/30 dark:bg-brand/10 px-2 py-1 rounded">×${item.count}</span></div>`).join('') : `<div class="text-center text-gray-500 py-6">보유한 업보가 없습니다.</div>`;
+            const itemsHtml = user.items.length > 0 ? user.items.map(item => `
+                <div class="flex justify-between items-center bg-[#faf8f4] dark:bg-[#1e1a17] border-2 border-[#f1ebd9] dark:border-[#2e2620] rounded-2xl p-4 mb-2">
+                    <span class="text-gray-800 dark:text-gray-200 font-bold text-sm">${item.name}</span>
+                    <span class="text-brand-dark dark:text-brand font-black bg-brand-light dark:bg-brand-deep/30 px-3 py-1 rounded-xl">×${item.count}</span>
+                </div>
+            `).join('') : `<div class="text-center text-gray-500 py-6">보유한 업보가 없습니다.</div>`;
 
-            modal.innerHTML = `<div class="bg-white dark:bg-[#25282e] rounded-2xl shadow-2xl w-11/12 max-w-sm overflow-hidden transform scale-95 transition-transform duration-300 border border-gray-100 dark:border-gray-700"><div class="p-5 flex items-center justify-between border-b border-gray-100 dark:border-gray-800"><div class="flex items-center gap-3"><img src="${avatarUrl}" onerror="this.src='https://placehold.co/100x100/e2e8f0/64748b?text=${user.nickname.substring(0,2)}'" class="w-10 h-10 rounded-full border border-gray-200 dark:border-gray-700 object-cover"><div><div class="text-gray-900 dark:text-white font-bold text-sm">${user.nickname}</div><div class="text-gray-500 dark:text-gray-400 text-xs">(${user.id})</div></div></div><button onclick="closeUpboModal()" class="text-gray-400 hover:text-gray-600 dark:hover:text-white transition-colors p-2"><i class="fa-solid fa-xmark text-xl"></i></button></div><div class="p-5 max-h-60 overflow-y-auto">${itemsHtml}</div></div>`;
+            modal.innerHTML = `
+                <div class="bg-[#fefcf9] dark:bg-[#25211e] rounded-3xl shadow-2xl w-11/12 max-w-sm overflow-hidden transform scale-95 transition-all duration-300 border-4 border-brand">
+                    <div class="p-5 flex items-center justify-between border-b-2 border-dashed border-[#f1ebd9] dark:border-[#2e2620]">
+                        <div class="flex items-center gap-3">
+                            <img src="${avatarUrl}" onerror="this.src='https://placehold.co/100x100/e2e8f0/64748b?text=${user.nickname.substring(0,2)}'" class="w-11 h-11 rounded-full border-2 border-white shadow-sm object-cover">
+                            <div>
+                                <div class="text-gray-900 dark:text-white font-black text-sm">${user.nickname}</div>
+                                <div class="text-gray-400 text-xs">(${user.id})</div>
+                            </div>
+                        </div>
+                        <button onclick="closeUpboModal()" class="text-gray-400 hover:text-gray-600 dark:hover:text-white transition-colors p-2">
+                            <i class="fa-solid fa-xmark text-xl"></i>
+                        </button>
+                    </div>
+                    <div class="p-5 max-h-60 overflow-y-auto">${itemsHtml}</div>
+                </div>
+            `;
             requestAnimationFrame(() => { modal.classList.remove('opacity-0', 'pointer-events-none'); modal.querySelector('div').classList.remove('scale-95'); modal.querySelector('div').classList.add('scale-100'); });
             modal.addEventListener('click', (e) => { if (e.target === modal) closeUpboModal(); });
         }
@@ -1006,13 +1087,13 @@
             
             // 헤더 정보 로딩
             document.getElementById('edit-modal-header').innerHTML = `
-                <img src="${avatarUrl}" onerror="this.src='https://placehold.co/100x100/e2e8f0/64748b?text=${user.nickname.substring(0,2)}'" class="w-10 h-10 rounded-full border border-gray-200 dark:border-gray-700 object-cover">
+                <img src="${avatarUrl}" onerror="this.src='https://placehold.co/100x100/e2e8f0/64748b?text=${user.nickname.substring(0,2)}'" class="w-11 h-11 rounded-full border-2 border-white shadow-sm object-cover">
                 <div>
-                    <div class="text-gray-900 dark:text-white font-bold text-sm">
+                    <div class="text-gray-900 dark:text-white font-black text-sm">
                         ${user.nickname} 
-                        <span class="text-xs text-brand font-normal bg-brand/10 px-2 py-0.5 rounded ml-1">수정 모드</span>
+                        <span class="text-xs text-brand-dark font-bold bg-brand-light dark:bg-brand-deep/30 px-2 py-0.5 rounded-lg ml-1">수정 중</span>
                     </div>
-                    <div class="text-gray-500 dark:text-gray-400 text-xs">(${user.id})</div>
+                    <div class="text-gray-400 text-xs">(${user.id})</div>
                 </div>
             `;
             
@@ -1022,8 +1103,8 @@
                 deleteUserBtn.classList.remove('hidden');
                 deleteUserBtn.classList.add('block');
                 deleteConfirmState = false; // 안전 장치 초기화
-                deleteUserBtn.innerHTML = `<i class="fa-solid fa-user-minus mr-1"></i>네잎이 삭제`;
-                deleteUserBtn.className = "text-xs bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 font-bold px-2.5 py-1.5 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/50 transition-all";
+                deleteUserBtn.innerHTML = `<i class="fa-solid fa-user-minus mr-1"></i>삭제`;
+                deleteUserBtn.className = "text-xs bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-400 font-bold px-3 py-1.5 rounded-xl hover:bg-rose-100 transition-all";
                 deleteUserBtn.onclick = () => handleDeleteUser(user.id);
             }
 
@@ -1058,14 +1139,14 @@
             if (!deleteConfirmState) {
                 // 1차 터치: 경고 상태로 변환
                 deleteConfirmState = true;
-                btn.innerHTML = `<i class="fa-solid fa-triangle-exclamation mr-1"></i>진짜 삭제?`;
-                btn.className = "text-xs bg-red-600 text-white font-bold px-2.5 py-1.5 rounded-lg hover:bg-red-700 transition-all animate-pulse";
+                btn.innerHTML = `<i class="fa-solid fa-triangle-exclamation mr-1"></i>진짜요?`;
+                btn.className = "text-xs bg-red-600 text-white font-bold px-3 py-1.5 rounded-xl hover:bg-red-700 transition-all animate-pulse";
                 
                 // 3초간 반응 없으면 원복
                 setTimeout(() => {
                     if (deleteConfirmState && currentEditingUserId === userId) {
-                        btn.innerHTML = `<i class="fa-solid fa-user-minus mr-1"></i>네잎이 삭제`;
-                        btn.className = "text-xs bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 font-bold px-2.5 py-1.5 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/50 transition-all";
+                        btn.innerHTML = `<i class="fa-solid fa-user-minus mr-1"></i>삭제`;
+                        btn.className = "text-xs bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-400 font-bold px-3 py-1.5 rounded-xl hover:bg-rose-100 transition-all";
                         deleteConfirmState = false;
                     }
                 }, 3000);
@@ -1082,8 +1163,18 @@
         function renderEditItems() {
             const user = globalUpboData.find(u => u.id === currentEditingUserId); if (!user) return;
             const body = document.getElementById('edit-modal-body');
-            if (user.items.length === 0) { body.innerHTML = `<div class="text-center text-gray-500 py-6">보유한 업보가 없습니다. 아래에서 추가해주세요.</div>`; return; }
-            body.innerHTML = user.items.map((item, index) => `<div class="flex justify-between items-center bg-gray-50 dark:bg-[#1e2126] border border-gray-100 dark:border-gray-800 rounded-xl p-3 mb-2"><span class="text-gray-800 dark:text-gray-200 font-medium text-sm sm:text-base">${item.name}</span><div class="flex items-center gap-2 sm:gap-3"><button onclick="changeItemCount(${index}, -1)" class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-red-100 hover:text-red-500 transition-colors"><i class="fa-solid fa-minus text-xs"></i></button><span class="font-bold w-5 text-center text-gray-900 dark:text-white">${item.count}</span><button onclick="changeItemCount(${index}, 1)" class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-brand-light hover:text-brand transition-colors"><i class="fa-solid fa-plus text-xs"></i></button><button onclick="deleteItem(${index})" class="ml-1 sm:ml-2 text-gray-400 hover:text-red-500 transition-colors p-2" title="이 항목 삭제"><i class="fa-solid fa-trash-can"></i></button></div></div>`).join('');
+            if (user.items.length === 0) { body.innerHTML = `<div class="text-center text-gray-400 py-6">보유한 업보가 없습니다. 아래에서 추가해주세요!</div>`; return; }
+            body.innerHTML = user.items.map((item, index) => `
+                <div class="flex justify-between items-center bg-[#faf8f4] dark:bg-[#1e1a17] border-2 border-[#f1ebd9] dark:border-[#2e2620] rounded-2xl p-3.5 mb-2">
+                    <span class="text-gray-800 dark:text-gray-200 font-bold text-sm sm:text-base">${item.name}</span>
+                    <div class="flex items-center gap-2 sm:gap-3">
+                        <button onclick="changeItemCount(${index}, -1)" class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-red-100 hover:text-red-500 transition-colors"><i class="fa-solid fa-minus text-xs"></i></button>
+                        <span class="font-black w-5 text-center text-gray-900 dark:text-white">${item.count}</span>
+                        <button onclick="changeItemCount(${index}, 1)" class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-brand-light hover:text-brand-dark transition-colors"><i class="fa-solid fa-plus text-xs"></i></button>
+                        <button onclick="deleteItem(${index})" class="ml-1 sm:ml-2 text-gray-400 hover:text-red-500 transition-colors p-2" title="이 항목 삭제"><i class="fa-solid fa-trash-can"></i></button>
+                    </div>
+                </div>
+            `).join('');
         }
 
         function changeItemCount(index, delta) {
@@ -1114,8 +1205,8 @@
         function submitNewUser() {
             const idInput = document.getElementById('new-user-id').value.trim(); const nickInput = document.getElementById('new-user-nickname').value.trim();
             if (!nickInput) {
-                const nickEl = document.getElementById('new-user-nickname'); nickEl.classList.add('border-red-500', 'placeholder-red-400'); nickEl.placeholder = '닉네임을 꼭 입력해주세요!';
-                setTimeout(() => { nickEl.classList.remove('border-red-500', 'placeholder-red-400'); nickEl.placeholder = '예: 우리주아이뻥'; }, 2000); return;
+                const nickEl = document.getElementById('new-user-nickname'); nickEl.classList.add('border-red-500', 'placeholder-red-400'); nickEl.placeholder = '닉네임을 입력해 주세요!';
+                setTimeout(() => { nickEl.classList.remove('border-red-500', 'placeholder-red-400'); nickEl.placeholder = '닉네임 입력'; }, 2000); return;
             }
             globalUpboData.unshift({ id: idInput, nickname: nickInput, items: [] });
             saveUpboData(); closeAddUserModal(); document.getElementById('upbo-search').dispatchEvent(new Event('input'));
@@ -1135,14 +1226,14 @@
             globalNoticeData.forEach((notice, index) => {
                 let linkBadge = '';
                 if (notice.link && notice.link.trim() !== '') {
-                    linkBadge = `<span class="text-[10px] bg-brand/10 text-brand-dark dark:text-brand font-semibold px-1.5 py-0.5 rounded border border-brand/20 truncate max-w-[120px]" title="${notice.link}"><i class="fa-solid fa-link mr-1"></i>${notice.link}</span>`;
+                    linkBadge = `<span class="text-[10px] bg-brand/20 text-brand-dark dark:text-brand font-bold px-2 py-0.5 rounded border border-brand/20 truncate max-w-[120px]" title="${notice.link}"><i class="fa-solid fa-link mr-1"></i>링크</span>`;
                 }
                 list.innerHTML += `
-                    <div class="bg-gray-50 dark:bg-[#1e2126] border border-gray-200 dark:border-gray-800 p-3 rounded-lg flex justify-between items-start gap-3">
+                    <div class="bg-[#faf8f4] dark:bg-[#1e1a17] border-2 border-[#f1ebd9] dark:border-[#2e2620] p-3 rounded-2xl flex justify-between items-start gap-3">
                         <div class="flex-grow min-w-0">
                             <div class="flex items-center gap-2 mb-1 flex-wrap">
-                                <span class="text-xs font-bold bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-2 py-0.5 rounded">${notice.type}</span>
-                                <span class="text-xs text-gray-500">${notice.date}</span>
+                                <span class="text-xs font-bold bg-brand-light text-brand-dark px-2 py-0.5 rounded-lg">${notice.type}</span>
+                                <span class="text-xs text-gray-400">${notice.date}</span>
                                 ${linkBadge}
                             </div>
                             <p class="text-sm text-gray-800 dark:text-gray-200 break-all">${linkify(notice.content)}</p>
@@ -1197,7 +1288,15 @@
         function renderScheduleEditList() {
             const list = document.getElementById('schedule-edit-list'); list.innerHTML = '';
             globalScheduleData.forEach((schedule, index) => {
-                list.innerHTML += `<div class="flex items-center gap-3 bg-gray-50 dark:bg-[#1e2126] border border-gray-200 dark:border-gray-800 p-2 rounded-lg"><div class="w-8 text-center font-bold text-gray-700 dark:text-gray-300 flex-shrink-0">${schedule.day}</div><input type="text" id="schedule-input-${index}" value="${schedule.content}" class="flex-grow bg-white dark:bg-[#16181b] border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-200 text-sm rounded focus:ring-green-500 focus:border-green-500 p-1.5 outline-none"><label class="flex items-center gap-1 text-xs text-gray-500 cursor-pointer flex-shrink-0"><input type="checkbox" id="schedule-rest-${index}" ${schedule.isRest ? 'checked' : ''} class="w-4 h-4 text-green-500 rounded focus:ring-green-500 dark:bg-gray-700 dark:border-gray-600">휴방</label></div>`;
+                list.innerHTML += `
+                    <div class="flex items-center gap-3 bg-[#faf8f4] dark:bg-[#1e1a17] border-2 border-[#f1ebd9] dark:border-[#2e2620] p-2.5 rounded-2xl">
+                        <div class="w-8 text-center font-black text-gray-700 dark:text-gray-300 flex-shrink-0 font-cute">${schedule.day}</div>
+                        <input type="text" id="schedule-input-${index}" value="${schedule.content}" class="flex-grow bg-white dark:bg-[#25211e] border-2 border-[#f1ebd9] dark:border-[#3d332a] text-[#4b453d] dark:text-gray-200 text-sm rounded-xl p-2 outline-none font-semibold focus:border-brand">
+                        <label class="flex items-center gap-1 text-xs font-bold text-gray-500 cursor-pointer flex-shrink-0">
+                            <input type="checkbox" id="schedule-rest-${index}" ${schedule.isRest ? 'checked' : ''} class="w-4 h-4 text-emerald-500 rounded focus:ring-emerald-500 dark:bg-gray-700 dark:border-gray-600">휴방
+                        </label>
+                    </div>
+                `;
             });
         }
         function saveScheduleChanges() {
@@ -1212,6 +1311,7 @@
         // 프로필 관리 액션
         function openProfileEditModal() {
             const modal = document.getElementById('profile-edit-modal');
+            document.getElementById('edit-profile-banner').value = globalProfileData.bannerUrl || "";
             document.getElementById('edit-profile-intro').value = globalProfileData.introText; 
             document.getElementById('edit-profile-tags').value = globalProfileData.tags.join(', ');
             document.getElementById('edit-profile-time').value = globalProfileData.broadcast.time; 
@@ -1248,14 +1348,14 @@
             const ddays = globalProfileData.ddays || defaultProfileData.ddays;
             ddays.forEach((dday, index) => {
                 list.innerHTML += `
-                    <div class="flex items-center gap-2 bg-gray-50 dark:bg-[#16181b] p-2 rounded-lg border border-gray-100 dark:border-gray-800">
-                        <input type="text" id="edit-dday-title-${index}" value="${dday.title}" class="w-1/3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded p-1.5 text-xs text-gray-900 dark:text-gray-200 outline-none" placeholder="타이틀 (예: 생일)">
-                        <select id="edit-dday-type-${index}" class="w-1/4 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded p-1.5 text-xs text-gray-900 dark:text-gray-200 outline-none">
+                    <div class="flex items-center gap-2 bg-[#faf8f4] dark:bg-[#181614] p-2 rounded-2xl border-2 border-[#f1ebd9] dark:border-[#2e2620]">
+                        <input type="text" id="edit-dday-title-${index}" value="${dday.title}" class="w-1/3 bg-white dark:bg-[#25211e] border border-gray-300 dark:border-gray-700 rounded-xl p-2 text-xs font-bold text-gray-900 dark:text-gray-200 outline-none" placeholder="타이틀">
+                        <select id="edit-dday-type-${index}" class="w-1/4 bg-white dark:bg-[#25211e] border border-gray-300 dark:border-gray-700 rounded-xl p-2 text-xs font-bold text-gray-900 dark:text-gray-200 outline-none">
                             <option value="birthday" ${dday.type === 'birthday' ? 'selected' : ''}>생일(매년)</option>
                             <option value="anniversary" ${dday.type === 'anniversary' ? 'selected' : ''}>기념일(경과)</option>
                             <option value="dday" ${dday.type === 'dday' ? 'selected' : ''}>디데이(남은일)</option>
                         </select>
-                        <input type="text" id="edit-dday-date-${index}" value="${dday.date}" class="w-1/4 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded p-1.5 text-xs text-gray-900 dark:text-gray-200 outline-none" placeholder="YYYY-MM-DD">
+                        <input type="text" id="edit-dday-date-${index}" value="${dday.date}" class="w-1/4 bg-white dark:bg-[#25211e] border border-gray-300 dark:border-gray-700 rounded-xl p-2 text-xs font-semibold text-gray-900 dark:text-gray-200 outline-none" placeholder="YYYY-MM-DD">
                         <button type="button" onclick="deleteEditDdayRow(${index})" class="text-gray-400 hover:text-red-500 p-1 text-sm"><i class="fa-solid fa-trash-can"></i></button>
                     </div>
                 `;
@@ -1264,7 +1364,7 @@
 
         function addEditDdayRow() {
             if (!globalProfileData.ddays) globalProfileData.ddays = [];
-            globalProfileData.ddays.push({ title: "새 디데이", type: "dday", date: "2026-09-23" });
+            globalProfileData.ddays.push({ title: "새 기념일", type: "dday", date: "2026-09-23" });
             renderEditDdays();
         }
 
@@ -1276,6 +1376,7 @@
 
         function saveProfileChanges() {
             const parse = (str) => str.split(',').map(item => item.trim()).filter(item => item !== '');
+            globalProfileData.bannerUrl = document.getElementById('edit-profile-banner').value.trim();
             globalProfileData.introText = document.getElementById('edit-profile-intro').value; 
             globalProfileData.tags = parse(document.getElementById('edit-profile-tags').value);
             globalProfileData.broadcast.time = document.getElementById('edit-profile-time').value; 
