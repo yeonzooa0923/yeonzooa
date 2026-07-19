@@ -1468,8 +1468,7 @@
                 const prefix = user.id.substring(0, 2);
                 return `https://stimg.afreecatv.com/LOGO/${prefix}/${user.id}/${user.id}.jpg`;
             }
-            const safeName = user.nickname.length >= 2 ? user.nickname.substring(0,2) : user.nickname;
-            return `https://placehold.co/100x100/e2e8f0/64748b?text=${encodeURIComponent(safeName)}`;
+            return null;
         }
 
         // 업보 리스트 렌더링
@@ -1484,7 +1483,21 @@
                 if (totalItems === 0 && !isAdminMode) return;
                 
                 const avatarUrl = getAvatarUrl(user);
-                const safeName = user.nickname.length >= 2 ? user.nickname.substring(0,2) : user.nickname;
+                let avatarHtml = '';
+                
+                if (avatarUrl) {
+                    avatarHtml = `
+                        <img src="${avatarUrl}" 
+                             onerror="this.outerHTML='<div class=\\'w-16 h-16 rounded-full flex items-center justify-center bg-brand-light dark:bg-brand-deep/30 border-4 border-white dark:border-gray-700 shadow-[0_4px_12px_rgba(0,0,0,0.08)] mb-3 text-2xl\\'>🍀</div>\\''" 
+                             alt="${user.nickname}" 
+                             class="w-16 h-16 rounded-full object-cover mb-3 shadow-[0_4px_12px_rgba(0,0,0,0.08)] bg-white dark:bg-gray-800 border-4 border-white dark:border-gray-700">`;
+                } else {
+                    avatarHtml = `
+                        <div class="w-16 h-16 rounded-full flex items-center justify-center bg-brand-light dark:bg-brand-deep/30 border-4 border-white dark:border-gray-700 shadow-[0_4px_12px_rgba(0,0,0,0.08)] mb-3 text-2xl">
+                            🍀
+                        </div>`;
+                }
+
                 const card = document.createElement('div');
                 card.className = 'bg-[#faf8f4] dark:bg-[#25211e] border-2 border-[#f1ebd9] dark:border-[#3d332a] rounded-3xl p-5 flex flex-col items-center justify-center cursor-pointer hover:bg-brand-light dark:hover:bg-[#2c2621] transition-all shadow-sm relative group squishy';
                 card.onclick = () => { if (isAdminMode) openUpboEditModal(user, avatarUrl); else openUpboModal(user, avatarUrl); };
@@ -1492,7 +1505,7 @@
 
                 card.innerHTML = `
                     ${adminBadge}
-                    <img src="${avatarUrl}" onerror="this.src='https://placehold.co/100x100/e2e8f0/64748b?text=${encodeURIComponent(safeName)}'" alt="${user.nickname}" class="w-16 h-16 rounded-full object-cover mb-3 shadow-[0_4px_12px_rgba(0,0,0,0.08)] bg-white dark:bg-gray-800 border-4 border-white dark:border-gray-700">
+                    ${avatarHtml}
                     <div class="text-gray-900 dark:text-gray-100 font-bold text-sm mb-3 truncate w-full text-center">${user.nickname}</div>
                     <div class="bg-brand text-emerald-900 font-bold text-xs px-3.5 py-1.5 rounded-full shadow-sm">업보 ${totalItems}</div>
                 `;
@@ -1514,14 +1527,27 @@
                 </div>
             `).join('') : `<div class="text-center text-gray-500 py-6">보유한 업보가 없습니다.</div>`;
 
+            let avatarHtml = '';
+            if (avatarUrl) {
+                avatarHtml = `
+                    <img src="${avatarUrl}" 
+                         onerror="this.outerHTML='<div class=\\'w-11 h-11 rounded-full flex items-center justify-center bg-brand-light dark:bg-brand-deep/30 border-2 border-white shadow-sm text-lg\\'>🍀</div>\\''" 
+                         class="w-11 h-11 rounded-full border-2 border-white shadow-sm object-cover">`;
+            } else {
+                avatarHtml = `
+                    <div class="w-11 h-11 rounded-full flex items-center justify-center bg-brand-light dark:bg-brand-deep/30 border-2 border-white shadow-sm text-lg">
+                        🍀
+                    </div>`;
+            }
+
             modal.innerHTML = `
                 <div class="bg-[#fefcf9] dark:bg-[#25211e] rounded-3xl shadow-2xl w-11/12 max-w-sm overflow-hidden transform scale-95 transition-all duration-300 border-4 border-brand">
                     <div class="p-5 flex items-center justify-between border-b-2 border-dashed border-[#f1ebd9] dark:border-[#2e2620]">
                         <div class="flex items-center gap-3">
-                            <img src="${avatarUrl}" onerror="this.src='https://placehold.co/100x100/e2e8f0/64748b?text=${user.nickname.substring(0,2)}'" class="w-11 h-11 rounded-full border-2 border-white shadow-sm object-cover">
+                            ${avatarHtml}
                             <div>
                                 <div class="text-gray-900 dark:text-white font-bold text-sm">${user.nickname}</div>
-                                <div class="text-gray-400 text-xs">(${user.id})</div>
+                                <div class="text-gray-400 text-xs">(${user.id || '아이디 없음'})</div>
                             </div>
                         </div>
                         <button onclick="closeUpboModal()" class="text-gray-400 hover:text-gray-600 dark:hover:text-white transition-colors p-2">
@@ -1587,15 +1613,28 @@
             currentEditingUserId = user.id; 
             const modal = document.getElementById('upbo-edit-modal');
             
+            let avatarHtml = '';
+            if (avatarUrl) {
+                avatarHtml = `
+                    <img src="${avatarUrl}" 
+                         onerror="this.outerHTML='<div class=\\'w-11 h-11 rounded-full flex items-center justify-center bg-brand-light dark:bg-brand-deep/30 border-2 border-white shadow-sm text-lg\\'>🍀</div>\\''" 
+                         class="w-11 h-11 rounded-full border-2 border-white shadow-sm object-cover bg-white">`;
+            } else {
+                avatarHtml = `
+                    <div class="w-11 h-11 rounded-full flex items-center justify-center bg-brand-light dark:bg-brand-deep/30 border-2 border-white shadow-sm text-lg">
+                        🍀
+                    </div>`;
+            }
+
             // 헤더 정보 로딩
             document.getElementById('edit-modal-header').innerHTML = `
-                <img src="${avatarUrl}" onerror="this.src='https://placehold.co/100x100/e2e8f0/64748b?text=${user.nickname.substring(0,2)}'" class="w-11 h-11 rounded-full border-2 border-white shadow-sm object-cover">
+                ${avatarHtml}
                 <div>
                     <div class="text-gray-900 dark:text-white font-bold text-sm">
                         ${user.nickname} 
                         <span class="text-xs text-brand-dark font-bold bg-brand-light dark:bg-brand-deep/30 px-2 py-0.5 rounded-lg ml-1">수정 중</span>
                     </div>
-                    <div class="text-gray-400 text-xs">(${user.id})</div>
+                    <div class="text-gray-400 text-xs">(${user.id || '아이디 없음'})</div>
                 </div>
             `;
             
@@ -1930,7 +1969,7 @@
             });
         }
 
-        // 신규 의상/헤어 아이템 등록 처리
+        // 신규 의상/헤어 아이템 등록 처리 (새로 올리는 사진이 맨 앞으로 오도록 unshift 사용)
         function addBangsellItem() {
             const titleInput = document.getElementById('new-bangsell-title');
             const categoryInput = document.getElementById('new-bangsell-category');
@@ -1954,8 +1993,8 @@
                 finalImageUrl = 'https://' + finalImageUrl;
             }
 
-            // 배열 추가 및 저장
-            globalBangsellData.push({
+            // 배열 추가 및 저장 (가장 최신 사진이 맨 앞으로 오도록 unshift 사용)
+            globalBangsellData.unshift({
                 title: title,
                 category: category,
                 description: description,
