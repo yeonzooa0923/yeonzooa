@@ -15,7 +15,7 @@
     <!-- Google Fonts: Gowun Dodum (Body) & Gaegu (Title/Cute Accent) -->
     <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Gaegu:wght@400;700&display=swap" rel="stylesheet">
     
-    <!-- Firebase SDK -->
+    <!-- Firebase SDK (User's v10 Compat requirements) -->
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 
@@ -83,9 +83,24 @@
         .sparkle-slow {
             animation: twinkle 3s ease-in-out infinite;
         }
+
+        /* 클로버 잎새 배경 하강 애니메이션 */
+        .leaf-particle {
+            position: absolute;
+            pointer-events: none;
+            animation: fall linear forwards;
+        }
+        @keyframes fall {
+            to {
+                transform: translateY(100vh) rotate(360deg);
+            }
+        }
     </style>
 </head>
-<body class="bg-[#fefcf9] dark:bg-[#181614] text-[#4b453d] dark:text-[#ebdcd0] font-sans antialiased min-h-screen flex flex-col transition-colors duration-300">
+<body class="bg-[#fefcf9] dark:bg-[#181614] text-[#4b453d] dark:text-[#ebdcd0] font-sans antialiased min-h-screen flex flex-col transition-colors duration-300 relative overflow-x-hidden">
+
+    <!-- Clover falling decorative background (Changed to fixed, increased opacity) -->
+    <div class="fixed inset-0 pointer-events-none overflow-hidden z-0 opacity-70 dark:opacity-35" id="leaf-bg-effects"></div>
 
     <!-- Header / Navigation -->
     <header class="bg-[#fefcf9]/95 dark:bg-[#181614]/95 backdrop-blur-md sticky top-0 z-50 transition-colors duration-300 border-b-4 border-dashed border-[#f1ebd9] dark:border-[#2e2620]">
@@ -131,7 +146,7 @@
     </header>
 
     <!-- Main Content -->
-    <main class="flex-grow w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
+    <main class="flex-grow w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12 relative z-10">
 
         <!-- 1. Profile Section -->
         <section id="profile" class="scroll-mt-24 flex flex-col gap-6">
@@ -147,14 +162,12 @@
                 </div>
                 
                 <div class="px-6 sm:px-10 pb-8 flex flex-col sm:flex-row relative">
-                    <!-- Avatar with Fluffy Border -->
+                    <!-- Avatar with Fluffy Border (Removed LIVE badge decoration) -->
                     <div class="-mt-16 sm:-mt-24 mb-4 sm:mb-0 sm:mr-8 flex-shrink-0 flex justify-center sm:block relative z-10">
                         <img class="h-32 w-32 sm:h-48 sm:w-48 rounded-full border-8 border-white dark:border-[#201d1a] shadow-[0_8px_24px_rgba(0,0,0,0.12)] object-cover bg-white dark:bg-gray-800 transition-transform hover:rotate-6 duration-300" 
                              src="https://stimg.afreecatv.com/LOGO/su/sudal0923/sudal0923.jpg" 
                              onerror="this.src='https://placehold.co/400x400/86efac/ffffff?text=Avatar'" 
                              alt="연주아 아바타">
-                        <!-- Tiny badge decoration -->
-                        <span class="absolute bottom-2 right-2 bg-yellow-300 text-yellow-800 text-xs px-2 py-0.5 rounded-full font-bold shadow-md transform rotate-12 animate-pulse">LIVE ✨</span>
                     </div>
                     
                     <!-- Info -->
@@ -174,15 +187,15 @@
                             </div>
                         </div>
 
-                        <!-- Social Links with bouncy circular bubbles -->
+                        <!-- Social Links with dynamic anchors -->
                         <div class="flex justify-center sm:justify-start gap-4">
-                            <a href="https://www.sooplive.com/station/sudal0923" target="_blank" class="w-12 h-12 rounded-full bg-sky-400 text-white flex items-center justify-center hover:bg-sky-500 transition-all hover:scale-110 active:scale-90 shadow-md squishy" title="SOOP 방송국">
+                            <a id="profile-soop-link" href="#" target="_blank" class="w-12 h-12 rounded-full bg-sky-400 text-white flex items-center justify-center hover:bg-sky-500 transition-all hover:scale-110 active:scale-90 shadow-md squishy" title="SOOP 방송국">
                                 <i class="fa-solid fa-tv text-lg"></i>
                             </a>
-                            <a href="https://www.youtube.com/@zooa_v" target="_blank" class="w-12 h-12 rounded-full bg-rose-500 text-white flex items-center justify-center hover:bg-rose-600 transition-all hover:scale-110 active:scale-90 shadow-md squishy" title="YouTube">
+                            <a id="profile-youtube-link" href="#" target="_blank" class="w-12 h-12 rounded-full bg-rose-500 text-white flex items-center justify-center hover:bg-rose-600 transition-all hover:scale-110 active:scale-90 shadow-md squishy" title="YouTube">
                                 <i class="fa-brands fa-youtube text-lg"></i>
                             </a>
-                            <a href="https://cafe.naver.com/2ooa" target="_blank" class="w-12 h-12 rounded-full bg-emerald-500 text-white flex items-center justify-center hover:bg-emerald-600 transition-all hover:scale-110 active:scale-90 shadow-md squishy" title="Naver Cafe">
+                            <a id="profile-cafe-link" href="#" target="_blank" class="w-12 h-12 rounded-full bg-emerald-500 text-white flex items-center justify-center hover:bg-emerald-600 transition-all hover:scale-110 active:scale-90 shadow-md squishy" title="Naver Cafe">
                                 <i class="fa-solid fa-mug-hot text-lg"></i>
                             </a>
                         </div>
@@ -213,7 +226,7 @@
                     </div>
                 </div>
 
-                <!-- D-Day & Anniversary Card (Cute pastel yellow accent) -->
+                <!-- D-Day & Anniversary Card -->
                 <div class="bg-white dark:bg-[#201d1a] rounded-3xl shadow-[0_8px_30px_rgba(241,235,217,0.4)] dark:shadow-none border-4 border-[#f1ebd9] dark:border-[#2e2620] p-6 transition-colors duration-300 flex flex-col justify-between">
                     <div>
                         <h3 class="flex items-center gap-2 text-xl font-bold font-cute text-gray-900 dark:text-white mb-4">
@@ -484,6 +497,26 @@
                         <input type="text" id="edit-profile-tags" class="w-full bg-white dark:bg-[#181614] border-2 border-[#f1ebd9] dark:border-[#3d332a] text-gray-900 dark:text-gray-200 text-sm rounded-2xl p-3 outline-none font-semibold focus:border-brand">
                     </div>
                     <hr class="border-dashed border-[#f1ebd9] dark:border-[#3d332a]">
+
+                    <!-- Admin SNS & External Links Configuration -->
+                    <div>
+                        <h4 class="text-base font-bold text-gray-900 dark:text-white mb-3"><i class="fa-solid fa-share-nodes text-brand-dark"></i> SNS 및 외부 링크 설정</h4>
+                        <div class="space-y-3">
+                            <div class="flex items-center gap-3">
+                                <span class="text-sm font-bold text-gray-600 dark:text-gray-400 w-20 whitespace-nowrap flex-shrink-0">SOOP 방송국</span>
+                                <input type="text" id="edit-profile-soop" class="flex-grow bg-white dark:bg-[#181614] border-2 border-[#f1ebd9] dark:border-[#3d332a] text-gray-900 dark:text-gray-200 text-sm rounded-xl p-2.5 outline-none font-semibold focus:border-brand">
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <span class="text-sm font-bold text-gray-600 dark:text-gray-400 w-20 whitespace-nowrap flex-shrink-0">유튜브</span>
+                                <input type="text" id="edit-profile-youtube" class="flex-grow bg-white dark:bg-[#181614] border-2 border-[#f1ebd9] dark:border-[#3d332a] text-gray-900 dark:text-gray-200 text-sm rounded-xl p-2.5 outline-none font-semibold focus:border-brand">
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <span class="text-sm font-bold text-gray-600 dark:text-gray-400 w-20 whitespace-nowrap flex-shrink-0">네이버 팬카페</span>
+                                <input type="text" id="edit-profile-cafe" class="flex-grow bg-white dark:bg-[#181614] border-2 border-[#f1ebd9] dark:border-[#3d332a] text-gray-900 dark:text-gray-200 text-sm rounded-xl p-2.5 outline-none font-semibold focus:border-brand">
+                            </div>
+                        </div>
+                    </div>
+                    <hr class="border-dashed border-[#f1ebd9] dark:border-[#3d332a]">
                     
                     <div>
                         <div class="flex items-center justify-between mb-3">
@@ -538,6 +571,11 @@
         </div>
 
     </main>
+
+    <!-- Visual Toast Notification -->
+    <div id="toast-message" class="fixed bottom-6 right-6 z-[150] bg-emerald-600 text-white font-bold text-sm py-3 px-5 rounded-xl shadow-lg transform translate-y-20 opacity-0 pointer-events-none transition-all duration-300 flex items-center gap-2">
+        <span id="toast-text">변경 사항이 반영되었습니다! 🍀</span>
+    </div>
 
     <!-- Footer -->
     <footer class="bg-brand-light dark:bg-[#12100f] text-[#5c5449] dark:text-[#a09489] py-8 text-center mt-auto border-t-4 border-dashed border-[#f1ebd9] dark:border-[#2e2620]">
@@ -605,8 +643,8 @@
             { day: '수', content: '정기 휴방 💤 재충전의 시간!', color: 'green', isRest: true },
             { day: '목', content: '시청자 참여 컨텐츠 / 배그', color: 'gray', isRest: false },
             { day: '금', content: '마인크래프트 (연토피아 서버)', color: 'gray', isRest: false },
-            { day: '토', content: '랜덤 컨텐츠 (게시판 공지 확인)', color: 'blue', isRest: false },
-            { day: '일', content: '노래방 및 주간 소통 🎤', color: 'red', isRest: false }
+            { day: '토', content: '랜덤 컨텐츠 (게시판 공지 확인)', color: 'gray', isRest: false },
+            { day: '일', content: '노래방 및 주간 소통 🎤', color: 'gray', isRest: false }
         ];
         
         const defaultProfileData = {
@@ -622,7 +660,12 @@
                 { title: "🎂 생일", type: "birthday", date: "09-23" },
                 { title: "🍀 데뷔", type: "anniversary", date: "2025-05-31" },
                 { title: "🎬 1주년 기념일", type: "anniversary", date: "2026-05-31" }
-            ]
+            ],
+            socials: {
+                soop: "https://www.sooplive.com/station/sudal0923",
+                youtube: "https://www.youtube.com/@zooa_v",
+                cafe: "https://cafe.naver.com/2ooa"
+            }
         };
 
         // 전역 상태 변수
@@ -673,6 +716,9 @@
                         if (globalProfileData && (!globalProfileData.ddays || globalProfileData.ddays.length === 0)) {
                             globalProfileData.ddays = JSON.parse(JSON.stringify(defaultProfileData.ddays));
                         }
+                        if (globalProfileData && !globalProfileData.socials) {
+                            globalProfileData.socials = JSON.parse(JSON.stringify(defaultProfileData.socials));
+                        }
                     } else {
                         await docRef.set({
                             upbo: defaultUpboData, 
@@ -704,6 +750,9 @@
             if (globalProfileData && (!globalProfileData.ddays || globalProfileData.ddays.length === 0)) {
                 globalProfileData.ddays = JSON.parse(JSON.stringify(defaultProfileData.ddays));
             }
+            if (globalProfileData && !globalProfileData.socials) {
+                globalProfileData.socials = JSON.parse(JSON.stringify(defaultProfileData.socials));
+            }
         }
 
         // 파이어베이스 데이터 업로드 공통함수
@@ -711,6 +760,7 @@
             if (db) {
                 try { 
                     await db.collection('zooaProfile').doc('siteData').update({ [key]: data }); 
+                    console.log("Firestore 저장 성공: " + key);
                 } catch (error) { 
                     console.error("데이터 저장 실패:", error); 
                 }
@@ -721,6 +771,9 @@
 
         // 앱 구동 시점 초기화 핸들러
         document.addEventListener('DOMContentLoaded', async () => {
+            // 네잎이 클로버 떨어지는 애니메이션 구동
+            generateBgLeaves();
+
             const themeToggleBtns = [document.getElementById('theme-toggle'), document.getElementById('mobile-theme-toggle')];
             const html = document.documentElement;
             let savedTheme = 'light';
@@ -785,6 +838,43 @@
             renderNotice();
             renderSchedule();
         });
+
+        // 잎새 백그라운드 애니메이션 헬퍼 (빈도, 크기, 선명도 향상)
+        function generateBgLeaves() {
+            const container = document.getElementById('leaf-bg-effects');
+            if (!container) return;
+            const leafIcons = ['🍀', '🌿', '🌱', '💚', '🍃'];
+            
+            setInterval(() => {
+                const leaf = document.createElement('div');
+                leaf.className = 'leaf-particle text-sm select-none';
+                leaf.style.left = Math.random() * 100 + 'vw';
+                leaf.style.top = '-20px';
+                leaf.style.fontSize = Math.random() * (26 - 14) + 14 + 'px'; // 잎새 크기를 조금 더 크게 조정
+                leaf.style.animationDuration = Math.random() * (10 - 5) + 5 + 's'; // 떨어지는 속도를 부드럽게 조정
+                leaf.style.opacity = Math.random() * 0.5 + 0.4; // 선명하게 잘 보이도록 최소 불투명도 0.4 이상 보장
+                leaf.innerText = leafIcons[Math.floor(Math.random() * leafIcons.length)];
+                
+                container.appendChild(leaf);
+                setTimeout(() => { leaf.remove(); }, 10000);
+            }, 900); // 생성 간격을 기존 1.8초에서 0.9초로 단축하여 클로버가 더 촘촘히 흩날리도록 개선
+        }
+
+        // 토스트 출력 유틸리티
+        function showToast(message) {
+            const toast = document.getElementById('toast-message');
+            const toastText = document.getElementById('toast-text');
+            if (!toast || !toastText) return;
+            
+            toastText.innerText = message;
+            toast.classList.remove('translate-y-20', 'opacity-0', 'pointer-events-none');
+            toast.classList.add('translate-y-0', 'opacity-100');
+            
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-20', 'opacity-0', 'pointer-events-none');
+            }, 2500);
+        }
 
         // 디데이/기념일 날짜 계산
         function calculateDDayString(type, dateStr) {
@@ -900,6 +990,16 @@
             if (dislikesContainer) {
                 dislikesContainer.innerHTML = globalProfileData.dislikes.map(dislike => `<span class="px-3.5 py-2 bg-rose-50 dark:bg-rose-950/20 text-rose-600 dark:text-rose-400 rounded-2xl text-xs font-bold border border-rose-100 dark:border-rose-950/50 hover:rotate-2 transition-transform duration-300 cursor-default">${dislike.trim()}</span>`).join('');
             }
+
+            // 외부 SNS 링크 다이나믹 매핑
+            const socials = globalProfileData.socials || defaultProfileData.socials || {};
+            const soopEl = document.getElementById('profile-soop-link');
+            const youtubeEl = document.getElementById('profile-youtube-link');
+            const cafeEl = document.getElementById('profile-cafe-link');
+            
+            if (soopEl) soopEl.href = socials.soop || "https://www.sooplive.com/station/sudal0923";
+            if (youtubeEl) youtubeEl.href = socials.youtube || "https://www.youtube.com/@zooa_v";
+            if (cafeEl) cafeEl.href = socials.cafe || "https://cafe.naver.com/2ooa";
         }
 
         // 공지사항 정보 렌더링
@@ -946,9 +1046,7 @@
             list.innerHTML = '';
             const colorMap = {
                 gray: { text: 'text-[#4b453d] dark:text-gray-300', dayText: 'text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-[#2b2723]' },
-                green: { text: 'text-emerald-800 dark:text-emerald-300 font-bold', dayText: 'text-white bg-emerald-500' },
-                blue: { text: 'text-[#4b453d] dark:text-gray-300', dayText: 'text-white bg-sky-500' },
-                red: { text: 'text-[#4b453d] dark:text-gray-300', dayText: 'text-white bg-rose-500' }
+                green: { text: 'text-emerald-800 dark:text-emerald-300 font-bold', dayText: 'text-white bg-emerald-500' }
             };
 
             globalScheduleData.forEach(schedule => {
@@ -1050,6 +1148,7 @@
                 document.getElementById('admin-add-user-btn').classList.add('hidden'); document.getElementById('admin-add-user-btn').classList.remove('flex');
                 document.getElementById('admin-notice-edit-btn').classList.add('hidden'); document.getElementById('admin-schedule-edit-btn').classList.add('hidden'); document.getElementById('admin-profile-edit-btn').classList.add('hidden');
                 document.getElementById('upbo-search').dispatchEvent(new Event('input')); 
+                showToast("관리자 모드가 해제되었습니다. 🍀");
                 return;
             }
             const modal = document.getElementById('admin-login-modal');
@@ -1069,6 +1168,7 @@
                 document.getElementById('admin-add-user-btn').classList.remove('hidden'); document.getElementById('admin-add-user-btn').classList.add('flex');
                 document.getElementById('admin-notice-edit-btn').classList.remove('hidden'); document.getElementById('admin-schedule-edit-btn').classList.remove('hidden'); document.getElementById('admin-profile-edit-btn').classList.remove('hidden');
                 document.getElementById('upbo-search').dispatchEvent(new Event('input'));
+                showToast("주아의 매니저 모드로 로그인 되었습니다! 💚");
             } else {
                 const input = document.getElementById('admin-pin');
                 input.classList.add('border-red-500'); input.value = ''; input.placeholder = '비밀번호가 틀렸습니다!';
@@ -1156,6 +1256,7 @@
                 closeUpboEditModal();
                 document.getElementById('upbo-search').dispatchEvent(new Event('input'));
                 deleteConfirmState = false;
+                showToast("삭제되었습니다.");
             }
         }
 
@@ -1209,6 +1310,7 @@
             }
             globalUpboData.unshift({ id: idInput, nickname: nickInput, items: [] });
             saveUpboData(); closeAddUserModal(); document.getElementById('upbo-search').dispatchEvent(new Event('input'));
+            showToast(`새 네잎이 "${nickInput}"님이 추가되었습니다.`);
         }
 
         // 공지 관리 액션
@@ -1275,8 +1377,9 @@
             linkInput.value = '';
             renderNoticeEditList(); 
             renderNotice();
+            showToast("새 공지가 등록되었습니다. 🍀");
         }
-        function deleteNotice(index) { globalNoticeData.splice(index, 1); updateFirestore('notice', globalNoticeData); renderNoticeEditList(); renderNotice(); }
+        function deleteNotice(index) { globalNoticeData.splice(index, 1); updateFirestore('notice', globalNoticeData); renderNoticeEditList(); renderNotice(); showToast("공지가 제거되었습니다."); }
 
         // 일정 관리 액션
         function openScheduleEditModal() {
@@ -1302,23 +1405,33 @@
             globalScheduleData.forEach((schedule, index) => {
                 const content = document.getElementById(`schedule-input-${index}`).value; const isRest = document.getElementById(`schedule-rest-${index}`).checked;
                 schedule.content = content; schedule.isRest = isRest;
-                if (isRest) { schedule.color = 'green'; } else { if (schedule.day === '토') schedule.color = 'blue'; else if (schedule.day === '일') schedule.color = 'red'; else schedule.color = 'gray'; }
+                if (isRest) { 
+                    schedule.color = 'green'; 
+                } else { 
+                    schedule.color = 'gray'; 
+                }
             });
-            updateFirestore('schedule', globalScheduleData); renderSchedule(); closeScheduleEditModal();
+            updateFirestore('schedule', globalScheduleData); renderSchedule(); closeScheduleEditModal(); showToast("주간 일정표가 반영되었습니다.");
         }
 
         // 프로필 관리 액션
         function openProfileEditModal() {
             const modal = document.getElementById('profile-edit-modal');
-            document.getElementById('edit-profile-banner').value = globalProfileData.bannerUrl || "";
-            document.getElementById('edit-profile-intro').value = globalProfileData.introText; 
-            document.getElementById('edit-profile-tags').value = globalProfileData.tags.join(', ');
-            document.getElementById('edit-profile-time').value = globalProfileData.broadcast.time; 
-            document.getElementById('edit-profile-content').value = globalProfileData.broadcast.content; 
-            document.getElementById('edit-profile-game').value = globalProfileData.broadcast.game;
-            document.getElementById('edit-profile-likes').value = globalProfileData.likes.join(', '); 
-            document.getElementById('edit-profile-dislikes').value = globalProfileData.dislikes.join(', ');
             
+            document.getElementById('edit-profile-banner').value = globalProfileData.bannerUrl || "";
+            document.getElementById('edit-profile-intro').value = globalProfileData.introText || ""; 
+            document.getElementById('edit-profile-tags').value = (globalProfileData.tags || []).join(', ');
+            document.getElementById('edit-profile-time').value = (globalProfileData.broadcast || {}).time || ""; 
+            document.getElementById('edit-profile-content').value = (globalProfileData.broadcast || {}).content || ""; 
+            document.getElementById('edit-profile-game').value = (globalProfileData.broadcast || {}).game || "";
+            document.getElementById('edit-profile-likes').value = (globalProfileData.likes || []).join(', '); 
+            document.getElementById('edit-profile-dislikes').value = (globalProfileData.dislikes || []).join(', ');
+            
+            const socials = globalProfileData.socials || defaultProfileData.socials || {};
+            document.getElementById('edit-profile-soop').value = socials.soop || "";
+            document.getElementById('edit-profile-youtube').value = socials.youtube || "";
+            document.getElementById('edit-profile-cafe').value = socials.cafe || "";
+
             if (!globalProfileData.ddays || globalProfileData.ddays.length === 0) {
                 globalProfileData.ddays = JSON.parse(JSON.stringify(defaultProfileData.ddays));
             }
@@ -1378,12 +1491,19 @@
             globalProfileData.bannerUrl = document.getElementById('edit-profile-banner').value.trim();
             globalProfileData.introText = document.getElementById('edit-profile-intro').value; 
             globalProfileData.tags = parse(document.getElementById('edit-profile-tags').value);
+            
+            if (!globalProfileData.broadcast) globalProfileData.broadcast = {};
             globalProfileData.broadcast.time = document.getElementById('edit-profile-time').value; 
             globalProfileData.broadcast.content = document.getElementById('edit-profile-content').value; 
             globalProfileData.broadcast.game = document.getElementById('edit-profile-game').value;
             globalProfileData.likes = parse(document.getElementById('edit-profile-likes').value); 
             globalProfileData.dislikes = parse(document.getElementById('edit-profile-dislikes').value);
             
+            if (!globalProfileData.socials) globalProfileData.socials = {};
+            globalProfileData.socials.soop = document.getElementById('edit-profile-soop').value.trim();
+            globalProfileData.socials.youtube = document.getElementById('edit-profile-youtube').value.trim();
+            globalProfileData.socials.cafe = document.getElementById('edit-profile-cafe').value.trim();
+
             const ddaysCount = (globalProfileData.ddays || []).length;
             const savedDdays = [];
             for (let i = 0; i < ddaysCount; i++) {
@@ -1403,7 +1523,36 @@
             updateFirestore('profile', globalProfileData); 
             renderProfile(); 
             closeProfileEditModal();
+            showToast("대표 프로필 정보와 SNS 링크들이 저장되었습니다. 🍀");
         }
+
+        // 인라인 이벤트 바인딩 해제 대응용 전역 변수 매핑
+        window.openProfileEditModal = openProfileEditModal;
+        window.closeProfileEditModal = closeProfileEditModal;
+        window.saveProfileChanges = saveProfileChanges;
+        window.openUpboEditModal = openUpboEditModal;
+        window.closeUpboEditModal = closeUpboEditModal;
+        window.openUpboModal = openUpboModal;
+        window.closeUpboModal = closeUpboModal;
+        window.openAdminLoginModal = openAdminLoginModal;
+        window.closeAdminLoginModal = closeAdminLoginModal;
+        window.checkAdminPin = checkAdminPin;
+        window.addNewItem = addNewItem;
+        window.changeItemCount = changeItemCount;
+        window.deleteItem = deleteItem;
+        window.openAddUserModal = openAddUserModal;
+        window.closeAddUserModal = closeAddUserModal;
+        window.submitNewUser = submitNewUser;
+        window.openNoticeEditModal = openNoticeEditModal;
+        window.closeNoticeEditModal = closeNoticeEditModal;
+        window.addNewNotice = addNewNotice;
+        window.deleteNotice = deleteNotice;
+        window.openScheduleEditModal = openScheduleEditModal;
+        window.closeScheduleEditModal = closeScheduleEditModal;
+        window.saveScheduleChanges = saveScheduleChanges;
+        window.addEditDdayRow = addEditDdayRow;
+        window.deleteEditDdayRow = deleteEditDdayRow;
+        window.handleDeleteUser = handleDeleteUser;
     </script>
 </body>
 </html>
