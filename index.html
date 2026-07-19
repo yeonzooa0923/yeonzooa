@@ -16,10 +16,6 @@
     <!-- Google Fonts: Jua (Rounded Title) & Gowun Dodum (Fallback) -->
     <link href="https://fonts.googleapis.com/css2?family=Jua&family=Gowun+Dodum&display=swap" rel="stylesheet">
     
-    <!-- Firebase SDK (Compat version for stable integrations) -->
-    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-
     <script>
         tailwind.config = {
             darkMode: 'class', // 다크모드 활성화
@@ -65,6 +61,15 @@
         ::-webkit-scrollbar-thumb { background: #a7f3d0; border-radius: 10px; border: 2px solid #fdfbf7; }
         .dark ::-webkit-scrollbar-thumb { background: #047857; border: 2px solid #1e1b18; }
         ::-webkit-scrollbar-thumb:hover { background: #34d399; }
+
+        /* 가로 슬라이더 스크롤바 숨기기 전용 클래스 */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
 
         /* 말랑말랑 바운스 효과 클래스 */
         .squishy {
@@ -361,7 +366,7 @@
             </section>
         </div>
 
-        <!-- 2.5 이달의 방셀 의상 & 헤어 섹션 -->
+        <!-- 2.5 이달의 방셀 의상 & 헤어 섹션 (슬라이더식으로 부드럽게 넘겨볼 수 있는 구조) -->
         <section id="bangsell" class="scroll-mt-24">
             <div class="bg-white dark:bg-[#201d1a] rounded-3xl shadow-[0_12px_40px_rgba(241,235,217,0.5)] dark:shadow-none border-4 border-brand-dark dark:border-brand-deep/70 p-6 transition-all duration-300">
                 <div class="flex items-center justify-between border-b-2 border-dashed border-[#f1ebd9] dark:border-[#2e2620] pb-4 mb-6">
@@ -369,6 +374,7 @@
                         <span class="text-brand-dark dark:text-brand font-bold text-xs tracking-wider block mb-1">YEON ZOOA BANGSELL CATALOG</span>
                         <h2 class="text-3xl font-bold font-cute text-gray-805 dark:text-white flex items-center gap-2.5">
                             <span class="animate-pulse">👗</span> 이달의 방셀 의상 & 헤어
+                            <span class="text-xs font-sans text-gray-400 font-bold ml-1 hidden sm:inline-block bg-gray-105 dark:bg-zinc-800 px-2.5 py-1 rounded-full"><i class="fa-solid fa-arrows-left-right mr-1"></i>좌우로 밀어보세요</span>
                         </h2>
                     </div>
                     <button id="admin-bangsell-edit-btn" onclick="openBangsellEditModal()" class="hidden text-gray-400 hover:text-brand-dark transition-colors p-2 rounded-2xl bg-brand-light/35 dark:bg-brand-deep/10" title="의상 & 헤어 관리">
@@ -376,13 +382,26 @@
                     </button>
                 </div>
 
-                <div id="bangsell-grid" class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
-                    <!-- JS Dynamic rendering -->
+                <!-- Slidable Container & Navigation Controller -->
+                <div class="relative group/slider">
+                    <!-- Left Arrow Button -->
+                    <button onclick="scrollSlider('bangsell-slider', -1)" class="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 sm:-translate-x-4 w-10 h-10 rounded-full bg-white dark:bg-zinc-800 shadow-md border border-[#f1ebd9] dark:border-zinc-700 flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-brand-light dark:hover:bg-brand-deep/20 transition-all z-20 opacity-0 group-hover/slider:opacity-100 focus:opacity-100 focus-within:opacity-100 pointer-events-auto">
+                        <i class="fa-solid fa-chevron-left text-sm"></i>
+                    </button>
+                    <!-- Right Arrow Button -->
+                    <button onclick="scrollSlider('bangsell-slider', 1)" class="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 sm:translate-x-4 w-10 h-10 rounded-full bg-white dark:bg-zinc-800 shadow-md border border-[#f1ebd9] dark:border-zinc-700 flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-brand-light dark:hover:bg-brand-deep/20 transition-all z-20 opacity-0 group-hover/slider:opacity-100 focus:opacity-100 focus-within:opacity-100 pointer-events-auto">
+                        <i class="fa-solid fa-chevron-right text-sm"></i>
+                    </button>
+                    
+                    <!-- Horizontal Slide Core -->
+                    <div id="bangsell-slider" class="flex gap-4 sm:gap-6 overflow-x-auto no-scrollbar snap-x snap-mandatory scroll-smooth pb-4 px-1">
+                        <!-- JS Dynamic rendering -->
+                    </div>
                 </div>
             </div>
         </section>
 
-        <!-- 2.8 주아의 시그니처 별풍선(시그풍) 리스트 섹션 -->
+        <!-- 2.8 주아의 시그니처 별풍선(시그풍) 리스트 섹션 (슬라이더식으로 깔끔하게 정렬) -->
         <section id="sigpoong" class="scroll-mt-24">
             <div class="bg-white dark:bg-[#201d1a] rounded-3xl shadow-[0_12px_40px_rgba(241,235,217,0.5)] dark:shadow-none border-4 border-pink-400 dark:border-rose-950/70 p-6 transition-all duration-300">
                 <div class="flex items-center justify-between border-b-2 border-dashed border-[#f1ebd9] dark:border-[#2e2620] pb-4 mb-6">
@@ -390,6 +409,7 @@
                         <span class="text-pink-500 dark:text-rose-400 font-bold text-xs tracking-wider block mb-1">YEON ZOOA SIGNATURE STAR BALLOON</span>
                         <h2 class="text-3xl font-bold font-cute text-gray-805 dark:text-white flex items-center gap-2.5">
                             <span class="animate-pulse">🎈</span> 주아의 시그풍 리스트
+                            <span class="text-xs font-sans text-gray-400 font-bold ml-1 hidden sm:inline-block bg-gray-105 dark:bg-zinc-800 px-2.5 py-1 rounded-full"><i class="fa-solid fa-arrows-left-right mr-1"></i>좌우로 밀어보세요</span>
                         </h2>
                     </div>
                     <button id="admin-sigpoong-edit-btn" onclick="openSigpoongEditModal()" class="hidden text-gray-400 hover:text-pink-500 transition-colors p-2 rounded-2xl bg-pink-50 dark:bg-rose-950/20" title="시그풍 리스트 관리">
@@ -397,8 +417,21 @@
                     </button>
                 </div>
 
-                <div id="sigpoong-grid" class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
-                    <!-- JS Dynamic rendering -->
+                <!-- Slidable Container & Navigation Controller -->
+                <div class="relative group/sigpoong-slider">
+                    <!-- Left Arrow Button -->
+                    <button onclick="scrollSlider('sigpoong-slider', -1)" class="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 sm:-translate-x-4 w-10 h-10 rounded-full bg-white dark:bg-zinc-800 shadow-md border border-[#f1ebd9] dark:border-zinc-700 flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-pink-50 dark:hover:bg-rose-950/20 transition-all z-20 opacity-0 group-hover/sigpoong-slider:opacity-100 focus:opacity-100 focus-within:opacity-100 pointer-events-auto">
+                        <i class="fa-solid fa-chevron-left text-sm"></i>
+                    </button>
+                    <!-- Right Arrow Button -->
+                    <button onclick="scrollSlider('sigpoong-slider', 1)" class="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 sm:translate-x-4 w-10 h-10 rounded-full bg-white dark:bg-zinc-800 shadow-md border border-[#f1ebd9] dark:border-zinc-700 flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-pink-50 dark:hover:bg-rose-950/20 transition-all z-20 opacity-0 group-hover/sigpoong-slider:opacity-100 focus:opacity-100 focus-within:opacity-100 pointer-events-auto">
+                        <i class="fa-solid fa-chevron-right text-sm"></i>
+                    </button>
+
+                    <!-- Horizontal Slide Core -->
+                    <div id="sigpoong-slider" class="flex gap-4 sm:gap-6 overflow-x-auto no-scrollbar snap-x snap-mandatory scroll-smooth pb-4 px-1">
+                        <!-- JS Dynamic rendering -->
+                    </div>
                 </div>
             </div>
         </section>
@@ -946,39 +979,30 @@
         </div>
     </footer>
 
-    <!-- JavaScript -->
-    <script>
-        // ==========================================
-        // 🚨 파이어베이스 연동 필수 설정 🚨 
-        // ==========================================
-        const firebaseConfig = {
-            apiKey: "AIzaSyD5s5HIUlfcV8ksiEsagpZWqOtbXg3zX_Q",
-            authDomain: "zooa-profile.firebaseapp.com",
-            projectId: "zooa-profile",
-            storageBucket: "zooa-profile.firebasestorage.app",
-            messagingSenderId: "575474141821",
-            appId: "1:575474141821:web:d1d863dd1d02ea1e8f7f14"
-        };
+    <!-- Firebase SDK Modular v11 + Javascript -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // 파이어베이스 초기화 함수
-        let db = null;
-        function initFirebase() {
-            try {
-                if (typeof firebase !== 'undefined') {
-                    if (firebaseConfig.apiKey && firebaseConfig.apiKey !== "") {
-                        firebase.initializeApp(firebaseConfig);
-                        db = firebase.firestore();
-                        console.log("Firebase 연동 성공!");
-                        return true;
-                    }
-                } else {
-                    console.warn("Firebase SDK 로딩 대기 중...");
-                }
-            } catch (error) {
-                console.error("Firebase 초기화 에러:", error);
-            }
-            return false;
-        }
+        // ==========================================
+        // 🚨 파이어베이스 연동 필수 설정 (보안 규칙 준수) 🚨 
+        // ==========================================
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'zooa-profile';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' 
+            ? JSON.parse(__firebase_config) 
+            : {
+                apiKey: "AIzaSyD5s5HIUlfcV8ksiEsagpZWqOtbXg3zX_Q",
+                authDomain: "zooa-profile.firebaseapp.com",
+                projectId: "zooa-profile",
+                storageBucket: "zooa-profile.firebasestorage.app",
+                messagingSenderId: "575474141821",
+                appId: "1:575474141821:web:d1d863dd1d02ea1e8f7f14"
+            };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
 
         // ==========================================
         // 기존 기본 데이터 (파이어베이스 연결 유실 시 사용됨)
@@ -1076,68 +1100,71 @@
             } catch (e) {}
         }
 
-        // 파이어베이스에서 데이터를 가져오는 핵심 함수
+        // 파이어베이스에서 데이터를 안전하게 패치 및 권한 취득
         async function fetchSiteData() {
             const loadingInd = document.getElementById('loading-indicator');
-            
-            if (!db) {
-                initFirebase();
-            }
+            if (loadingInd) loadingInd.classList.remove('hidden');
 
-            if (db) {
-                if (loadingInd) loadingInd.classList.remove('hidden');
-                try {
-                    const docRef = db.collection('zooaProfile').doc('siteData');
-                    const doc = await docRef.get();
-                    if (doc.exists) {
-                        const data = doc.data();
-                        globalUpboData = (data.upbo !== undefined && data.upbo !== null) ? data.upbo : JSON.parse(JSON.stringify(defaultUpboData));
-                        globalNoticeData = (data.notice !== undefined && data.notice !== null) ? data.notice : JSON.parse(JSON.stringify(defaultNoticeData));
-                        globalScheduleData = (data.schedule !== undefined && data.schedule !== null) ? data.schedule : JSON.parse(JSON.stringify(defaultScheduleData));
-                        globalProfileData = (data.profile !== undefined && data.profile !== null) ? data.profile : JSON.parse(JSON.stringify(defaultProfileData));
-                        globalBangsellData = (data.bangsell !== undefined && data.bangsell !== null) ? data.bangsell : JSON.parse(JSON.stringify(defaultBangsellData));
-                        globalSigpoongData = (data.sigpoong !== undefined && data.sigpoong !== null) ? data.sigpoong : JSON.parse(JSON.stringify(defaultSigpoongData));
-                        
-                        if (globalProfileData && !globalProfileData.ddays) {
-                            globalProfileData.ddays = JSON.parse(JSON.stringify(defaultProfileData.ddays));
-                        }
-                        if (globalProfileData && !globalProfileData.socials) {
-                            globalProfileData.socials = JSON.parse(JSON.stringify(defaultProfileData.socials));
-                        }
-                    } else {
-                        await docRef.set({
-                            upbo: defaultUpboData, 
-                            notice: defaultNoticeData, 
-                            schedule: defaultScheduleData, 
-                            profile: defaultProfileData,
-                            bangsell: defaultBangsellData,
-                            sigpoong: defaultSigpoongData
-                        });
-                        globalUpboData = JSON.parse(JSON.stringify(defaultUpboData)); 
-                        globalNoticeData = JSON.parse(JSON.stringify(defaultNoticeData)); 
-                        globalScheduleData = JSON.parse(JSON.stringify(defaultScheduleData)); 
-                        globalProfileData = JSON.parse(JSON.stringify(defaultProfileData));
-                        globalBangsellData = JSON.parse(JSON.stringify(defaultBangsellData));
-                        globalSigpoongData = JSON.parse(JSON.stringify(defaultSigpoongData));
-                    }
-
-                    // 출석 데이터 실시간 패치
-                    const attendRef = db.collection('zooaProfile').doc('attendanceData');
-                    const attendDoc = await attendRef.get();
-                    if (attendDoc.exists) {
-                        globalAttendanceData = attendDoc.data() || {};
-                    } else {
-                        await attendRef.set({});
-                        globalAttendanceData = {};
-                    }
-                } catch (error) {
-                    console.error("데이터 로딩 실패:", error);
-                    fallbackToLocal();
+            try {
+                // RULE 3 - Firestore 쿼리 실행 전 익명 또는 지정된 토큰으로 안전하게 인증
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
                 }
-                if (loadingInd) loadingInd.classList.add('hidden');
-            } else {
+                
+                // RULE 1 - 데이터 저장 및 로드를 위한 무조건적인 지정 보안 규격 경로 접근
+                const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'siteConfig', 'main');
+                const docSnap = await getDoc(docRef);
+
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    globalUpboData = (data.upbo !== undefined && data.upbo !== null) ? data.upbo : JSON.parse(JSON.stringify(defaultUpboData));
+                    globalNoticeData = (data.notice !== undefined && data.notice !== null) ? data.notice : JSON.parse(JSON.stringify(defaultNoticeData));
+                    globalScheduleData = (data.schedule !== undefined && data.schedule !== null) ? data.schedule : JSON.parse(JSON.stringify(defaultScheduleData));
+                    globalProfileData = (data.profile !== undefined && data.profile !== null) ? data.profile : JSON.parse(JSON.stringify(defaultProfileData));
+                    globalBangsellData = (data.bangsell !== undefined && data.bangsell !== null) ? data.bangsell : JSON.parse(JSON.stringify(defaultBangsellData));
+                    globalSigpoongData = (data.sigpoong !== undefined && data.sigpoong !== null) ? data.sigpoong : JSON.parse(JSON.stringify(defaultSigpoongData));
+                    
+                    if (globalProfileData && !globalProfileData.ddays) {
+                        globalProfileData.ddays = JSON.parse(JSON.stringify(defaultProfileData.ddays));
+                    }
+                    if (globalProfileData && !globalProfileData.socials) {
+                        globalProfileData.socials = JSON.parse(JSON.stringify(defaultProfileData.socials));
+                    }
+                } else {
+                    // 기본값으로 도큐먼트 초기 생성
+                    await setDoc(docRef, {
+                        upbo: defaultUpboData, 
+                        notice: defaultNoticeData, 
+                        schedule: defaultScheduleData, 
+                        profile: defaultProfileData,
+                        bangsell: defaultBangsellData,
+                        sigpoong: defaultSigpoongData
+                    });
+                    globalUpboData = JSON.parse(JSON.stringify(defaultUpboData)); 
+                    globalNoticeData = JSON.parse(JSON.stringify(defaultNoticeData)); 
+                    globalScheduleData = JSON.parse(JSON.stringify(defaultScheduleData)); 
+                    globalProfileData = JSON.parse(JSON.stringify(defaultProfileData));
+                    globalBangsellData = JSON.parse(JSON.stringify(defaultBangsellData));
+                    globalSigpoongData = JSON.parse(JSON.stringify(defaultSigpoongData));
+                }
+
+                // 출석부 전용 경로 로드
+                const attendRef = doc(db, 'artifacts', appId, 'public', 'data', 'attendance', 'main');
+                const attendSnap = await getDoc(attendRef);
+                if (attendSnap.exists()) {
+                    globalAttendanceData = attendSnap.data() || {};
+                } else {
+                    await setDoc(attendRef, {});
+                    globalAttendanceData = {};
+                }
+            } catch (error) {
+                console.error("Firebase 로딩 실패, 로컬 캐시 사용:", error);
                 fallbackToLocal();
             }
+
+            if (loadingInd) loadingInd.classList.add('hidden');
         }
 
         function fallbackToLocal() {
@@ -1162,16 +1189,14 @@
             globalAttendanceData = safeGetStorage('yeonZooaAttendanceData', {});
         }
 
-        // 파이어베이스 데이터 업로드 공통함수
+        // 파이어베이스 데이터 업로드 핵심 함수 (setDoc merge 기법으로 덮어쓰기 문제 완벽 방지)
         async function updateFirestore(key, data) {
-            if (db) {
-                try { 
-                    await db.collection('zooaProfile').doc('siteData').update({ [key]: data }); 
-                    console.log("Firestore 저장 성공: " + key);
-                } catch (error) { 
-                    console.error("데이터 저장 실패:", error); 
-                }
-            } else {
+            try { 
+                const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'siteConfig', 'main');
+                await setDoc(docRef, { [key]: data }, { merge: true });
+                console.log("Firestore 저장 성공: " + key);
+            } catch (error) { 
+                console.error("데이터 저장 실패, 로컬 캐시에 저장:", error); 
                 safeSetStorage(`yeonZooa${key.charAt(0).toUpperCase() + key.slice(1)}Data`, data);
             }
         }
@@ -1239,7 +1264,6 @@
                 }
 
                 // 렌더링 순서 보장 (에러 시 빈 화면이 되지 않도록 Fallback 적용)
-                initFirebase();
                 await fetchSiteData();
             } catch (err) {
                 console.error("초기 데이터 획득 중 에러, 기본 데이터로 복구 진행:", err);
@@ -1486,16 +1510,16 @@
             });
         }
 
-        // 이달의 방셀 의상 & 헤어 렌더링 (object-contain을 사용해 이미지가 잘리지 않게 조정)
+        // 이달의 방셀 의상 & 헤어 렌더링 (가로 슬라이더 레이아웃으로 변경)
         function renderBangsell() {
-            const grid = document.getElementById('bangsell-grid');
-            if (!grid) return;
-            grid.innerHTML = '';
+            const slider = document.getElementById('bangsell-slider');
+            if (!slider) return;
+            slider.innerHTML = '';
 
             const items = globalBangsellData;
 
             if (items.length === 0) {
-                grid.innerHTML = `<div class="col-span-full py-10 text-center text-gray-400 font-bold bg-[#faf8f4] dark:bg-[#25211e] rounded-3xl border-2 border-dashed border-[#f1ebd9] dark:border-[#3d332a]">이달의 방셀이 비어있습니다. 관리자 모드에서 추가해 주세요! 👗</div>`;
+                slider.innerHTML = `<div class="w-full py-10 text-center text-gray-400 font-bold bg-[#faf8f4] dark:bg-[#25211e] rounded-3xl border-2 border-dashed border-[#f1ebd9] dark:border-[#3d332a]">이달의 방셀이 비어있습니다. 관리자 모드에서 추가해 주세요! 👗</div>`;
                 return;
             }
 
@@ -1504,8 +1528,8 @@
                 if (item.category === '헤어') badgeColor = "bg-purple-500";
                 if (item.category === '세트') badgeColor = "bg-amber-500";
 
-                grid.innerHTML += `
-                    <div class="bg-[#faf8f4] dark:bg-[#25211e] border-2 border-[#f1ebd9] dark:border-[#3d332a] rounded-3xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col group squishy cursor-pointer" onclick="openImageLightbox('${item.url || 'https://placehold.co/400x500/e6f9ed/047857?text=Outfit'}', '${item.title}')">
+                slider.innerHTML += `
+                    <div class="flex-shrink-0 w-[72%] sm:w-[45%] md:w-[30%] lg:w-[23%] snap-start bg-[#faf8f4] dark:bg-[#25211e] border-2 border-[#f1ebd9] dark:border-[#3d332a] rounded-3xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col group squishy cursor-pointer" onclick="openImageLightbox('${item.url || 'https://placehold.co/400x500/e6f9ed/047857?text=Outfit'}', '${item.title}')">
                         <div class="aspect-[4/5] w-full bg-white dark:bg-zinc-900 relative overflow-hidden border-b-2 border-dashed border-[#f1ebd9] dark:border-[#3d332a] flex items-center justify-center">
                             <img src="${item.url || 'https://placehold.co/400x500/e6f9ed/047857?text=Outfit'}" 
                                  alt="${item.title}" 
@@ -1522,22 +1546,22 @@
             });
         }
 
-        // 주아의 시그니처 별풍선(시그풍) 리스트 렌더링 (object-contain을 적용하여 전체 그림이 잘림 없이 깔끔하게 표기됨)
+        // 주아의 시그니처 별풍선(시그풍) 리스트 렌더링 (가로 슬라이더 레이아웃으로 변경)
         function renderSigpoong() {
-            const grid = document.getElementById('sigpoong-grid');
-            if (!grid) return;
-            grid.innerHTML = '';
+            const slider = document.getElementById('sigpoong-slider');
+            if (!slider) return;
+            slider.innerHTML = '';
 
             const items = globalSigpoongData;
 
             if (items.length === 0) {
-                grid.innerHTML = `<div class="col-span-full py-10 text-center text-gray-400 font-bold bg-[#faf8f4] dark:bg-[#25211e] rounded-3xl border-2 border-dashed border-[#f1ebd9] dark:border-[#3d332a]">시그풍 리스트가 비어있습니다. 관리자 모드에서 추가해 주세요! 🎈</div>`;
+                slider.innerHTML = `<div class="w-full py-10 text-center text-gray-400 font-bold bg-[#faf8f4] dark:bg-[#25211e] rounded-3xl border-2 border-dashed border-[#f1ebd9] dark:border-[#3d332a]">시그풍 리스트가 비어있습니다. 관리자 모드에서 추가해 주세요! 🎈</div>`;
                 return;
             }
 
             items.forEach((item, index) => {
-                grid.innerHTML += `
-                    <div class="bg-[#faf8f4] dark:bg-[#25211e] border-2 border-[#f1ebd9] dark:border-[#3d332a] rounded-3xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col group squishy cursor-pointer" onclick="openImageLightbox('${item.url || 'https://placehold.co/400x400/fff1f2/9f1239?text=Balloon'}', '${item.title}')">
+                slider.innerHTML += `
+                    <div class="flex-shrink-0 w-[72%] sm:w-[45%] md:w-[30%] lg:w-[23%] snap-start bg-[#faf8f4] dark:bg-[#25211e] border-2 border-[#f1ebd9] dark:border-[#3d332a] rounded-3xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col group squishy cursor-pointer" onclick="openImageLightbox('${item.url || 'https://placehold.co/400x400/fff1f2/9f1239?text=Balloon'}', '${item.title}')">
                         <div class="aspect-square w-full bg-white dark:bg-zinc-900 relative overflow-hidden border-b-2 border-dashed border-[#f1ebd9] dark:border-[#3d332a] flex items-center justify-center">
                             <img src="${item.url || 'https://placehold.co/400x400/fff1f2/9f1239?text=Balloon'}" 
                                  alt="${item.title}" 
@@ -1553,6 +1577,17 @@
                         </div>
                     </div>
                 `;
+            });
+        }
+
+        // 캐러셀 슬라이더 구동 보조 함수
+        function scrollSlider(id, direction) {
+            const slider = document.getElementById(id);
+            if (!slider) return;
+            const scrollAmount = slider.clientWidth * 0.75; // 75% 만큼 가로 스크롤
+            slider.scrollBy({
+                left: direction * scrollAmount,
+                behavior: 'smooth'
             });
         }
 
@@ -2085,20 +2120,16 @@
                         canvas.height = height;
                         const ctx = canvas.getContext('2d');
                         
-                        // 투명도(Alpha 채널) 손실 방지를 위해 깨끗하게 영역 클리어
                         ctx.clearRect(0, 0, width, height);
                         ctx.drawImage(img, 0, 0, width, height);
                         
-                        // 파일 객체 정보 또는 실제 읽어온 바이너리 데이터 헤더를 통해 PNG 파일 여부 초강력 검증
                         const isPng = (file && file.type === 'image/png') || 
                                       (file && file.name && file.name.toLowerCase().endsWith('.png')) || 
                                       (event.target.result && event.target.result.startsWith('data:image/png'));
                         
                         if (isPng) {
-                            // PNG 무손실 투명 배경 데이터로 내보내기
                             resolve(canvas.toDataURL('image/png'));
                         } else {
-                            // 일반 이미지는 용량을 낮추기 위해 JPEG로 압축 처리
                             resolve(canvas.toDataURL('image/jpeg', 0.8));
                         }
                     };
@@ -2491,7 +2522,7 @@
             window.removeEventListener('resize', resizeCanvas);
             window.addEventListener('resize', resizeCanvas);
 
-            // 주아 귀여운 아바타 미리 로드
+            // 주아 아바타 이미지 로드
             avatarImg = new Image();
             avatarImg.src = "https://stimg.afreecatv.com/LOGO/su/sudal0923/sudal0923.jpg";
             avatarImg.onload = () => {
@@ -2509,7 +2540,7 @@
             if (!gameCanvas) return;
             const parent = gameCanvas.parentElement;
             gameCanvas.width = parent.clientWidth;
-            gameCanvas.height = 240; // 고정된 적절한 높이 설정
+            gameCanvas.height = 240; // 고정 높이 설정
             
             player.y = gameCanvas.height - player.size - 10;
             if (!gameActive) {
@@ -2523,12 +2554,10 @@
             
             let clientX;
             if (e.touches && e.touches.length > 0) {
-                // 모바일 터치 처리 (기본 스크롤 방지 포함)
                 e.preventDefault();
                 const rect = gameCanvas.getBoundingClientRect();
                 clientX = e.touches[0].clientX - rect.left;
             } else {
-                // 마우스 처리
                 const rect = gameCanvas.getBoundingClientRect();
                 clientX = e.clientX - rect.left;
             }
@@ -2598,7 +2627,7 @@
 
             ctx.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
 
-            // 1. 아바타 드로잉 (클립핑하여 아주 귀여운 둥글뱅이 원형으로 표현)
+            // 1. 아바타 드로잉 (클립핑하여 원형으로 표현)
             if (avatarImg && avatarImg.complete) {
                 ctx.save();
                 ctx.beginPath();
@@ -2728,7 +2757,7 @@
         // 📅 실시간 출석체크 도장판 시스템 (KST 기준 동작) 📅
         // ==========================================
 
-        // 한국 표준시(KST) 날짜를 YYYY-MM-DD 형태로 변환하는 헬퍼 함수 (서버 시간 오차 극복)
+        // 한국 표준시(KST) 날짜를 YYYY-MM-DD 형태로 변환하는 헬퍼 함수
         function getKSTDateString(offsetDays = 0) {
             const date = new Date();
             const utc = date.getTime() + (date.getTimezoneOffset() * 60000);
@@ -2784,7 +2813,7 @@
             showToast("출석 닉네임이 해제되었습니다.");
         }
 
-        // 오늘 출석 도장 쿵! 찍기
+        // 오늘 출석 도장 찍기
         async function checkAttendanceToday() {
             if (!attendanceUserNickname) return;
             
@@ -2822,15 +2851,13 @@
             }
         }
 
-        // 데이터베이스에 반영
+        // 데이터베이스에 출석부 반영 (보안 규칙에 통과되는 Public 지정경로)
         async function syncAttendanceToDatabase() {
-            if (db) {
-                try {
-                    await db.collection('zooaProfile').doc('attendanceData').set(globalAttendanceData);
-                } catch (e) {
-                    console.error("출석 DB 연동 오류:", e);
-                }
-            } else {
+            try {
+                const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'attendance', 'main');
+                await setDoc(docRef, globalAttendanceData);
+            } catch (e) {
+                console.error("출석 DB 연동 오류, 로컬 캐시 적용:", e);
                 safeSetStorage('yeonZooaAttendanceData', globalAttendanceData);
             }
         }
@@ -2883,7 +2910,6 @@
                 if (stampGrid) {
                     stampGrid.innerHTML = '';
                     const streakCycle = 30;
-                    // 보드판의 현재 사이클 내에서의 진행률 계산 (0~30일차)
                     const currentBoardProgress = record.streak > 0 ? ((record.streak - 1) % streakCycle) + 1 : 0;
 
                     for (let i = 1; i <= 30; i++) {
@@ -2927,7 +2953,7 @@
                 }
             }
 
-            // 오늘 출석한 네잎이들 사이드바 채우기
+            // 오늘 출석한 네잎이들 명단 렌더링
             renderTodayAttendees();
 
             // 개근왕 명예의 전당 탑 5 채우기
@@ -2969,14 +2995,12 @@
             if (!container) return;
             container.innerHTML = "";
 
-            // 정렬 정제 배열화
             const list = Object.keys(globalAttendanceData).map(nick => ({
                 nickname: nick,
                 total: globalAttendanceData[nick].total || 0,
                 streak: globalAttendanceData[nick].streak || 0
             })).filter(u => u.total > 0);
 
-            // 누적 출석 많은 순 -> 연속 출석 많은 순 정렬
             list.sort((a, b) => b.total - a.total || b.streak - a.streak);
 
             const top5 = list.slice(0, 5);
@@ -3001,7 +3025,7 @@
             }
         }
 
-        // 전역 함수 맵핑 바인딩
+        // 전역 함수 맵핑 바인딩 (module 구조에서 HTML 인라인 스크립트 호출 대응용)
         window.openProfileEditModal = openProfileEditModal;
         window.closeProfileEditModal = closeProfileEditModal;
         window.saveProfileChanges = saveProfileChanges;
@@ -3048,6 +3072,7 @@
         window.handleFileSelected = handleFileSelected;
         window.openImageLightbox = openImageLightbox;
         window.closeImageLightbox = closeImageLightbox;
+        window.scrollSlider = scrollSlider;
 
         // 시그니처 풍선 카탈로그 스크립트 전역 맵핑
         window.openSigpoongEditModal = openSigpoongEditModal;
