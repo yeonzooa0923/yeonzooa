@@ -1091,14 +1091,14 @@
                     const doc = await docRef.get();
                     if (doc.exists) {
                         const data = doc.data();
-                        globalUpboData = data.upbo || defaultUpboData;
-                        globalNoticeData = data.notice || defaultNoticeData;
-                        globalScheduleData = data.schedule || defaultScheduleData;
-                        globalProfileData = data.profile || defaultProfileData;
-                        globalBangsellData = data.bangsell || defaultBangsellData;
-                        globalSigpoongData = data.sigpoong || defaultSigpoongData; // 신규 바인딩
+                        globalUpboData = (data.upbo !== undefined && data.upbo !== null) ? data.upbo : JSON.parse(JSON.stringify(defaultUpboData));
+                        globalNoticeData = (data.notice !== undefined && data.notice !== null) ? data.notice : JSON.parse(JSON.stringify(defaultNoticeData));
+                        globalScheduleData = (data.schedule !== undefined && data.schedule !== null) ? data.schedule : JSON.parse(JSON.stringify(defaultScheduleData));
+                        globalProfileData = (data.profile !== undefined && data.profile !== null) ? data.profile : JSON.parse(JSON.stringify(defaultProfileData));
+                        globalBangsellData = (data.bangsell !== undefined && data.bangsell !== null) ? data.bangsell : JSON.parse(JSON.stringify(defaultBangsellData));
+                        globalSigpoongData = (data.sigpoong !== undefined && data.sigpoong !== null) ? data.sigpoong : JSON.parse(JSON.stringify(defaultSigpoongData)); // 신규 바인딩
                         
-                        if (globalProfileData && (!globalProfileData.ddays || globalProfileData.ddays.length === 0)) {
+                        if (globalProfileData && !globalProfileData.ddays) {
                             globalProfileData.ddays = JSON.parse(JSON.stringify(defaultProfileData.ddays));
                         }
                         if (globalProfileData && !globalProfileData.socials) {
@@ -1113,12 +1113,12 @@
                             bangsell: defaultBangsellData,
                             sigpoong: defaultSigpoongData // 신규 저장소
                         });
-                        globalUpboData = defaultUpboData; 
-                        globalNoticeData = defaultNoticeData; 
-                        globalScheduleData = defaultScheduleData; 
-                        globalProfileData = defaultProfileData;
-                        globalBangsellData = defaultBangsellData;
-                        globalSigpoongData = defaultSigpoongData;
+                        globalUpboData = JSON.parse(JSON.stringify(defaultUpboData)); 
+                        globalNoticeData = JSON.parse(JSON.stringify(defaultNoticeData)); 
+                        globalScheduleData = JSON.parse(JSON.stringify(defaultScheduleData)); 
+                        globalProfileData = JSON.parse(JSON.stringify(defaultProfileData));
+                        globalBangsellData = JSON.parse(JSON.stringify(defaultBangsellData));
+                        globalSigpoongData = JSON.parse(JSON.stringify(defaultSigpoongData));
                     }
 
                     // 출석 데이터 실시간 패치
@@ -1141,20 +1141,25 @@
         }
 
         function fallbackToLocal() {
-            globalUpboData = safeGetStorage('yeonZooaUpboData', defaultUpboData);
-            globalNoticeData = safeGetStorage('yeonZooaNoticeData', defaultNoticeData);
-            globalScheduleData = safeGetStorage('yeonZooaScheduleData', defaultScheduleData);
-            globalProfileData = safeGetStorage('yeonZooaProfileData', defaultProfileData);
-            globalBangsellData = safeGetStorage('yeonZooaBangsellData', defaultBangsellData);
-            globalSigpoongData = safeGetStorage('yeonZooaSigpoongData', defaultSigpoongData); // 신규 로컬 백업
+            globalUpboData = safeGetStorage('yeonZooaUpboData', null);
+            if (globalUpboData === null) globalUpboData = JSON.parse(JSON.stringify(defaultUpboData));
+
+            globalNoticeData = safeGetStorage('yeonZooaNoticeData', null);
+            if (globalNoticeData === null) globalNoticeData = JSON.parse(JSON.stringify(defaultNoticeData));
+
+            globalScheduleData = safeGetStorage('yeonZooaScheduleData', null);
+            if (globalScheduleData === null) globalScheduleData = JSON.parse(JSON.stringify(defaultScheduleData));
+
+            globalProfileData = safeGetStorage('yeonZooaProfileData', null);
+            if (globalProfileData === null) globalProfileData = JSON.parse(JSON.stringify(defaultProfileData));
+
+            globalBangsellData = safeGetStorage('yeonZooaBangsellData', null);
+            if (globalBangsellData === null) globalBangsellData = JSON.parse(JSON.stringify(defaultBangsellData));
+
+            globalSigpoongData = safeGetStorage('yeonZooaSigpoongData', null);
+            if (globalSigpoongData === null) globalSigpoongData = JSON.parse(JSON.stringify(defaultSigpoongData));
+
             globalAttendanceData = safeGetStorage('yeonZooaAttendanceData', {});
-            
-            if (globalProfileData && (!globalProfileData.ddays || globalProfileData.ddays.length === 0)) {
-                globalProfileData.ddays = JSON.parse(JSON.stringify(defaultProfileData.ddays));
-            }
-            if (globalProfileData && !globalProfileData.socials) {
-                globalProfileData.socials = JSON.parse(JSON.stringify(defaultProfileData.socials));
-            }
         }
 
         // 파이어베이스 데이터 업로드 공통함수
@@ -1487,7 +1492,12 @@
             if (!grid) return;
             grid.innerHTML = '';
 
-            const items = globalBangsellData.length > 0 ? globalBangsellData : defaultBangsellData;
+            const items = globalBangsellData;
+
+            if (items.length === 0) {
+                grid.innerHTML = `<div class="col-span-full py-10 text-center text-gray-400 font-bold bg-[#faf8f4] dark:bg-[#25211e] rounded-3xl border-2 border-dashed border-[#f1ebd9] dark:border-[#3d332a]">이달의 방셀이 비어있습니다. 관리자 모드에서 추가해 주세요! 👗</div>`;
+                return;
+            }
 
             items.forEach((item, index) => {
                 let badgeColor = "bg-emerald-500";
@@ -1518,7 +1528,12 @@
             if (!grid) return;
             grid.innerHTML = '';
 
-            const items = globalSigpoongData.length > 0 ? globalSigpoongData : defaultSigpoongData;
+            const items = globalSigpoongData;
+
+            if (items.length === 0) {
+                grid.innerHTML = `<div class="col-span-full py-10 text-center text-gray-400 font-bold bg-[#faf8f4] dark:bg-[#25211e] rounded-3xl border-2 border-dashed border-[#f1ebd9] dark:border-[#3d332a]">시그풍 리스트가 비어있습니다. 관리자 모드에서 추가해 주세요! 🎈</div>`;
+                return;
+            }
 
             items.forEach((item, index) => {
                 grid.innerHTML += `
@@ -1991,7 +2006,7 @@
             if (!list) return;
             list.innerHTML = '';
 
-            const items = globalBangsellData.length > 0 ? globalBangsellData : defaultBangsellData;
+            const items = globalBangsellData;
 
             if (items.length === 0) {
                 list.innerHTML = `<div class="text-center text-gray-400 py-6 font-bold">등록된 방셀 카탈로그 상품이 없습니다.</div>`;
@@ -2165,7 +2180,7 @@
             if (!list) return;
             list.innerHTML = '';
 
-            const items = globalSigpoongData.length > 0 ? globalSigpoongData : defaultSigpoongData;
+            const items = globalSigpoongData;
 
             if (items.length === 0) {
                 list.innerHTML = `<div class="text-center text-gray-400 py-6 font-bold">등록된 시그니처 풍선이 없습니다.</div>`;
@@ -2269,7 +2284,7 @@
             document.getElementById('edit-profile-youtube').value = socials.youtube || "";
             document.getElementById('edit-profile-cafe').value = socials.cafe || "";
 
-            if (!globalProfileData.ddays || globalProfileData.ddays.length === 0) {
+            if (!globalProfileData.ddays) {
                 globalProfileData.ddays = JSON.parse(JSON.stringify(defaultProfileData.ddays));
             }
 
