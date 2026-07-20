@@ -865,7 +865,7 @@
                 </div>
                 <div class="p-5 flex-grow overflow-y-auto space-y-4" id="bangsell-edit-list"></div>
                 <div class="p-4 border-t-2 border-dashed border-[#f1ebd9] dark:border-[#3d332a] bg-[#faf8f4] dark:bg-[#181614] space-y-3">
-                    <p class="text-xs font-bold text-brand-dark dark:text-brand"><i class="fa-solid fa-circle-info mr-1"></i> 새 의상/헤어 아이템 추가하기</p>
+                    <p class="text-xs font-bold text-brand-dark dark:text-brand"><i class="fa-solid fa-circle-info mr-1"></i> 새 의상/헤어 아이템 추가하기 (PNG 투명 프사 지원)</p>
                     <div class="grid grid-cols-2 gap-2">
                         <input type="text" id="new-bangsell-title" class="bg-white dark:bg-[#25211e] border-2 border-[#f1ebd9] dark:border-[#3d332a] text-gray-900 dark:text-gray-200 text-xs rounded-xl p-2.5 outline-none font-bold" placeholder="아이템명 (예: 파스텔 수달 가디건)">
                         <select id="new-bangsell-category" class="bg-white dark:bg-[#25211e] border-2 border-[#f1ebd9] dark:border-[#3d332a] text-gray-900 dark:text-gray-200 text-xs rounded-xl p-2.5 outline-none font-bold">
@@ -904,7 +904,7 @@
                 </div>
                 <div class="p-5 flex-grow overflow-y-auto space-y-4" id="sigpoong-edit-list"></div>
                 <div class="p-4 border-t-2 border-dashed border-[#f1ebd9] dark:border-[#3d332a] bg-[#faf8f4] dark:bg-[#181614] space-y-3">
-                    <p class="text-xs font-bold text-pink-500 dark:text-rose-400"><i class="fa-solid fa-circle-info mr-1"></i> 새 시그풍 정보 추가하기</p>
+                    <p class="text-xs font-bold text-pink-500 dark:text-rose-400"><i class="fa-solid fa-circle-info mr-1"></i> 새 시그풍 정보 추가하기 (PNG 투명 프사 지원)</p>
                     <div class="grid grid-cols-2 gap-2">
                         <input type="text" id="new-sigpoong-count" class="bg-white dark:bg-[#25211e] border-2 border-[#f1ebd9] dark:border-[#3d332a] text-gray-900 dark:text-gray-200 text-xs rounded-xl p-2.5 outline-none font-bold" placeholder="풍선 개수 (예: 100, 282, 1004)">
                         <input type="text" id="new-sigpoong-title" class="bg-white dark:bg-[#25211e] border-2 border-[#f1ebd9] dark:border-[#3d332a] text-gray-900 dark:text-gray-200 text-xs rounded-xl p-2.5 outline-none font-bold" placeholder="타이틀 (예: 윙크주아)">
@@ -1101,7 +1101,6 @@
             if (db) {
                 if (loadingInd) loadingInd.classList.remove('hidden');
                 try {
-                    // Firestore 단일 문서 1MB 사이즈 초과 문제를 피하기 위해 개별 문서로 분산 조회
                     const keys = ['profile', 'upbo', 'notice', 'schedule', 'bangsell', 'sigpoong'];
                     const promises = keys.map(key => db.collection('zooaProfile').doc(key).get());
                     const docs = await Promise.all(promises);
@@ -1117,13 +1116,11 @@
                                 const serverUpdated = serverData.lastUpdated || 0;
 
                                 if (localUpdated > serverUpdated) {
-                                    // 로컬 데이터가 최신일 경우 서버에 즉시 오버라이트 주입
                                     const localData = safeGetStorage(`yeonZooa${key.charAt(0).toUpperCase() + key.slice(1)}Data`, null);
                                     if (localData !== null) {
                                         updateFirestore(key, localData);
                                     }
                                 } else {
-                                    // 서버 데이터가 최신일 경우 로컬 변수에 적용
                                     const parsedData = serverData.data;
                                     if (key === 'profile') globalProfileData = parsedData;
                                     else if (key === 'upbo') globalUpboData = parsedData;
@@ -1135,7 +1132,6 @@
                                 }
                             }
                         } else {
-                            // 문서가 생성되지 않은 초기 환경 세팅
                             const localData = safeGetStorage(`yeonZooa${key.charAt(0).toUpperCase() + key.slice(1)}Data`, null);
                             const initialData = localData || getDefaultDataByKey(key);
                             updateFirestore(key, initialData);
@@ -1154,7 +1150,6 @@
                         renderAll();
                     }
 
-                    // 출석 데이터 연동
                     const attendRef = db.collection('zooaProfile').doc('attendanceData');
                     const attendDoc = await attendRef.get();
                     if (attendDoc.exists) {
@@ -1178,7 +1173,6 @@
             
             if (db) {
                 try {
-                    // 각 도큐먼트의 1MB 한도를 보장하기 위해 zooaProfile 아래 컬렉션 도큐먼트로 쪼개어 저장
                     await db.collection('zooaProfile').doc(key).set({ 
                         data: data,
                         lastUpdated: now
@@ -1507,7 +1501,7 @@
                         <div class="aspect-[4/5] w-full bg-white dark:bg-zinc-900 relative overflow-hidden border-b-2 border-dashed border-[#f1ebd9] dark:border-[#3d332a] flex items-center justify-center">
                             <img src="${item.url || 'https://placehold.co/400x500/e6f9ed/047857?text=Outfit'}" 
                                  alt="${item.title}" 
-                                 class="w-full h-full object-contain transition-transform duration-500 group-hover:scale-[1.03]" 
+                                 class="max-w-full max-h-full object-contain transition-transform duration-500 group-hover:scale-[1.03]" 
                                  onerror="this.src='https://placehold.co/400x500/e6f9ed/047857?text=🍀+Yeon+Zooa'">
                             <span class="absolute top-3 left-3 text-[10px] text-white font-bold px-2.5 py-1 rounded-full ${badgeColor} shadow-md z-10">${item.category}</span>
                         </div>
@@ -1538,7 +1532,7 @@
                         <div class="aspect-square w-full bg-white dark:bg-zinc-900 relative overflow-hidden border-b-2 border-dashed border-[#f1ebd9] dark:border-[#3d332a] flex items-center justify-center">
                             <img src="${item.url || 'https://placehold.co/400x400/fff1f2/9f1239?text=Balloon'}" 
                                  alt="${item.title}" 
-                                 class="w-full h-full object-contain transition-transform duration-500 group-hover:scale-[1.03]" 
+                                 class="max-w-full max-h-full object-contain transition-transform duration-500 group-hover:scale-[1.03]" 
                                  onerror="this.src='https://placehold.co/400x400/fff1f2/9f1239?text=🎈+Yeon+Zooa'">
                             <span class="absolute top-3 left-3 text-[10px] text-white font-black px-3 py-1 rounded-full bg-gradient-to-r from-pink-500 to-rose-500 shadow-md flex items-center gap-1 z-10">
                                 <i class="fa-solid fa-gift text-[9px] animate-bounce"></i> ${item.count}개
@@ -2051,13 +2045,21 @@
                     limitW = 800;
                     limitH = 800;
                 } else if (mode === 'banner') {
-                    // 해상도는 선명하게 유지하면서 용량은 기하급수적으로 줄이도록 가로 최대 1200px 캔버스 셋팅
                     limitW = 1200;
                     limitH = 400;
                 }
 
-                const compressed = await compressImage(file, limitW, limitH);
+                // PNG 및 일반 이미지 압축 실행
+                let compressed = await compressImage(file, limitW, limitH);
                 
+                // Firestore 업로드 한도(1MB) 및 성능 보존을 위한 용량 제한 가드레일 (750KB 초과 시 70% 비율로 축소 재가공)
+                if (compressed.length > 750 * 1024) {
+                    if (file.type === 'image/png') {
+                        showToast("PNG 이미지 용량이 커서 최적의 크기로 자동 다운사이징 조절합니다... ⚙️");
+                        compressed = await compressImage(file, limitW * 0.7, limitH * 0.7);
+                    }
+                }
+
                 if (mode === 'banner') {
                     tempSelectedBannerBase64 = compressed;
                 } else {
@@ -2106,8 +2108,13 @@
                         ctx.clearRect(0, 0, width, height);
                         ctx.drawImage(img, 0, 0, width, height);
                         
-                        // 최고 화질 유지비율(0.8) 세팅
-                        resolve(canvas.toDataURL('image/jpeg', 0.8));
+                        // 업로드한 파일 타입이 PNG인지 체크하여 투명도(Alpha Channel)가 깨지지 않고 그대로 보존되도록 구현!
+                        const mimeType = file.type || 'image/jpeg';
+                        if (mimeType === 'image/png') {
+                            resolve(canvas.toDataURL('image/png'));
+                        } else {
+                            resolve(canvas.toDataURL('image/jpeg', 0.8));
+                        }
                     };
                 };
                 reader.onerror = error => reject(error);
