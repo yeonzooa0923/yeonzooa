@@ -430,7 +430,7 @@
             <div class="bg-white dark:bg-[#201d1a] rounded-3xl shadow-[0_12px_40px_rgba(241,235,217,0.5)] dark:shadow-none border-4 border-brand-dark dark:border-brand-deep/70 p-6 transition-all duration-300">
                 <div class="border-b-2 border-dashed border-[#f1ebd9] dark:border-[#2e2620] pb-4 mb-6">
                     <span class="text-brand-dark dark:text-brand font-bold text-xs tracking-wider block mb-1">YEON ZOOA PLAYGROUND</span>
-                    <h2 class="text-3xl font-bold font-cute text-gray-800 dark:text-white flex items-center gap-2"><span class="animate-pulse">🃏</span> 주아의 클로버 타로 놀이터</h2>
+                    <h2 class="text-3xl font-bold font-cute text-gray-800 dark:text-white flex items-center justify-center gap-2"><span class="animate-pulse">🃏</span> 주아의 클로버 타로 놀이터</h2>
                 </div>
 
                 <div class="max-w-xl mx-auto w-full">
@@ -752,7 +752,7 @@
                 </div>
                 <div class="p-5 flex-grow overflow-y-auto space-y-4" id="bangsell-edit-list"></div>
                 <div class="p-4 border-t-2 border-dashed border-[#f1ebd9] dark:border-[#3d332a] bg-[#faf8f4] dark:bg-[#181614] space-y-3">
-                    <p class="text-xs font-bold text-brand-dark dark:text-brand"><i class="fa-solid fa-circle-info mr-1"></i> 새 의상/헤어 아이템 추가하기 (PNG 투명 프사 지원)</p>
+                    <p class="text-xs font-bold text-brand-dark dark:text-brand"><i class="fa-solid fa-circle-info mr-1"></i> 새 의상/헤어 추가하기 (투명 PNG 지원)</p>
                     <div class="grid grid-cols-2 gap-2">
                         <input type="text" id="new-bangsell-title" class="bg-white dark:bg-[#25211e] border-2 border-[#f1ebd9] dark:border-[#3d332a] text-gray-900 dark:text-gray-200 text-xs rounded-xl p-2.5 outline-none font-bold" placeholder="아이템명 (예: 파스텔 수달 가디건)">
                         <select id="new-bangsell-category" class="bg-white dark:bg-[#25211e] border-2 border-[#f1ebd9] dark:border-[#3d332a] text-gray-900 dark:text-gray-200 text-xs rounded-xl p-2.5 outline-none font-bold">
@@ -791,7 +791,7 @@
                 </div>
                 <div class="p-5 flex-grow overflow-y-auto space-y-4" id="sigpoong-edit-list"></div>
                 <div class="p-4 border-t-2 border-dashed border-[#f1ebd9] dark:border-[#3d332a] bg-[#faf8f4] dark:bg-[#181614] space-y-3">
-                    <p class="text-xs font-bold text-pink-500 dark:text-rose-400"><i class="fa-solid fa-circle-info mr-1"></i> 새 시그풍 정보 추가하기 (PNG 투명 프사 지원)</p>
+                    <p class="text-xs font-bold text-pink-500 dark:text-rose-400"><i class="fa-solid fa-circle-info mr-1"></i> 새 시그풍 추가하기 (투명 PNG 지원)</p>
                     <div class="grid grid-cols-2 gap-2">
                         <input type="text" id="new-sigpoong-count" class="bg-white dark:bg-[#25211e] border-2 border-[#f1ebd9] dark:border-[#3d332a] text-gray-900 dark:text-gray-200 text-xs rounded-xl p-2.5 outline-none font-bold" placeholder="풍선 개수 (예: 100, 282, 1004)">
                         <input type="text" id="new-sigpoong-title" class="bg-white dark:bg-[#25211e] border-2 border-[#f1ebd9] dark:border-[#3d332a] text-gray-900 dark:text-gray-200 text-xs rounded-xl p-2.5 outline-none font-bold" placeholder="타이틀 (예: 윙크주아)">
@@ -944,11 +944,6 @@
             } catch (e) {}
         }
 
-        // 도큐먼트 바이트 크기 추정 계산기 (1MB 방어용)
-        function getByteSize(obj) {
-            return new Blob([JSON.stringify(obj)]).size;
-        }
-
         function fallbackToLocal() {
             globalUpboData = safeGetStorage('yeonZooaUpboData', null) || JSON.parse(JSON.stringify(defaultUpboData));
             globalNoticeData = safeGetStorage('yeonZooaNoticeData', null) || JSON.parse(JSON.stringify(defaultNoticeData));
@@ -972,8 +967,6 @@
             if (key === 'upbo') return defaultUpboData;
             if (key === 'notice') return defaultNoticeData;
             if (key === 'schedule') return defaultScheduleData;
-            if (key === 'bangsell') return defaultBangsellData;
-            if (key === 'sigpoong') return defaultSigpoongData;
             return null;
         }
 
@@ -989,7 +982,8 @@
             if (db) {
                 if (loadingInd) loadingInd.classList.remove('hidden');
                 try {
-                    const keys = ['profile', 'upbo', 'notice', 'schedule', 'bangsell', 'sigpoong'];
+                    // 1. 단일 다큐먼트 설정 로드 (프로필, 업보, 공지, 일정)
+                    const keys = ['profile', 'upbo', 'notice', 'schedule'];
                     const promises = keys.map(key => db.collection('zooaProfile').doc(key).get());
                     const docs = await Promise.all(promises);
 
@@ -1014,8 +1008,6 @@
                                     else if (key === 'upbo') globalUpboData = parsedData;
                                     else if (key === 'notice') globalNoticeData = parsedData;
                                     else if (key === 'schedule') globalScheduleData = parsedData;
-                                    else if (key === 'bangsell') globalBangsellData = parsedData;
-                                    else if (key === 'sigpoong') globalSigpoongData = parsedData;
                                     updatedAny = true;
                                 }
                             }
@@ -1025,6 +1017,50 @@
                             updateFirestore(key, initialData);
                         }
                     });
+
+                    // 2. 의상(Bangsell) 개별 다큐먼트 컬렉션 수집 및 정렬 (1MB 한도 완전 우회)
+                    const bangsellSnapshot = await db.collection('zooaProfile_bangsell').get();
+                    let tempBangsell = [];
+                    bangsellSnapshot.forEach(doc => {
+                        let item = doc.data();
+                        item.id = doc.id;
+                        tempBangsell.push(item);
+                    });
+                    
+                    if (tempBangsell.length > 0) {
+                        tempBangsell.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+                        globalBangsellData = tempBangsell;
+                        safeSetStorage('yeonZooaBangsellData', globalBangsellData);
+                        updatedAny = true;
+                    } else if (globalBangsellData.length > 0) {
+                        // DB가 완전히 비었을 시 로컬 기본값 업로드 및 마이그레이션 실행
+                        for (let item of globalBangsellData) {
+                            item.createdAt = item.createdAt || Date.now();
+                            const docRef = await db.collection('zooaProfile_bangsell').add(item);
+                            item.id = docRef.id;
+                        }
+                    }
+
+                    // 3. 시그풍(Sigpoong) 개별 다큐먼트 컬렉션 수집 및 정렬 (1MB 한도 완전 우회)
+                    const sigpoongSnapshot = await db.collection('zooaProfile_sigpoong').get();
+                    let tempSigpoong = [];
+                    sigpoongSnapshot.forEach(doc => {
+                        let item = doc.data();
+                        item.id = doc.id;
+                        tempSigpoong.push(item);
+                    });
+
+                    if (tempSigpoong.length > 0) {
+                        tempSigpoong.sort((a, b) => parseInt(a.count.replace(/[^0-9]/g, '')) - parseInt(b.count.replace(/[^0-9]/g, '')));
+                        globalSigpoongData = tempSigpoong;
+                        safeSetStorage('yeonZooaSigpoongData', globalSigpoongData);
+                        updatedAny = true;
+                    } else if (globalSigpoongData.length > 0) {
+                        for (let item of globalSigpoongData) {
+                            const docRef = await db.collection('zooaProfile_sigpoong').add(item);
+                            item.id = docRef.id;
+                        }
+                    }
 
                     if (globalProfileData && !globalProfileData.ddays) {
                         globalProfileData.ddays = JSON.parse(JSON.stringify(defaultProfileData.ddays));
@@ -1045,13 +1081,6 @@
         }
 
         async function updateFirestore(key, data) {
-            // 업로드 전 바이트 사이즈 제한 가드레일 (1MB 초과 시 저장 거부하여 콘솔 오류 방지)
-            const currentSize = getByteSize(data);
-            if (currentSize > 1000 * 1024) { // 1000KB 이상 저장 거부
-                showToast(`[용량 제한] 의상 데이터 크기(${Math.round(currentSize/1024)}KB)가 1MB 한도에 도달했습니다! 새로운 옷을 올리기 위해 불필요한 기존 의상을 삭제해 주세요.`);
-                return false;
-            }
-
             const now = Date.now();
             safeSetStorage('yeonZooaLastUpdated', now);
             safeSetStorage(`yeonZooa${key.charAt(0).toUpperCase() + key.slice(1)}Data`, data);
@@ -1062,11 +1091,10 @@
                         data: data,
                         lastUpdated: now
                     }, { merge: true });
-                    console.log(`Firestore 개별 동기화 성공: [${key}] (용량: ${Math.round(currentSize/1024)}KB)`);
+                    console.log(`Firestore 개별 동기화 성공: [${key}]`);
                     return true;
                 } catch (error) {
                     console.error(`Firestore 저장 실패 [${key}]:`, error);
-                    showToast(`Firestore 전송에 실패했습니다. 용량이 너무 큽니다.`);
                     return false;
                 }
             }
@@ -1921,18 +1949,18 @@
             if (mode === 'banner') labelId = 'banner-file-upload-label';
 
             const fileLabel = document.getElementById(labelId);
-            if (fileLabel) fileLabel.innerHTML = `<i class="fa-solid fa-spinner animate-spin mr-1"></i>최적화 가공 중...`;
+            if (fileLabel) fileLabel.innerHTML = `<i class="fa-solid fa-spinner animate-spin mr-1"></i>최적화 압축 중...`;
 
             try {
-                // 용량 초과 에러 해결: 최대 해상도를 선명한 수준(500px)으로 낮추고 고효율 압축을 강제 적용합니다.
-                let limitW = 500;
-                let limitH = 620;
+                // 개별 문서화로 저장 용량이 대폭 해제되었으므로 해상도 화질 한도를 800px~1200px 수준으로 대폭 높여 고화질 제공
+                let limitW = 800;
+                let limitH = 1000;
                 if (mode === 'sigpoong') {
-                    limitW = 450;
-                    limitH = 450;
+                    limitW = 800;
+                    limitH = 800;
                 } else if (mode === 'banner') {
-                    limitW = 1000;
-                    limitH = 330;
+                    limitW = 1200;
+                    limitH = 400;
                 }
 
                 const compressed = await compressImage(file, limitW, limitH);
@@ -1943,12 +1971,12 @@
                     tempSelectedBase64Image = compressed;
                 }
 
-                if (fileLabel) fileLabel.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-500 mr-1"></i>준비 완료 (${Math.round(compressed.length / 1024)}KB)`;
-                showToast("사진이 가볍고 선명하게 최적화 압축되었습니다! 📸");
+                if (fileLabel) fileLabel.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-500 mr-1"></i>최적화 완료 (${Math.round(compressed.length / 1024)}KB)`;
+                showToast("사진이 최적화 가공되었습니다! 📸");
             } catch (err) {
                 console.error("이미지 가공 에러:", err);
                 if (fileLabel) fileLabel.innerHTML = `<i class="fa-solid fa-circle-xmark text-rose-500 mr-1"></i>실패`;
-                showToast("사진 파일 처리 도중 에러가 발생했습니다.");
+                showToast("사진 파일을 정상적으로 처리하지 못했습니다.");
             }
         }
 
@@ -1964,8 +1992,7 @@
                         let width = img.width;
                         let height = img.height;
                         
-                        // Strict aspect-ratio based downsizing to avoid huge memory/DB impact
-                        if (width > maxWidth || height > maxHeight) {
+                        if (width > maxHeight || height > maxHeight) {
                             if (width > height) {
                                 height = Math.round((height * maxWidth) / width);
                                 width = maxWidth;
@@ -1984,13 +2011,13 @@
                         ctx.clearRect(0, 0, width, height);
                         ctx.drawImage(img, 0, 0, width, height);
                         
-                        const mimeType = file.type || 'image/jpeg';
+                        const mimeType = file.type || 'image/png';
                         if (mimeType === 'image/png') {
-                            // PNG 파일은 투명 배경을 완벽 보존하도록 함과 동시에 해상도 스케일링을 한층 더 타이트하게 적용하여 용량 압축
+                            // PNG 투명화(Alpha channel) 보전 및 선명화 처리
                             resolve(canvas.toDataURL('image/png'));
                         } else {
-                            // 일반 이미지는 용량 다이어트를 위해 압축 퀄리티를 0.6으로 낮춤 (저화질로 느껴지지 않음)
-                            resolve(canvas.toDataURL('image/jpeg', 0.6));
+                            // 일반 Jpeg 이미지는 고품질 85% 압축율 적용
+                            resolve(canvas.toDataURL('image/jpeg', 0.85));
                         }
                     };
                 };
@@ -2020,19 +2047,28 @@
                 finalImageUrl = 'https://' + finalImageUrl;
             }
 
-            // 임시로 추가할 데이터 가상 로드
-            const updatedList = [
-                { title: title, category: category, description: description, url: finalImageUrl },
-                ...globalBangsellData
-            ];
+            const newItem = {
+                title: title,
+                category: category,
+                description: description,
+                url: finalImageUrl,
+                createdAt: Date.now()
+            };
 
-            // 업로드 전 도큐먼트 바이트 유효성 선검증
-            const success = await updateFirestore('bangsell', updatedList);
-            if (!success) {
-                return; // 가드레일 작동 시 차단
+            if (db) {
+                try {
+                    // 각 아이템을 별개의 독립 문서(Document)로 컬렉션에 업로드 (1MB 초과 차단 해제)
+                    const docRef = await db.collection('zooaProfile_bangsell').add(newItem);
+                    newItem.id = docRef.id;
+                } catch (e) {
+                    console.error("Firestore 추가 실패:", e);
+                    showToast("서버에 저장하지 못했습니다.");
+                    return;
+                }
             }
 
-            globalBangsellData = updatedList;
+            globalBangsellData.unshift(newItem);
+            safeSetStorage('yeonZooaBangsellData', globalBangsellData);
             
             titleInput.value = '';
             descInput.value = '';
@@ -2049,12 +2085,20 @@
             showToast(`새로운 ${category} 아이템이 등록되었습니다. 🍀`);
         }
 
-        function deleteBangsellItem(index) {
+        async function deleteBangsellItem(index) {
+            const item = globalBangsellData[index];
+            if (db && item.id) {
+                try {
+                    await db.collection('zooaProfile_bangsell').doc(item.id).delete();
+                } catch (e) {
+                    console.error("Firestore 삭제 실패:", e);
+                }
+            }
             globalBangsellData.splice(index, 1);
-            updateFirestore('bangsell', globalBangsellData);
+            safeSetStorage('yeonZooaBangsellData', globalBangsellData);
             renderBangsellEditList();
             renderBangsell();
-            showToast("아이템이 카탈로그에서 제거되었습니다.");
+            showToast("의상이 카탈로그에서 제거되었습니다.");
         }
 
         function openSigpoongEditModal() {
@@ -2129,19 +2173,28 @@
                 finalImageUrl = 'https://' + finalImageUrl;
             }
 
-            const updatedList = [
-                { count: count, title: title, description: description, url: finalImageUrl },
-                ...globalSigpoongData
-            ];
-            
-            updatedList.sort((a, b) => parseInt(a.count.replace(/[^0-9]/g, '')) - parseInt(b.count.replace(/[^0-9]/g, '')));
+            const newItem = {
+                count: count,
+                title: title,
+                description: description,
+                url: finalImageUrl
+            };
 
-            const success = await updateFirestore('sigpoong', updatedList);
-            if (!success) {
-                return;
+            if (db) {
+                try {
+                    // 각 시그풍을 별개의 독립 문서(Document)로 컬렉션에 업로드 (1MB 초과 해제)
+                    const docRef = await db.collection('zooaProfile_sigpoong').add(newItem);
+                    newItem.id = docRef.id;
+                } catch (e) {
+                    console.error("Firestore 추가 실패:", e);
+                    showToast("서버에 저장하지 못했습니다.");
+                    return;
+                }
             }
 
-            globalSigpoongData = updatedList;
+            globalSigpoongData.unshift(newItem);
+            globalSigpoongData.sort((a, b) => parseInt(a.count.replace(/[^0-9]/g, '')) - parseInt(b.count.replace(/[^0-9]/g, '')));
+            safeSetStorage('yeonZooaSigpoongData', globalSigpoongData);
             
             countInput.value = '';
             titleInput.value = '';
@@ -2159,9 +2212,17 @@
             showToast(`신규 시그풍(${count}개) 정보가 추가되었습니다! 🎈`);
         }
 
-        function deleteSigpoongItem(index) {
+        async function deleteSigpoongItem(index) {
+            const item = globalSigpoongData[index];
+            if (db && item.id) {
+                try {
+                    await db.collection('zooaProfile_sigpoong').doc(item.id).delete();
+                } catch (e) {
+                    console.error("Firestore 삭제 실패:", e);
+                }
+            }
             globalSigpoongData.splice(index, 1);
-            updateFirestore('sigpoong', globalSigpoongData);
+            safeSetStorage('yeonZooaSigpoongData', globalSigpoongData);
             renderSigpoongEditList();
             renderSigpoong();
             showToast("시그풍이 리스트에서 안전하게 제거되었습니다.");
