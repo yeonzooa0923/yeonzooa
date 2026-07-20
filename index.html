@@ -791,7 +791,6 @@
                 </div>
                 
                 <div class="p-5 flex-grow overflow-y-auto space-y-6">
-                    <!-- Banner Setting with direct File Upload option -->
                     <div>
                         <h4 class="text-base font-bold text-gray-900 dark:text-white mb-2"><i class="fa-solid fa-image text-brand-dark"></i> 배너 이미지 설정</h4>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -1093,7 +1092,7 @@
         let deleteConfirmState = false; // 삭제 버퍼 상태 체크
         let attendanceUserNickname = ""; // 현재 로그인 중인 네잎이 닉네임
 
-        // 파일 올리기 임시 홀더 (방셀/시그풍용 및 배너용 분리)
+        // 파일 올리기 임시 홀더
         let tempSelectedBase64Image = "";
         let tempSelectedBannerBase64 = "";
 
@@ -2082,7 +2081,7 @@
             });
         }
 
-        // 이미지 파일 선택 시 즉각적인 압축처리
+        // 이미지 파일 선택 시 즉각적인 고화질 최적화 압축처리
         async function handleFileSelected(input, mode) {
             const file = input.files[0];
             if (!file) return;
@@ -2092,20 +2091,21 @@
             if (mode === 'banner') labelId = 'banner-file-upload-label';
 
             const fileLabel = document.getElementById(labelId);
-            if (fileLabel) fileLabel.innerHTML = `<i class="fa-solid fa-spinner animate-spin mr-1"></i>압축 중...`;
+            if (fileLabel) fileLabel.innerHTML = `<i class="fa-solid fa-spinner animate-spin mr-1"></i>변환 중...`;
 
             try {
-                // 규격별 분기 압축 설정
-                let limitW = 400;
-                let limitH = 500;
+                // 초고화질 매칭을 위해 규격 한계 대폭 상향
+                let limitW = 1000;
+                let limitH = 1250;
                 if (mode === 'sigpoong') {
-                    limitW = 400;
-                    limitH = 400;
+                    limitW = 800;
+                    limitH = 800;
                 } else if (mode === 'banner') {
-                    limitW = 1200;
-                    limitH = 450;
+                    limitW = 1920;
+                    limitH = 640;
                 }
 
+                // 고화질 압축 (Quality 0.9 설정)
                 const compressed = await compressImage(file, limitW, limitH);
                 
                 if (mode === 'banner') {
@@ -2114,15 +2114,16 @@
                     tempSelectedBase64Image = compressed;
                 }
 
-                if (fileLabel) fileLabel.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-500 mr-1"></i>선택됨 (${Math.round(compressed.length / 1024)}KB)`;
-                showToast("사진이 가볍게 최적화 압축되어 준비되었습니다! 📸");
+                if (fileLabel) fileLabel.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-500 mr-1"></i>완료 (${Math.round(compressed.length / 1024)}KB)`;
+                showToast("사진이 고화질 원본 느낌을 유지하며 최적화되었습니다! 📸");
             } catch (err) {
                 console.error("이미지 가공 에러:", err);
                 if (fileLabel) fileLabel.innerHTML = `<i class="fa-solid fa-circle-xmark text-rose-500 mr-1"></i>실패`;
-                showToast("사진 파일을 읽어오지 못했습니다.");
+                showToast("사진 파일을 처리하지 못했습니다.");
             }
         }
 
+        // 이미지 가볍고 선명하게 캔버스 크기 제어 및 고화질 압축 (0.9 선명도 설정)
         function compressImage(file, maxWidth, maxHeight) {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
@@ -2135,6 +2136,7 @@
                         let width = img.width;
                         let height = img.height;
                         
+                        // 비율 유지 한도 계산
                         if (width > height) {
                             if (width > maxWidth) {
                                 height = Math.round((height * maxWidth) / width);
@@ -2151,10 +2153,13 @@
                         canvas.height = height;
                         const ctx = canvas.getContext('2d');
                         
+                        ctx.imageSmoothingEnabled = true;
+                        ctx.imageSmoothingQuality = 'high';
                         ctx.clearRect(0, 0, width, height);
                         ctx.drawImage(img, 0, 0, width, height);
                         
-                        resolve(canvas.toDataURL('image/jpeg', 0.5));
+                        // Quality를 0.9(90%)로 대폭 늘려 선명도 극대화
+                        resolve(canvas.toDataURL('image/jpeg', 0.9));
                     };
                 };
                 reader.onerror = error => reject(error);
@@ -2341,7 +2346,7 @@
             document.getElementById('edit-profile-youtube').value = socials.youtube || "";
             document.getElementById('edit-profile-cafe').value = socials.cafe || "";
 
-            // 배너 선택 필드 초기화
+            // 배너 임시 홀더 초기화 및 레이블 설정
             tempSelectedBannerBase64 = "";
             const bannerFileLabel = document.getElementById('banner-file-upload-label');
             if (bannerFileLabel) bannerFileLabel.innerHTML = `<i class="fa-solid fa-file-image mr-1.5"></i>배너 파일 선택`;
@@ -2406,7 +2411,7 @@
             const parse = (str) => str.split(',').map(item => item.trim()).filter(item => item !== '');
             const bannerTextUrl = document.getElementById('edit-profile-banner').value.trim();
 
-            // 이미지 업로드 파일이 선택되어 있다면 base64 데이터를 사용하고, 그렇지 않다면 텍스트 URL 사용
+            // 업로드한 파일(tempSelectedBannerBase64)이 있으면 우선 사용, 없으면 입력된 텍스트 URL 사용
             globalProfileData.bannerUrl = tempSelectedBannerBase64 || bannerTextUrl || "https://cdn.discordapp.com/attachments/1525157421717127394/1527440071471665192/71938f3c4b417597.png?ex=6a5aaaeb&is=6a59596b&hm=d9e05c51c633fc2b17a0879b56c7131810f21145564ec1f7acf8f689843856dc&";
             
             globalProfileData.introText = document.getElementById('edit-profile-intro').value; 
