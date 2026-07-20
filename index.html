@@ -47,8 +47,13 @@
     </script>
     
     <style>
-        /* 한글 최고 인기 동글동글 심플 서체 NanumSquareRound 불러오기 */
-        @import url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_two@1.0/NanumSquareRound.woff');
+        /* 한글 최고 인기 동글동글 심플 서체 NanumSquareRound 웹폰트 표준 규격 선언 */
+        @font-face {
+            font-family: 'NanumSquareRound';
+            src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_two@1.0/NanumSquareRound.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+        }
 
         html { scroll-behavior: smooth; }
         
@@ -198,10 +203,10 @@
             
             <!-- Header Card (Cloud-like bubbly shape) -->
             <div class="bg-white dark:bg-[#201d1a] rounded-3xl shadow-[0_12px_40px_rgba(241,235,217,0.5)] dark:shadow-none border-4 border-[#f1ebd9] dark:border-[#2e2620] overflow-hidden transition-all duration-300">
-                <!-- Cover Image -->
+                <!-- Cover Image (Stable Unsplash green leaves illustration) -->
                 <div class="h-36 sm:h-56 w-full relative overflow-hidden bg-brand-light dark:bg-[#2a2521]">
                     <img id="profile-banner-img" src="" 
-                         onerror="this.src='https://placehold.co/1200x400/a7f3d0/047857?text=🍀+Zooa+Station'" 
+                         onerror="this.src='https://images.unsplash.com/photo-1528183429752-a97d0bf99b5a?q=80&w=1200&auto=format&fit=crop'" 
                          class="w-full h-full object-cover absolute inset-0" alt="방송국 배너">
                     <div class="absolute inset-0 bg-gradient-to-t from-white/30 dark:from-black/30"></div>
                 </div>
@@ -232,7 +237,7 @@
                             </div>
                         </div>
 
-                        <!-- Social Links with dynamic anchors -->
+                        <!-- Social Links -->
                         <div class="flex justify-center sm:justify-start gap-4">
                             <a id="profile-soop-link" href="#" target="_blank" class="w-12 h-12 rounded-full bg-sky-400 text-white flex items-center justify-center hover:bg-sky-500 transition-all hover:scale-110 active:scale-90 shadow-md squishy" title="SOOP 방송국">
                                 <i class="fa-solid fa-tv text-lg"></i>
@@ -248,9 +253,9 @@
                 </div>
             </div>
 
+            <!-- Intro, Dday grids -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                
-                <!-- Intro Card (Wobbly Cloud card with updated header "주아는 !") -->
+                <!-- Intro Card -->
                 <div class="bg-white dark:bg-[#201d1a] rounded-3xl shadow-[0_8px_30px_rgba(241,235,217,0.4)] dark:shadow-none border-4 border-[#f1ebd9] dark:border-[#2e2620] p-6 transition-colors duration-300 relative flex flex-col justify-between">
                     <div>
                         <div class="flex items-center justify-between mb-4">
@@ -281,10 +286,9 @@
                         </div>
                     </div>
                 </div>
-
             </div>
 
-            <!-- Broadcast Info Card (Cozy green style) -->
+            <!-- Broadcast Info Card -->
             <div class="bg-white dark:bg-[#201d1a] rounded-3xl shadow-[0_8px_30px_rgba(241,235,217,0.4)] dark:shadow-none border-4 border-[#f1ebd9] dark:border-[#2e2620] p-6 transition-colors duration-300">
                 <h3 class="flex items-center gap-2 text-xl font-bold font-cute text-gray-900 dark:text-white mb-5">
                     <span class="text-xl">📺</span> 방송 안내판
@@ -325,7 +329,6 @@
                     </div>
                 </div>
             </div>
-
         </section>
 
         <!-- 2. Notice & Schedule Grid -->
@@ -343,7 +346,7 @@
                         </button>
                     </div>
                     <ul id="notice-list" class="space-y-4">
-                        <!-- 동적 렌더링 영역 -->
+                        <!-- Dynamic notice cards -->
                     </ul>
                 </div>
             </section>
@@ -362,13 +365,13 @@
                     </div>
                     
                     <div id="schedule-list" class="space-y-3">
-                        <!-- 동적 렌더링 영역 -->
+                        <!-- Dynamic schedule list -->
                     </div>
                 </div>
             </section>
         </div>
 
-        <!-- 2.5 이달의 방셀 의상 & 헤어 섹션 -->
+        <!-- 3. Outfit Collection -->
         <section id="bangsell" class="scroll-mt-24">
             <div class="bg-white dark:bg-[#201d1a] rounded-3xl shadow-[0_12px_40px_rgba(241,235,217,0.5)] dark:shadow-none border-4 border-brand-dark dark:border-brand-deep/70 p-6 transition-all duration-300">
                 <div class="flex items-center justify-between border-b-2 border-dashed border-[#f1ebd9] dark:border-[#2e2620] pb-4 mb-6">
@@ -378,8 +381,6 @@
                             <span class="animate-pulse">👗</span> 이달의 방셀 의상 & 헤어
                         </h2>
                     </div>
-                    
-                    <!-- Slider Navigation Controllers -->
                     <div class="flex items-center gap-1.5">
                         <button onclick="scrollSlider('bangsell-slider', -1)" class="w-9 h-9 rounded-xl bg-[#faf8f4] dark:bg-[#2b2723] border border-[#f1ebd9] dark:border-[#3d332a] text-gray-600 dark:text-gray-400 hover:bg-brand-light dark:hover:bg-brand-deep/30 transition-all flex items-center justify-center squishy" title="이전">
                             <i class="fa-solid fa-chevron-left text-xs"></i>
@@ -392,15 +393,13 @@
                         </button>
                     </div>
                 </div>
-
-                <!-- Horizontal Slider Window with Touch Snap features -->
                 <div id="bangsell-slider" class="flex overflow-x-auto gap-4 sm:gap-6 snap-x snap-mandatory scroll-smooth no-scrollbar pb-3">
-                    <!-- JS Dynamic rendering -->
+                    <!-- Dynamic slider cards -->
                 </div>
             </div>
         </section>
 
-        <!-- 2.8 주아의 시그니처 별풍선(시그풍) 리스트 섹션 -->
+        <!-- 4. Signature Balloons -->
         <section id="sigpoong" class="scroll-mt-24">
             <div class="bg-white dark:bg-[#201d1a] rounded-3xl shadow-[0_12px_40px_rgba(241,235,217,0.5)] dark:shadow-none border-4 border-pink-400 dark:border-rose-950/70 p-6 transition-all duration-300">
                 <div class="flex items-center justify-between border-b-2 border-dashed border-[#f1ebd9] dark:border-[#2e2620] pb-4 mb-6">
@@ -410,8 +409,6 @@
                             <span class="animate-pulse">🎈</span> 주아의 시그풍 리스트
                         </h2>
                     </div>
-                    
-                    <!-- Slider Navigation Controllers -->
                     <div class="flex items-center gap-1.5">
                         <button onclick="scrollSlider('sigpoong-slider', -1)" class="w-9 h-9 rounded-xl bg-[#faf8f4] dark:bg-[#2b2723] border border-[#f1ebd9] dark:border-[#3d332a] text-gray-600 dark:text-gray-400 hover:bg-pink-50 dark:hover:bg-rose-950/25 transition-all flex items-center justify-center squishy" title="이전">
                             <i class="fa-solid fa-chevron-left text-xs"></i>
@@ -424,15 +421,13 @@
                         </button>
                     </div>
                 </div>
-
-                <!-- Horizontal Slider Window with Touch Snap features -->
                 <div id="sigpoong-slider" class="flex overflow-x-auto gap-4 sm:gap-6 snap-x snap-mandatory scroll-smooth no-scrollbar pb-3">
-                    <!-- JS Dynamic rendering -->
+                    <!-- Dynamic signature balloons -->
                 </div>
             </div>
         </section>
 
-        <!-- 3. Playground Section (Mini Game & Fortune Card) -->
+        <!-- 5. Playground -->
         <section id="playground" class="scroll-mt-24">
             <div class="bg-white dark:bg-[#201d1a] rounded-3xl shadow-[0_12px_40px_rgba(241,235,217,0.5)] dark:shadow-none border-4 border-brand-dark dark:border-brand-deep/70 p-6 transition-all duration-300">
                 <div class="border-b-2 border-dashed border-[#f1ebd9] dark:border-[#2e2620] pb-4 mb-6">
@@ -441,7 +436,7 @@
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <!-- Fortune card left col -->
+                    <!-- Tarot fortune card selector -->
                     <div class="bg-[#faf8f4] dark:bg-[#262320] p-5 rounded-2xl border-2 border-dashed border-emerald-100 dark:border-emerald-950 flex flex-col justify-between">
                         <div>
                             <h3 class="text-xl font-bold font-cute text-gray-850 dark:text-white mb-2 flex items-center gap-1.5"><span class="text-xl">🃏</span> 오늘의 클로버 운세 뽑기</h3>
@@ -489,8 +484,6 @@
                                 </div>
                             </div>
                         </div>
-
-                        <!-- Fortune Text block and action -->
                         <div class="text-center">
                             <div id="fortune-result-box" class="hidden bg-white dark:bg-zinc-900 border-2 border-dashed border-brand p-3 rounded-xl mb-4 min-h-[4.5rem] flex items-center justify-center">
                                 <p id="fortune-result-text" class="text-xs text-gray-700 dark:text-gray-300 font-bold leading-relaxed break-keep"></p>
@@ -501,7 +494,7 @@
                         </div>
                     </div>
 
-                    <!-- Mini Game Right col -->
+                    <!-- Mini Game -->
                     <div class="bg-[#faf8f4] dark:bg-[#262320] p-5 rounded-2xl border-2 border-dashed border-emerald-100 dark:border-emerald-950 flex flex-col">
                         <div class="flex justify-between items-center mb-1">
                             <h3 class="text-xl font-bold font-cute text-gray-850 dark:text-white flex items-center gap-1.5"><span class="text-xl">🍀</span> 미니 클로버 먹기 게임</h3>
@@ -511,12 +504,10 @@
                             </div>
                         </div>
                         <p class="text-xs text-gray-500 dark:text-gray-400 mb-4 font-bold">마우스 또는 화면 좌우 터치 슬라이드로 주아 아바타를 조종해 클로버를 가득 담으세요!</p>
-
-                        <!-- Game Canvas wrapper -->
                         <div class="relative flex-grow min-h-[220px] bg-emerald-50/50 dark:bg-zinc-900 rounded-2xl overflow-hidden border-2 border-brand-dark/20 flex items-center justify-center">
                             <canvas id="game-canvas" class="w-full h-full block cursor-crosshair max-h-[240px]"></canvas>
 
-                            <!-- Start / GameOver Overlays -->
+                            <!-- Start / Game Over Overlay -->
                             <div id="game-start-overlay" class="absolute inset-0 bg-black/40 backdrop-blur-xs flex flex-col items-center justify-center text-center p-4">
                                 <span class="text-3xl mb-1 animate-bounce">🍀</span>
                                 <h4 class="text-white font-bold text-base mb-3 font-cute">클로버 캐쳐 30</h4>
@@ -524,7 +515,6 @@
                                     <i class="fa-solid fa-play mr-1.5"></i>게임 시작하기
                                 </button>
                             </div>
-
                             <div id="game-result-overlay" class="hidden absolute inset-0 bg-black/75 backdrop-blur-xs flex flex-col items-center justify-center text-center p-4">
                                 <span class="text-3xl mb-1">🏆</span>
                                 <h4 class="text-brand font-bold text-lg mb-1 font-cute">게임 완료!</h4>
@@ -540,7 +530,7 @@
             </div>
         </section>
 
-        <!-- 3-2. Attendance (출석체크) Section -->
+        <!-- 6. Attendance board -->
         <section id="attendance" class="scroll-mt-24">
             <div class="bg-white dark:bg-[#201d1a] rounded-3xl shadow-[0_12px_40px_rgba(241,235,217,0.5)] dark:shadow-none border-4 border-brand-dark dark:border-brand-deep/70 p-6 transition-all duration-300">
                 <div class="flex flex-col sm:flex-row sm:items-end justify-between border-b-2 border-dashed border-[#f1ebd9] dark:border-[#2e2620] pb-4 mb-6 gap-3">
@@ -556,10 +546,8 @@
                 </div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                    <!-- Stamp area -->
                     <div class="lg:col-span-8 bg-[#faf8f4] dark:bg-[#262320] p-6 rounded-2xl border-2 border-dashed border-emerald-100 dark:border-emerald-950 flex flex-col justify-between relative min-h-[300px]">
-                        
-                        <!-- Logged out View -->
+                        <!-- Logged out -->
                         <div id="attendance-logged-out" class="flex flex-col items-center justify-center flex-grow py-8 text-center">
                             <span class="text-4xl mb-3 animate-bounce">🔑</span>
                             <h4 class="text-lg font-bold text-gray-800 dark:text-white mb-2 font-cute">네잎이 닉네임을 등록해 주세요!</h4>
@@ -572,7 +560,7 @@
                             </div>
                         </div>
 
-                        <!-- Logged in View (Monthly Grid 30 Stamps) -->
+                        <!-- Logged in -->
                         <div id="attendance-logged-in" class="hidden flex-col justify-between flex-grow">
                             <div>
                                 <div class="flex flex-col sm:flex-row justify-between sm:items-center mb-5 gap-2">
@@ -584,55 +572,45 @@
                                         <i class="fa-solid fa-arrow-right-from-bracket mr-1"></i>닉네임 변경
                                     </button>
                                 </div>
-
-                                <!-- Stamp Grid (Dynamically generated 30 days) -->
                                 <div id="attendance-stamp-grid" class="grid grid-cols-5 sm:grid-cols-10 gap-2 mb-6">
-                                    <!-- JS Dynamic 30 Stamp Cells -->
+                                    <!-- Stamp grid elements -->
                                 </div>
                             </div>
-
                             <div class="text-center mt-4">
                                 <button id="attendance-trigger-btn" onclick="checkAttendanceToday()" class="w-full max-w-sm py-3.5 bg-brand text-emerald-900 hover:bg-brand-dark hover:text-white font-bold text-sm rounded-2xl shadow-md transition-all active:scale-95 squishy">
                                     <i class="fa-solid fa-stamp mr-1.5"></i>오늘의 출석 도장 찍기 🍀
                                 </button>
                             </div>
                         </div>
-
                     </div>
 
-                    <!-- Sidebar area (Live List & Leaderboard) -->
                     <div class="lg:col-span-4 flex flex-col gap-5">
-                        
-                        <!-- Today Attendance Board -->
+                        <!-- Daily Attendance Board -->
                         <div class="bg-[#faf8f4] dark:bg-[#262320] p-4 rounded-2xl border-2 border-[#f1ebd9] dark:border-[#3d332a] flex flex-col min-h-[145px]">
                             <h4 class="text-sm font-bold text-gray-850 dark:text-white mb-3 flex items-center gap-1.5">
                                 <span class="text-xs">✨</span> 오늘 출석한 네잎이들
                             </h4>
                             <div id="attendance-today-list" class="flex-grow overflow-y-auto max-h-[100px] text-xs text-gray-500 dark:text-gray-400 flex flex-wrap gap-1.5 content-start">
-                                <!-- JS Dynamic active attendees list -->
+                                <!-- Today attendees -->
                             </div>
                         </div>
-
-                        <!-- Leaderboard (Top 5 King) -->
+                        <!-- Leaderboard -->
                         <div class="bg-[#faf8f4] dark:bg-[#262320] p-4 rounded-2xl border-2 border-[#f1ebd9] dark:border-[#3d332a] flex flex-col min-h-[145px]">
                             <h4 class="text-sm font-bold text-gray-850 dark:text-white mb-3 flex items-center gap-1.5">
                                 <span class="text-xs">🏆</span> 개근왕 명예의 전당 (Top 5)
                             </h4>
                             <div id="attendance-leaderboard-list" class="flex-grow space-y-2 text-xs font-bold">
-                                <!-- JS Dynamic Top 5 rankings -->
+                                <!-- Rankings -->
                             </div>
                         </div>
-
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- 4. Karma (업보) Section -->
+        <!-- 7. Karma list -->
         <section id="karma" class="scroll-mt-24">
             <div class="bg-white dark:bg-[#201d1a] rounded-3xl shadow-[0_12px_40px_rgba(241,235,217,0.5)] dark:shadow-none p-6 border-4 border-brand transition-colors duration-300">
-                
-                <!-- Header -->
                 <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-6 gap-4 border-b-2 border-dashed border-[#f1ebd9] dark:border-[#2e2620] pb-4">
                     <div>
                         <div class="text-brand-dark dark:text-brand font-bold tracking-widest text-xs mb-1.5 flex items-center gap-2">
@@ -651,25 +629,21 @@
                     </div>
                 </div>
 
-                <!-- Search Bar -->
                 <div class="flex flex-col sm:flex-row gap-3 mb-6">
                     <div class="relative flex-grow">
                         <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                             <i class="fa-solid fa-magnifying-glass text-brand-dark dark:text-brand"></i>
                         </div>
-                        <input type="text" id="upbo-search" class="w-full bg-[#faf8f4] dark:bg-[#181614] border-2 border-[#f1ebd9] dark:border-[#3d332a] text-gray-900 dark:text-gray-200 text-sm rounded-2xl focus:ring-2 focus:ring-brand focus:border-brand-dark block pl-11 p-3.5 outline-none font-bold" placeholder="닉네임 또는 아이디 검색...">
+                        <input type="text" id="upbo-search" class="w-full bg-[#faf8f4] dark:bg-[#181614] border-2 border-[#f1ebd9] dark:border-[#3d332a] text-gray-900 dark:text-gray-200 text-sm rounded-2xl focus:ring-2 focus:ring-brand focus:border-brand-dark block pl-11 p-3.5 outline-none font-bold" placeholder="닉네임 또는 SOOP ID 검색...">
                     </div>
-                    <!-- Admin: Add User Button -->
                     <button id="admin-add-user-btn" onclick="openAddUserModal()" class="hidden items-center justify-center bg-brand hover:bg-brand-dark text-emerald-900 hover:text-white font-bold py-3 px-6 rounded-2xl transition-all shadow-md hover:shadow-lg whitespace-nowrap transform hover:-translate-y-0.5 squishy">
                         <i class="fa-solid fa-user-plus mr-2"></i>네잎이 추가
                     </button>
                 </div>
 
-                <!-- User Grid -->
                 <div id="upbo-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                    <!-- Cards will be dynamically inserted here by JS -->
+                    <!-- User elements -->
                 </div>
-
             </div>
         </section>
 
@@ -677,7 +651,7 @@
         <div id="admin-login-modal" class="fixed inset-0 z-[110] flex items-center justify-center bg-black/50 backdrop-blur-sm opacity-0 pointer-events-none transition-all duration-300">
             <div class="bg-[#fefcf9] dark:bg-[#25211e] rounded-3xl shadow-2xl w-11/12 max-w-sm p-6 transform scale-95 transition-all duration-300 border-4 border-brand">
                 <h3 class="text-xl font-bold font-cute text-gray-900 dark:text-white mb-2">관리자 모드</h3>
-                <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">업보 및 출석을 수정하려면 비밀번호를 입력해주세요.</p>
+                <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">업보 및 프로필 정보 수정을 위해 비밀번호를 입력해주세요.</p>
                 <input type="password" id="admin-pin" class="w-full bg-white dark:bg-[#181614] border-2 border-[#f1ebd9] dark:border-[#3d332a] text-gray-900 dark:text-gray-200 rounded-2xl p-3 mb-4 outline-none font-bold text-center tracking-widest focus:border-brand" placeholder="PIN 번호 입력">
                 <div class="flex justify-end gap-2.5">
                     <button onclick="closeAdminLoginModal()" class="px-5 py-2.5 rounded-2xl bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-bold hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">취소</button>
@@ -691,7 +665,6 @@
             <div class="bg-[#fefcf9] dark:bg-[#25211e] rounded-3xl shadow-2xl w-11/12 max-w-md overflow-hidden transform scale-95 transition-all duration-300 border-4 border-brand flex flex-col max-h-[80vh]">
                 <div class="p-4 flex items-center justify-between border-b-2 border-dashed border-[#f1ebd9] dark:border-[#3d332a] bg-brand-light/35 dark:bg-brand-deep/20">
                     <div class="flex items-center gap-3" id="edit-modal-header"></div>
-                    <!-- Right Actions in Header: Delete + Close -->
                     <div class="flex items-center gap-2">
                         <button id="delete-user-confirm-btn" class="hidden text-xs bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-400 font-bold px-3 py-1.5 rounded-xl hover:bg-red-100 transition-all" title="이 네잎이 정보 완전 삭제">
                             <i class="fa-solid fa-user-minus mr-1"></i>삭제
@@ -809,7 +782,7 @@
                     </div>
                     <hr class="border-dashed border-[#f1ebd9] dark:border-[#3d332a]">
 
-                    <!-- Admin SNS Configuration -->
+                    <!-- SNS Settings -->
                     <div>
                         <h4 class="text-base font-bold text-gray-900 dark:text-white mb-3"><i class="fa-solid fa-share-nodes text-brand-dark"></i> SNS 및 외부 링크 설정</h4>
                         <div class="space-y-3">
@@ -837,7 +810,7 @@
                             </button>
                         </div>
                         <div id="edit-dday-list" class="space-y-2.5">
-                            <!-- JS Dynamic rows -->
+                            <!-- Rows list -->
                         </div>
                     </div>
                     <hr class="border-dashed border-[#f1ebd9] dark:border-[#3d332a]">
@@ -881,7 +854,7 @@
             </div>
         </div>
 
-        <!-- 이달의 방셀 의상 & 헤어 편집 모달 -->
+        <!-- Bangsell items editor -->
         <div id="bangsell-edit-modal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm opacity-0 pointer-events-none transition-all duration-300">
             <div class="bg-[#fefcf9] dark:bg-[#25211e] rounded-3xl shadow-2xl w-11/12 max-w-lg overflow-hidden transform scale-95 transition-all duration-300 border-4 border-brand flex flex-col max-h-[85vh]">
                 <div class="p-4 flex items-center justify-between border-b-2 border-dashed border-[#f1ebd9] dark:border-[#3d332a] bg-brand-light/35 dark:bg-brand-deep/20">
@@ -890,11 +863,7 @@
                         <i class="fa-solid fa-xmark text-xl"></i>
                     </button>
                 </div>
-                
-                <div class="p-5 flex-grow overflow-y-auto space-y-4" id="bangsell-edit-list">
-                    <!-- JS Dynamic edit rows -->
-                </div>
-                
+                <div class="p-5 flex-grow overflow-y-auto space-y-4" id="bangsell-edit-list"></div>
                 <div class="p-4 border-t-2 border-dashed border-[#f1ebd9] dark:border-[#3d332a] bg-[#faf8f4] dark:bg-[#181614] space-y-3">
                     <p class="text-xs font-bold text-brand-dark dark:text-brand"><i class="fa-solid fa-circle-info mr-1"></i> 새 의상/헤어 아이템 추가하기</p>
                     <div class="grid grid-cols-2 gap-2">
@@ -907,7 +876,6 @@
                     </div>
                     <div class="grid grid-cols-2 gap-2">
                         <input type="text" id="new-bangsell-description" class="bg-white dark:bg-[#25211e] border-2 border-[#f1ebd9] dark:border-[#3d332a] text-gray-900 dark:text-gray-200 text-xs rounded-xl p-2.5 outline-none font-semibold" placeholder="추가 설명/가격 (예: 별풍선 200개)">
-                        <!-- Photo Uploading controls (File Upload & URL backup) -->
                         <div class="flex gap-1.5">
                             <label class="flex-grow flex items-center justify-center bg-emerald-50 dark:bg-emerald-950/35 hover:bg-emerald-100 border-2 border-dashed border-emerald-300 dark:border-emerald-800 rounded-xl px-2 text-xs font-bold text-emerald-800 dark:text-emerald-300 cursor-pointer transition-colors relative" title="사진 파일 올리기">
                                 <span id="file-upload-label"><i class="fa-solid fa-file-image mr-1"></i>파일 선택</span>
@@ -925,7 +893,7 @@
             </div>
         </div>
 
-        <!-- 주아의 시그풍 리스트 편집 모달 -->
+        <!-- Signature Balloon Editor -->
         <div id="sigpoong-edit-modal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm opacity-0 pointer-events-none transition-all duration-300">
             <div class="bg-[#fefcf9] dark:bg-[#25211e] rounded-3xl shadow-2xl w-11/12 max-w-lg overflow-hidden transform scale-95 transition-all duration-300 border-4 border-pink-400 flex flex-col max-h-[85vh]">
                 <div class="p-4 flex items-center justify-between border-b-2 border-dashed border-[#f1ebd9] dark:border-[#3d332a] bg-pink-50 dark:bg-rose-950/20">
@@ -934,11 +902,7 @@
                         <i class="fa-solid fa-xmark text-xl"></i>
                     </button>
                 </div>
-                
-                <div class="p-5 flex-grow overflow-y-auto space-y-4" id="sigpoong-edit-list">
-                    <!-- JS Dynamic edit rows -->
-                </div>
-                
+                <div class="p-5 flex-grow overflow-y-auto space-y-4" id="sigpoong-edit-list"></div>
                 <div class="p-4 border-t-2 border-dashed border-[#f1ebd9] dark:border-[#3d332a] bg-[#faf8f4] dark:bg-[#181614] space-y-3">
                     <p class="text-xs font-bold text-pink-500 dark:text-rose-400"><i class="fa-solid fa-circle-info mr-1"></i> 새 시그풍 정보 추가하기</p>
                     <div class="grid grid-cols-2 gap-2">
@@ -947,7 +911,6 @@
                     </div>
                     <div class="grid grid-cols-2 gap-2">
                         <input type="text" id="new-sigpoong-description" class="bg-white dark:bg-[#25211e] border-2 border-[#f1ebd9] dark:border-[#3d332a] text-gray-900 dark:text-gray-200 text-xs rounded-xl p-2.5 outline-none font-semibold" placeholder="등장 멘트 / 설명">
-                        <!-- Photo Uploading controls (File Upload & URL backup) -->
                         <div class="flex gap-1.5">
                             <label class="flex-grow flex items-center justify-center bg-pink-50 dark:bg-rose-950/20 hover:bg-pink-100 border-2 border-dashed border-pink-300 dark:border-rose-900 rounded-xl px-2 text-xs font-bold text-pink-700 dark:text-rose-300 cursor-pointer transition-colors relative" title="사진 파일 올리기">
                                 <span id="sigpoong-file-upload-label"><i class="fa-solid fa-file-image mr-1"></i>파일 선택</span>
@@ -964,7 +927,6 @@
                 </div>
             </div>
         </div>
-
     </main>
 
     <!-- Visual Toast Notification -->
@@ -982,9 +944,6 @@
     </footer>
 
     <script>
-        // ==========================================
-        // 🚨 파이어베이스 연동 필수 설정 🚨 
-        // ==========================================
         const firebaseConfig = {
             apiKey: "AIzaSyD5s5HIUlfcV8ksiEsagpZWqOtbXg3zX_Q",
             authDomain: "zooa-profile.firebaseapp.com",
@@ -994,19 +953,19 @@
             appId: "1:575474141821:web:d1d863dd1d02ea1e8f7f14"
         };
 
-        // 파이어베이스 초기화 함수
         let db = null;
+
         function initFirebase() {
             try {
                 if (typeof firebase !== 'undefined') {
                     if (firebaseConfig.apiKey && firebaseConfig.apiKey !== "") {
-                        firebase.initializeApp(firebaseConfig);
+                        if (firebase.apps.length === 0) {
+                            firebase.initializeApp(firebaseConfig);
+                        }
                         db = firebase.firestore();
                         console.log("Firebase 연동 성공!");
                         return true;
                     }
-                } else {
-                    console.warn("Firebase SDK 로딩 대기 중...");
                 }
             } catch (error) {
                 console.error("Firebase 초기화 에러:", error);
@@ -1014,9 +973,6 @@
             return false;
         }
 
-        // ==========================================
-        // 기존 기본 데이터 (파이어베이스 연결 유실 시 사용됨)
-        // ==========================================
         const defaultUpboData = [
             { id: 'mmx301', nickname: '우리주아이뻥', items: [{ name: '하트 조각', count: 1 }, { name: '고정 체키', count: 1 }, { name: '비키니', count: 1 }, { name: '랜덤 얼빡 방셀', count: 1 }, { name: '움짤 방셀', count: 2 }] },
             { id: 'khw137', nickname: '연도움', items: [{ name: '랜덤 얼빡 방셀', count: 1 }] },
@@ -1041,7 +997,6 @@
             { day: '일', content: '노래방 및 주간 소통 🎤', color: 'gray', isRest: false }
         ];
 
-        // 이달의 방셀 기본 데이터
         const defaultBangsellData = [
             { title: "멜론 크림 가디건 세트", category: "의상", description: "러블리 멜론 가디건+테니스 스커트 🍈", url: "https://placehold.co/400x500/e6f9ed/047857?text=Outfit+1" },
             { title: "볼캡 캐주얼 오버핏 후드", category: "의상", description: "꾸안꾸 편안하고 친근한 데일리 후드 🧢", url: "https://placehold.co/400x500/e6f9ed/047857?text=Outfit+2" },
@@ -1049,7 +1004,6 @@
             { title: "루즈 가터 벨트 바니걸 세트", category: "세트", description: "대박적 행운의 상징! 황금 바니 세트 ✨", url: "https://placehold.co/400x500/e6f9ed/047857?text=Set+1" }
         ];
 
-        // 주아의 시그풍 기본 데이터
         const defaultSigpoongData = [
             { count: "100", title: "주아 윙크", description: "백만 불짜리 전설의 수달 윙크 🍀", url: "https://placehold.co/400x400/fff1f2/9f1239?text=100+Balloon" },
             { count: "282", title: "이뻐해주아", description: "네잎이들 심장을 저격하는 볼하트 💖", url: "https://placehold.co/400x400/fff1f2/9f1239?text=282+Balloon" },
@@ -1058,18 +1012,15 @@
         ];
         
         const defaultProfileData = {
-            bannerUrl: "https://cdn.discordapp.com/attachments/1525157421717127394/1527440071471665192/71938f3c4b417597.png?ex=6a5aaaeb&is=6a59596b&hm=d9e05c51c633fc2b17a0879b56c7131810f21145564ec1f7acf8f689843856dc&",
-            introText: `언제나 밝은 에너지로 힐링을 주는 버추얼 스트리머 연주아입니다.
-친근하고 편안한 분위기로 방송을 이끌어가며, 가끔은 허당미 넘치는 모습도 보여드려요!
-주로 저챗과 다양한 종합게임으로 여러분과 만나고 있습니다.`,
+            bannerUrl: "https://images.unsplash.com/photo-1528183429752-a97d0bf99b5a?q=80&w=1200&auto=format&fit=crop",
+            introText: "언제나 밝은 에너지로 힐링을 주는 버추얼 스트리머 연주아입니다. 소통을 좋아해요 💚",
             tags: ["편안함", "소통왕", "텐션업"],
-            broadcast: { time: "주 6일 · 저녁 시간대 · 휴방 1일(수요일)", content: "저챗 · 종합게임 · 마인크래프트 · 시참", game: "배틀그라운드 · 스팀 게임 · 리듬 게임 등" },
-            likes: ["네잎이 (팬 애칭💚)", "맛있는 거 먹기", "게임"],
-            dislikes: ["벌레", "갑툭튀 (공포게임)", "매운 음식"],
+            broadcast: { time: "주 6일 · 저녁 시간대 · 휴방 수요일", content: "저챗 · 종합게임 · 마인크래프트 · 시참", game: "배틀그라운드 · 스팀 게임 · 리듬 게임 등" },
+            likes: ["네잎이 💚", "맛있는 거 먹기", "게임"],
+            dislikes: ["벌레", "공포게임 갑툭튀", "매운 음식"],
             ddays: [
                 { title: "🎂 생일", type: "birthday", date: "09-23" },
-                { title: "🍀 데뷔", type: "anniversary", date: "2025-05-31" },
-                { title: "🎬 1주년 기념일", type: "anniversary", date: "2026-05-31" }
+                { title: "🍀 데뷔", type: "anniversary", date: "2025-05-31" }
             ],
             socials: {
                 soop: "https://www.sooplive.com/station/sudal0923",
@@ -1078,25 +1029,22 @@
             }
         };
 
-        // 전역 상태 변수
         let globalUpboData = [];
         let globalNoticeData = [];
         let globalScheduleData = [];
         let globalBangsellData = [];
         let globalSigpoongData = [];
         let globalProfileData = {};
-        let globalAttendanceData = {}; // 출석체크 DB 상태 맵
+        let globalAttendanceData = {};
         
         let isAdminMode = false;
         let currentEditingUserId = null;
-        let deleteConfirmState = false; // 삭제 버퍼 상태 체크
-        let attendanceUserNickname = ""; // 현재 로그인 중인 네잎이 닉네임
+        let deleteConfirmState = false;
+        let attendanceUserNickname = "";
 
-        // 파일 올리기 임시 홀더
         let tempSelectedBase64Image = "";
         let tempSelectedBannerBase64 = "";
 
-        // 안전한 로컬 스토리지 함수
         function safeGetStorage(key, defaultValue) {
             try { 
                 const item = window.localStorage.getItem(key); 
@@ -1111,110 +1059,139 @@
             } catch (e) {}
         }
 
-        // 파이어베이스에서 데이터를 가져오는 핵심 함수
+        function fallbackToLocal() {
+            globalUpboData = safeGetStorage('yeonZooaUpboData', null) || JSON.parse(JSON.stringify(defaultUpboData));
+            globalNoticeData = safeGetStorage('yeonZooaNoticeData', null) || JSON.parse(JSON.stringify(defaultNoticeData));
+            globalScheduleData = safeGetStorage('yeonZooaScheduleData', null) || JSON.parse(JSON.stringify(defaultScheduleData));
+            globalProfileData = safeGetStorage('yeonZooaProfileData', null) || JSON.parse(JSON.stringify(defaultProfileData));
+            globalBangsellData = safeGetStorage('yeonZooaBangsellData', null) || JSON.parse(JSON.stringify(defaultBangsellData));
+            globalSigpoongData = safeGetStorage('yeonZooaSigpoongData', null) || JSON.parse(JSON.stringify(defaultSigpoongData));
+            globalAttendanceData = safeGetStorage('yeonZooaAttendanceData', {});
+        }
+
+        function saveAllToLocal() {
+            safeSetStorage('yeonZooaUpboData', globalUpboData);
+            safeSetStorage('yeonZooaNoticeData', globalNoticeData);
+            safeSetStorage('yeonZooaScheduleData', globalScheduleData);
+            safeSetStorage('yeonZooaProfileData', globalProfileData);
+            safeSetStorage('yeonZooaBangsellData', globalBangsellData);
+            safeSetStorage('yeonZooaSigpoongData', globalSigpoongData);
+            safeSetStorage('yeonZooaAttendanceData', globalAttendanceData);
+        }
+
+        function getDefaultDataByKey(key) {
+            if (key === 'profile') return defaultProfileData;
+            if (key === 'upbo') return defaultUpboData;
+            if (key === 'notice') return defaultNoticeData;
+            if (key === 'schedule') return defaultScheduleData;
+            if (key === 'bangsell') return defaultBangsellData;
+            if (key === 'sigpoong') return defaultSigpoongData;
+            return null;
+        }
+
         async function fetchSiteData() {
             const loadingInd = document.getElementById('loading-indicator');
-            
             if (!db) {
                 initFirebase();
             }
 
+            fallbackToLocal();
+            renderAll();
+
             if (db) {
                 if (loadingInd) loadingInd.classList.remove('hidden');
                 try {
-                    const docRef = db.collection('zooaProfile').doc('siteData');
-                    const doc = await docRef.get();
-                    if (doc.exists) {
-                        const data = doc.data();
-                        globalUpboData = (data.upbo !== undefined && data.upbo !== null) ? data.upbo : JSON.parse(JSON.stringify(defaultUpboData));
-                        globalNoticeData = (data.notice !== undefined && data.notice !== null) ? data.notice : JSON.parse(JSON.stringify(defaultNoticeData));
-                        globalScheduleData = (data.schedule !== undefined && data.schedule !== null) ? data.schedule : JSON.parse(JSON.stringify(defaultScheduleData));
-                        globalProfileData = (data.profile !== undefined && data.profile !== null) ? data.profile : JSON.parse(JSON.stringify(defaultProfileData));
-                        globalBangsellData = (data.bangsell !== undefined && data.bangsell !== null) ? data.bangsell : JSON.parse(JSON.stringify(defaultBangsellData));
-                        globalSigpoongData = (data.sigpoong !== undefined && data.sigpoong !== null) ? data.sigpoong : JSON.parse(JSON.stringify(defaultSigpoongData));
-                        
-                        if (globalProfileData && !globalProfileData.ddays) {
-                            globalProfileData.ddays = JSON.parse(JSON.stringify(defaultProfileData.ddays));
+                    // Firestore 단일 문서 1MB 사이즈 초과 문제를 피하기 위해 개별 문서로 분산 조회
+                    const keys = ['profile', 'upbo', 'notice', 'schedule', 'bangsell', 'sigpoong'];
+                    const promises = keys.map(key => db.collection('zooaProfile').doc(key).get());
+                    const docs = await Promise.all(promises);
+
+                    let updatedAny = false;
+
+                    docs.forEach((doc, idx) => {
+                        const key = keys[idx];
+                        if (doc.exists) {
+                            const serverData = doc.data();
+                            if (serverData && serverData.data !== undefined) {
+                                const localUpdated = safeGetStorage('yeonZooaLastUpdated', 0);
+                                const serverUpdated = serverData.lastUpdated || 0;
+
+                                if (localUpdated > serverUpdated) {
+                                    // 로컬 데이터가 최신일 경우 서버에 즉시 오버라이트 주입
+                                    const localData = safeGetStorage(`yeonZooa${key.charAt(0).toUpperCase() + key.slice(1)}Data`, null);
+                                    if (localData !== null) {
+                                        updateFirestore(key, localData);
+                                    }
+                                } else {
+                                    // 서버 데이터가 최신일 경우 로컬 변수에 적용
+                                    const parsedData = serverData.data;
+                                    if (key === 'profile') globalProfileData = parsedData;
+                                    else if (key === 'upbo') globalUpboData = parsedData;
+                                    else if (key === 'notice') globalNoticeData = parsedData;
+                                    else if (key === 'schedule') globalScheduleData = parsedData;
+                                    else if (key === 'bangsell') globalBangsellData = parsedData;
+                                    else if (key === 'sigpoong') globalSigpoongData = parsedData;
+                                    updatedAny = true;
+                                }
+                            }
+                        } else {
+                            // 문서가 생성되지 않은 초기 환경 세팅
+                            const localData = safeGetStorage(`yeonZooa${key.charAt(0).toUpperCase() + key.slice(1)}Data`, null);
+                            const initialData = localData || getDefaultDataByKey(key);
+                            updateFirestore(key, initialData);
                         }
-                        if (globalProfileData && !globalProfileData.socials) {
-                            globalProfileData.socials = JSON.parse(JSON.stringify(defaultProfileData.socials));
-                        }
-                    } else {
-                        await docRef.set({
-                            upbo: defaultUpboData, 
-                            notice: defaultNoticeData, 
-                            schedule: defaultScheduleData, 
-                            profile: defaultProfileData,
-                            bangsell: defaultBangsellData,
-                            sigpoong: defaultSigpoongData
-                        });
-                        globalUpboData = JSON.parse(JSON.stringify(defaultUpboData)); 
-                        globalNoticeData = JSON.parse(JSON.stringify(defaultNoticeData)); 
-                        globalScheduleData = JSON.parse(JSON.stringify(defaultScheduleData)); 
-                        globalProfileData = JSON.parse(JSON.stringify(defaultProfileData));
-                        globalBangsellData = JSON.parse(JSON.stringify(defaultBangsellData));
-                        globalSigpoongData = JSON.parse(JSON.stringify(defaultSigpoongData));
+                    });
+
+                    if (globalProfileData && !globalProfileData.ddays) {
+                        globalProfileData.ddays = JSON.parse(JSON.stringify(defaultProfileData.ddays));
+                    }
+                    if (globalProfileData && !globalProfileData.socials) {
+                        globalProfileData.socials = JSON.parse(JSON.stringify(defaultProfileData.socials));
                     }
 
-                    // 출석 데이터 실시간 패치
+                    if (updatedAny) {
+                        saveAllToLocal();
+                        renderAll();
+                    }
+
+                    // 출석 데이터 연동
                     const attendRef = db.collection('zooaProfile').doc('attendanceData');
                     const attendDoc = await attendRef.get();
                     if (attendDoc.exists) {
                         globalAttendanceData = attendDoc.data() || {};
+                        safeSetStorage('yeonZooaAttendanceData', globalAttendanceData);
+                        renderAttendanceBoard();
                     } else {
                         await attendRef.set({});
-                        globalAttendanceData = {};
                     }
                 } catch (error) {
-                    console.error("데이터 로딩 실패:", error);
-                    fallbackToLocal();
+                    console.error("데이터 동기화 실패 (로컬 모드로 작동):", error);
                 }
                 if (loadingInd) loadingInd.classList.add('hidden');
-            } else {
-                fallbackToLocal();
             }
         }
 
-        function fallbackToLocal() {
-            globalUpboData = safeGetStorage('yeonZooaUpboData', null);
-            if (globalUpboData === null) globalUpboData = JSON.parse(JSON.stringify(defaultUpboData));
-
-            globalNoticeData = safeGetStorage('yeonZooaNoticeData', null);
-            if (globalNoticeData === null) globalNoticeData = JSON.parse(JSON.stringify(defaultNoticeData));
-
-            globalScheduleData = safeGetStorage('yeonZooaScheduleData', null);
-            if (globalScheduleData === null) globalScheduleData = JSON.parse(JSON.stringify(defaultScheduleData));
-
-            globalProfileData = safeGetStorage('yeonZooaProfileData', null);
-            if (globalProfileData === null) globalProfileData = JSON.parse(JSON.stringify(defaultProfileData));
-
-            globalBangsellData = safeGetStorage('yeonZooaBangsellData', null);
-            if (globalBangsellData === null) globalBangsellData = JSON.parse(JSON.stringify(defaultBangsellData));
-
-            globalSigpoongData = safeGetStorage('yeonZooaSigpoongData', null);
-            if (globalSigpoongData === null) globalSigpoongData = JSON.parse(JSON.stringify(defaultSigpoongData));
-
-            globalAttendanceData = safeGetStorage('yeonZooaAttendanceData', {});
-        }
-
-        // 파이어베이스 데이터 업로드 공통함수
         async function updateFirestore(key, data) {
+            const now = Date.now();
+            safeSetStorage('yeonZooaLastUpdated', now);
+            safeSetStorage(`yeonZooa${key.charAt(0).toUpperCase() + key.slice(1)}Data`, data);
+            
             if (db) {
-                try { 
-                    await db.collection('zooaProfile').doc('siteData').update({ [key]: data }); 
-                    console.log("Firestore 저장 성공: " + key);
-                } catch (error) { 
-                    console.error("데이터 저장 실패:", error); 
+                try {
+                    // 각 도큐먼트의 1MB 한도를 보장하기 위해 zooaProfile 아래 컬렉션 도큐먼트로 쪼개어 저장
+                    await db.collection('zooaProfile').doc(key).set({ 
+                        data: data,
+                        lastUpdated: now
+                    }, { merge: true });
+                    console.log(`Firestore 개별 동기화 성공: [${key}]`);
+                } catch (error) {
+                    console.error(`Firestore 저장 실패 [${key}]:`, error);
                 }
-            } else {
-                safeSetStorage(`yeonZooa${key.charAt(0).toUpperCase() + key.slice(1)}Data`, data);
             }
         }
 
-        // 앱 구동 시점 초기화 핸들러
         document.addEventListener('DOMContentLoaded', async () => {
             try {
-                // 네잎이 클로버 떨어지는 애니메이션 구동
                 generateBgLeaves();
 
                 const themeToggleBtns = [document.getElementById('theme-toggle'), document.getElementById('mobile-theme-toggle')];
@@ -1254,9 +1231,6 @@
                         document.getElementById('mobile-menu').classList.toggle('hidden');
                     });
                 }
-                document.querySelectorAll('#mobile-menu a').forEach(link => {
-                    link.addEventListener('click', () => document.getElementById('mobile-menu').classList.add('hidden'));
-                });
 
                 const today = new Date();
                 const dateSpan = document.getElementById('upbo-date');
@@ -1273,30 +1247,17 @@
                     });
                 }
 
-                // 렌더링 순서 보장
-                initFirebase();
                 await fetchSiteData();
             } catch (err) {
-                console.error("초기 데이터 획득 중 에러, 기본 데이터로 복구 진행:", err);
+                console.error("App bundle startup sequence error:", err);
                 fallbackToLocal();
+                renderAll();
             } finally {
-                // UI 렌더링은 에러 유무에 상관없이 반드시 실행
-                renderProfile();
-                renderUpbo(globalUpboData);
-                renderNotice();
-                renderSchedule();
-                renderBangsell(); 
-                renderSigpoong();
-                
-                // 미니게임 & 타로 운세 리셋 초기화
                 initPlayground();
-
-                // 출석체크 로컬 데이터 복구 및 동기화
                 initAttendanceSystem();
             }
         });
 
-        // 잎새 백그라운드 애니메이션 헬퍼
         function generateBgLeaves() {
             const container = document.getElementById('leaf-bg-effects');
             if (!container) return;
@@ -1317,7 +1278,6 @@
             }, 450);
         }
 
-        // 토스트 출력 유틸리티
         function showToast(message) {
             const toast = document.getElementById('toast-message');
             const toastText = document.getElementById('toast-text');
@@ -1333,7 +1293,16 @@
             }, 3000);
         }
 
-        // 디데이/기념일 날짜 계산
+        function renderAll() {
+            renderProfile();
+            renderUpbo(globalUpboData);
+            renderNotice();
+            renderSchedule();
+            renderBangsell();
+            renderSigpoong();
+            renderAttendanceBoard();
+        }
+
         function calculateDDayString(type, dateStr) {
             const today = new Date();
             today.setHours(0,0,0,0);
@@ -1387,7 +1356,6 @@
             }
         }
 
-        // 인터넷 주소 자동 변환 헬퍼 함수
         function linkify(text) {
             if (!text) return '';
             const urlPattern = /(https?:\/\/[^\s]+)/g;
@@ -1396,11 +1364,10 @@
             });
         }
 
-        // 프로필 정보 영역 렌더링
         function renderProfile() {
             const bannerEl = document.getElementById('profile-banner-img');
             if (bannerEl) {
-                bannerEl.src = globalProfileData.bannerUrl || "https://cdn.discordapp.com/attachments/1525157421717127394/1527440071471665192/71938f3c4b417597.png?ex=6a5aaaeb&is=6a59596b&hm=d9e05c51c633fc2b17a0879b56c7131810f21145564ec1f7acf8f689843856dc&";
+                bannerEl.src = globalProfileData.bannerUrl || "https://images.unsplash.com/photo-1528183429752-a97d0bf99b5a?q=80&w=1200&auto=format&fit=crop";
             }
 
             const introEl = document.getElementById('profile-intro-text');
@@ -1449,7 +1416,6 @@
                 dislikesContainer.innerHTML = (globalProfileData.dislikes || []).map(dislike => `<span class="px-3.5 py-2 bg-rose-50 dark:bg-rose-950/20 text-rose-600 dark:text-rose-400 rounded-2xl text-xs font-bold border border-rose-100/50 dark:border-rose-950/50 hover:rotate-2 transition-transform duration-300 cursor-default">${dislike.trim()}</span>`).join('');
             }
 
-            // 외부 SNS 링크 다이나믹 매핑
             const socials = globalProfileData.socials || defaultProfileData.socials || {};
             const soopEl = document.getElementById('profile-soop-link');
             const youtubeEl = document.getElementById('profile-youtube-link');
@@ -1460,7 +1426,6 @@
             if (cafeEl) cafeEl.href = socials.cafe || "https://cafe.naver.com/2ooa";
         }
 
-        // 공지사항 정보 렌더링
         function renderNotice() {
             const list = document.getElementById('notice-list');
             if (!list) return;
@@ -1497,7 +1462,6 @@
             });
         }
 
-        // 주간 일정 렌더링
         function renderSchedule() {
             const list = document.getElementById('schedule-list');
             if (!list) return;
@@ -1521,7 +1485,6 @@
             });
         }
 
-        // 이달의 방셀 의상 & 헤어 슬라이스 렌더링
         function renderBangsell() {
             const grid = document.getElementById('bangsell-slider');
             if (!grid) return;
@@ -1534,7 +1497,7 @@
                 return;
             }
 
-            items.forEach((item, index) => {
+            items.forEach((item) => {
                 let badgeColor = "bg-emerald-500";
                 if (item.category === '헤어') badgeColor = "bg-purple-500";
                 if (item.category === '세트') badgeColor = "bg-amber-500";
@@ -1557,7 +1520,6 @@
             });
         }
 
-        // 주아의 시그니처 별풍선(시그풍) 리스트 슬라이스 렌더링
         function renderSigpoong() {
             const grid = document.getElementById('sigpoong-slider');
             if (!grid) return;
@@ -1570,7 +1532,7 @@
                 return;
             }
 
-            items.forEach((item, index) => {
+            items.forEach((item) => {
                 grid.innerHTML += `
                     <div class="w-[180px] sm:w-[210px] md:w-[225px] flex-shrink-0 snap-start bg-[#faf8f4] dark:bg-[#25211e] border-2 border-[#f1ebd9] dark:border-[#3d332a] rounded-3xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col group squishy cursor-pointer" onclick="openImageLightbox('${item.url || 'https://placehold.co/400x400/fff1f2/9f1239?text=Balloon'}', '${item.title}')">
                         <div class="aspect-square w-full bg-white dark:bg-zinc-900 relative overflow-hidden border-b-2 border-dashed border-[#f1ebd9] dark:border-[#3d332a] flex items-center justify-center">
@@ -1591,19 +1553,17 @@
             });
         }
 
-        // 슬라이더 좌우 내비게이션 조작 기능
         function scrollSlider(sliderId, direction) {
             const slider = document.getElementById(sliderId);
             if (!slider) return;
             const cardWidth = slider.firstElementChild ? slider.firstElementChild.clientWidth : 200;
-            const scrollAmount = cardWidth * 2; // 한 번 클릭할 때 카드 2개 넓이씩 슬라이드
+            const scrollAmount = cardWidth * 2;
             slider.scrollBy({
                 left: direction * scrollAmount,
                 behavior: 'smooth'
             });
         }
 
-        // 이미지 크게 보기 (라이트박스)
         function openImageLightbox(url, title) {
             let lightbox = document.getElementById('image-lightbox');
             if (!lightbox) {
@@ -1630,7 +1590,6 @@
             if (lightbox) lightbox.classList.add('opacity-0', 'pointer-events-none');
         }
 
-        // 유저 아바타 URL
         function getAvatarUrl(user) {
             if (user.id && user.id.trim() !== '') {
                 const prefix = user.id.substring(0, 2);
@@ -1639,7 +1598,6 @@
             return null;
         }
 
-        // 업보 리스트 렌더링
         function renderUpbo(data) {
             const grid = document.getElementById('upbo-grid');
             if (!grid) return;
@@ -1681,7 +1639,6 @@
             });
         }
 
-        // 일반 업보 조회 모달
         function openUpboModal(user, avatarUrl) {
             let modal = document.getElementById('upbo-modal');
             if (!modal) {
@@ -1734,12 +1691,13 @@
             if (modal) { modal.classList.add('opacity-0', 'pointer-events-none'); modal.querySelector('div').classList.remove('scale-100'); modal.querySelector('div').classList.add('scale-95'); }
         }
 
-        // 관리자 인증 처리
         function openAdminLoginModal() {
             if (isAdminMode) {
                 isAdminMode = false;
-                document.getElementById('admin-add-user-btn').classList.add('hidden'); document.getElementById('admin-add-user-btn').classList.remove('flex');
-                document.getElementById('admin-notice-edit-btn').classList.add('hidden'); document.getElementById('admin-schedule-edit-btn').classList.add('hidden'); document.getElementById('admin-profile-edit-btn').classList.add('hidden');
+                document.getElementById('admin-add-user-btn').classList.add('hidden');
+                document.getElementById('admin-notice-edit-btn').classList.add('hidden'); 
+                document.getElementById('admin-schedule-edit-btn').classList.add('hidden'); 
+                document.getElementById('admin-profile-edit-btn').classList.add('hidden');
                 document.getElementById('admin-bangsell-edit-btn').classList.add('hidden');
                 document.getElementById('admin-sigpoong-edit-btn').classList.add('hidden');
                 document.getElementById('upbo-search').dispatchEvent(new Event('input')); 
@@ -1761,8 +1719,11 @@
             const pin = document.getElementById('admin-pin').value;
             if (pin === '09230923') { 
                 isAdminMode = true; closeAdminLoginModal();
-                document.getElementById('admin-add-user-btn').classList.remove('hidden'); document.getElementById('admin-add-user-btn').classList.add('flex');
-                document.getElementById('admin-notice-edit-btn').classList.remove('hidden'); document.getElementById('admin-schedule-edit-btn').classList.remove('hidden'); document.getElementById('admin-profile-edit-btn').classList.remove('hidden');
+                document.getElementById('admin-add-user-btn').classList.remove('hidden'); 
+                document.getElementById('admin-add-user-btn').classList.add('flex');
+                document.getElementById('admin-notice-edit-btn').classList.remove('hidden'); 
+                document.getElementById('admin-schedule-edit-btn').classList.remove('hidden'); 
+                document.getElementById('admin-profile-edit-btn').classList.remove('hidden');
                 document.getElementById('admin-bangsell-edit-btn').classList.remove('hidden');
                 document.getElementById('admin-sigpoong-edit-btn').classList.remove('hidden');
                 document.getElementById('upbo-search').dispatchEvent(new Event('input'));
@@ -1775,10 +1736,8 @@
             }
         }
 
-        // DB 저장 연결
         function saveUpboData() { updateFirestore('upbo', globalUpboData); }
 
-        // 관리자용 업보 편집 창 열기
         function openUpboEditModal(user, avatarUrl) {
             currentEditingUserId = user.id; 
             const modal = document.getElementById('upbo-edit-modal');
@@ -1796,7 +1755,6 @@
                     </div>`;
             }
 
-            // 헤더 정보 로딩
             document.getElementById('edit-modal-header').innerHTML = `
                 ${avatarHtml}
                 <div>
@@ -1808,12 +1766,11 @@
                 </div>
             `;
             
-            // 네잎이 삭제 버튼 바인딩 및 상태 복원
             const deleteUserBtn = document.getElementById('delete-user-confirm-btn');
             if (deleteUserBtn) {
                 deleteUserBtn.classList.remove('hidden');
                 deleteUserBtn.classList.add('block');
-                deleteConfirmState = false; // 안전 장치 초기화
+                deleteConfirmState = false;
                 deleteUserBtn.innerHTML = `<i class="fa-solid fa-user-minus mr-1"></i>삭제`;
                 deleteUserBtn.className = "text-xs bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-400 font-bold px-3 py-1.5 rounded-xl hover:bg-rose-100 transition-all";
                 deleteUserBtn.onclick = () => handleDeleteUser(user.id);
@@ -1842,18 +1799,15 @@
             }
         }
 
-        // 안전 유저(네잎이) 제거 제어 시스템
         function handleDeleteUser(userId) {
             const btn = document.getElementById('delete-user-confirm-btn');
             if (!btn) return;
 
             if (!deleteConfirmState) {
-                // 1차 터치: 경고 상태로 변환
                 deleteConfirmState = true;
                 btn.innerHTML = `<i class="fa-solid fa-triangle-exclamation mr-1"></i>진짜요?`;
                 btn.className = "text-xs bg-red-600 text-white font-bold px-3 py-1.5 rounded-xl hover:bg-red-700 transition-all animate-pulse";
                 
-                // 3초간 반응 없으면 원복
                 setTimeout(() => {
                     if (deleteConfirmState && currentEditingUserId === userId) {
                         btn.innerHTML = `<i class="fa-solid fa-user-minus mr-1"></i>삭제`;
@@ -1862,7 +1816,6 @@
                     }
                 }, 3000);
             } else {
-                // 2차 터치: 진짜 삭제 처리 완료
                 globalUpboData = globalUpboData.filter(u => u.id !== userId);
                 saveUpboData();
                 closeUpboEditModal();
@@ -1925,7 +1878,6 @@
             showToast(`새 네잎이 "${nickInput}"님이 추가되었습니다.`);
         }
 
-        // 공지 관리 액션
         function openNoticeEditModal() {
             const modal = document.getElementById('notice-edit-modal'); renderNoticeEditList();
             requestAnimationFrame(() => { modal.classList.remove('opacity-0', 'pointer-events-none'); modal.querySelector('div').classList.remove('scale-95'); modal.querySelector('div').classList.add('scale-100'); });
@@ -1956,6 +1908,7 @@
                 `;
             });
         }
+
         function addNewNotice() {
             const type = document.getElementById('new-notice-type').value; 
             const contentInput = document.getElementById('new-notice-content'); 
@@ -1993,7 +1946,6 @@
         }
         function deleteNotice(index) { globalNoticeData.splice(index, 1); updateFirestore('notice', globalNoticeData); renderNoticeEditList(); renderNotice(); showToast("공지가 제거되었습니다."); }
 
-        // 일정 관리 액션
         function openScheduleEditModal() {
             const modal = document.getElementById('schedule-edit-modal'); renderScheduleEditList();
             requestAnimationFrame(() => { modal.classList.remove('opacity-0', 'pointer-events-none'); modal.querySelector('div').classList.remove('scale-95'); modal.querySelector('div').classList.add('scale-100'); });
@@ -2013,6 +1965,7 @@
                 `;
             });
         }
+
         function saveScheduleChanges() {
             globalScheduleData.forEach((schedule, index) => {
                 const content = document.getElementById(`schedule-input-${index}`).value; const isRest = document.getElementById(`schedule-rest-${index}`).checked;
@@ -2026,11 +1979,10 @@
             updateFirestore('schedule', globalScheduleData); renderSchedule(); closeScheduleEditModal(); showToast("주간 일정표가 반영되었습니다.");
         }
 
-        // 이달의 방셀 의상/헤어 편집 관리 모달 구동
         function openBangsellEditModal() {
             const modal = document.getElementById('bangsell-edit-modal');
             renderBangsellEditList();
-            tempSelectedBase64Image = ""; // 초기화
+            tempSelectedBase64Image = "";
             const fileLabel = document.getElementById('file-upload-label');
             if (fileLabel) fileLabel.innerHTML = `<i class="fa-solid fa-file-image mr-1"></i>파일 선택`;
             
@@ -2081,7 +2033,6 @@
             });
         }
 
-        // 이미지 파일 선택 시 즉각적인 고화질 최적화 압축처리
         async function handleFileSelected(input, mode) {
             const file = input.files[0];
             if (!file) return;
@@ -2091,21 +2042,20 @@
             if (mode === 'banner') labelId = 'banner-file-upload-label';
 
             const fileLabel = document.getElementById(labelId);
-            if (fileLabel) fileLabel.innerHTML = `<i class="fa-solid fa-spinner animate-spin mr-1"></i>변환 중...`;
+            if (fileLabel) fileLabel.innerHTML = `<i class="fa-solid fa-spinner animate-spin mr-1"></i>압축 중...`;
 
             try {
-                // 초고화질 매칭을 위해 규격 한계 대폭 상향
                 let limitW = 1000;
                 let limitH = 1250;
                 if (mode === 'sigpoong') {
                     limitW = 800;
                     limitH = 800;
                 } else if (mode === 'banner') {
-                    limitW = 1920;
-                    limitH = 640;
+                    // 해상도는 선명하게 유지하면서 용량은 기하급수적으로 줄이도록 가로 최대 1200px 캔버스 셋팅
+                    limitW = 1200;
+                    limitH = 400;
                 }
 
-                // 고화질 압축 (Quality 0.9 설정)
                 const compressed = await compressImage(file, limitW, limitH);
                 
                 if (mode === 'banner') {
@@ -2115,7 +2065,7 @@
                 }
 
                 if (fileLabel) fileLabel.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-500 mr-1"></i>완료 (${Math.round(compressed.length / 1024)}KB)`;
-                showToast("사진이 고화질 원본 느낌을 유지하며 최적화되었습니다! 📸");
+                showToast("사진이 최적화 가공되었습니다! 📸");
             } catch (err) {
                 console.error("이미지 가공 에러:", err);
                 if (fileLabel) fileLabel.innerHTML = `<i class="fa-solid fa-circle-xmark text-rose-500 mr-1"></i>실패`;
@@ -2123,7 +2073,6 @@
             }
         }
 
-        // 이미지 가볍고 선명하게 캔버스 크기 제어 및 고화질 압축 (0.9 선명도 설정)
         function compressImage(file, maxWidth, maxHeight) {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
@@ -2136,7 +2085,6 @@
                         let width = img.width;
                         let height = img.height;
                         
-                        // 비율 유지 한도 계산
                         if (width > height) {
                             if (width > maxWidth) {
                                 height = Math.round((height * maxWidth) / width);
@@ -2158,8 +2106,8 @@
                         ctx.clearRect(0, 0, width, height);
                         ctx.drawImage(img, 0, 0, width, height);
                         
-                        // Quality를 0.9(90%)로 대폭 늘려 선명도 극대화
-                        resolve(canvas.toDataURL('image/jpeg', 0.9));
+                        // 최고 화질 유지비율(0.8) 세팅
+                        resolve(canvas.toDataURL('image/jpeg', 0.8));
                     };
                 };
                 reader.onerror = error => reject(error);
@@ -2220,11 +2168,10 @@
             showToast("아이템이 카탈로그에서 제거되었습니다.");
         }
 
-        // 시그니처 풍선(시그풍) 에디터 관리 모달 구동
         function openSigpoongEditModal() {
             const modal = document.getElementById('sigpoong-edit-modal');
             renderSigpoongEditList();
-            tempSelectedBase64Image = ""; // 업로드 초기화
+            tempSelectedBase64Image = "";
             const fileLabel = document.getElementById('sigpoong-file-upload-label');
             if (fileLabel) fileLabel.innerHTML = `<i class="fa-solid fa-file-image mr-1"></i>파일 선택`;
             
@@ -2328,11 +2275,10 @@
             showToast("시그풍이 리스트에서 안전하게 제거되었습니다.");
         }
 
-        // 프로필 관리 액션
         function openProfileEditModal() {
             const modal = document.getElementById('profile-edit-modal');
             
-            document.getElementById('edit-profile-banner').value = globalProfileData.bannerUrl || "";
+            document.getElementById('edit-profile-banner').value = globalProfileData.bannerUrl && !globalProfileData.bannerUrl.startsWith('data:') ? globalProfileData.bannerUrl : "";
             document.getElementById('edit-profile-intro').value = globalProfileData.introText || ""; 
             document.getElementById('edit-profile-tags').value = (globalProfileData.tags || []).join(', ');
             document.getElementById('edit-profile-time').value = (globalProfileData.broadcast || {}).time || ""; 
@@ -2346,7 +2292,6 @@
             document.getElementById('edit-profile-youtube').value = socials.youtube || "";
             document.getElementById('edit-profile-cafe').value = socials.cafe || "";
 
-            // 배너 임시 홀더 초기화 및 레이블 설정
             tempSelectedBannerBase64 = "";
             const bannerFileLabel = document.getElementById('banner-file-upload-label');
             if (bannerFileLabel) bannerFileLabel.innerHTML = `<i class="fa-solid fa-file-image mr-1.5"></i>배너 파일 선택`;
@@ -2411,9 +2356,7 @@
             const parse = (str) => str.split(',').map(item => item.trim()).filter(item => item !== '');
             const bannerTextUrl = document.getElementById('edit-profile-banner').value.trim();
 
-            // 업로드한 파일(tempSelectedBannerBase64)이 있으면 우선 사용, 없으면 입력된 텍스트 URL 사용
-            globalProfileData.bannerUrl = tempSelectedBannerBase64 || bannerTextUrl || "https://cdn.discordapp.com/attachments/1525157421717127394/1527440071471665192/71938f3c4b417597.png?ex=6a5aaaeb&is=6a59596b&hm=d9e05c51c633fc2b17a0879b56c7131810f21145564ec1f7acf8f689843856dc&";
-            
+            globalProfileData.bannerUrl = tempSelectedBannerBase64 || bannerTextUrl || globalProfileData.bannerUrl || "https://images.unsplash.com/photo-1528183429752-a97d0bf99b5a?q=80&w=1200&auto=format&fit=crop";
             globalProfileData.introText = document.getElementById('edit-profile-intro').value; 
             globalProfileData.tags = parse(document.getElementById('edit-profile-tags').value);
             
@@ -2451,11 +2394,6 @@
             showToast("대표 프로필 정보와 SNS 링크들이 저장되었습니다. 🍀");
         }
 
-
-        // ==========================================
-        // 🎮 주아의 놀이터 (미니게임 & 운세 뽑기) 엔진 🎮
-        // ==========================================
-
         const fortuneDatabase = [
             { title: "네잎클로버", emoji: "🍀", text: "오늘은 모든 일이 잘 풀릴꺼야 !" },
             { title: "세잎클로버", emoji: "☘️", text: "오늘은 맛있는 거 먹겠따 !" },
@@ -2471,13 +2409,12 @@
             initGameEngine();
         }
 
-        // --- 1) 카드 타로 운세 로직 ---
         function resetFortuneCards() {
             selectedFortuneCard = null;
             document.getElementById('fortune-result-box').classList.add('hidden');
             
             const cardItems = document.querySelectorAll('.card-item');
-            cardItems.forEach((card, idx) => {
+            cardItems.forEach((card) => {
                 card.classList.remove('card-flipped', 'pointer-events-none');
                 card.querySelector('.card-front').style.opacity = '1';
             });
@@ -2512,7 +2449,6 @@
             showToast(`오늘의 운세를 뽑았습니다! ${randomFortune.emoji}`);
         }
 
-        // --- 2) 클로버 받기 게임 엔진 ---
         let gameCanvas, ctx;
         let gameActive = false;
         let gameScore = 0;
@@ -2760,11 +2696,6 @@
             showToast(`최종 ${gameScore}점으로 게임 종료!`);
         }
 
-
-        // ==========================================
-        // 📅 실시간 출석체크 도장판 시스템 (KST 기준 동작) 📅
-        // ==========================================
-
         function getKSTDateString(offsetDays = 0) {
             const date = new Date();
             const utc = date.getTime() + (date.getTimezoneOffset() * 60000);
@@ -2852,14 +2783,15 @@
         }
 
         async function syncAttendanceToDatabase() {
+            safeSetStorage('yeonZooaAttendanceData', globalAttendanceData);
+            
             if (db) {
                 try {
-                    await db.collection('zooaProfile').doc('attendanceData').set(globalAttendanceData);
+                    const attendRef = db.collection('zooaProfile').doc('attendanceData');
+                    await attendRef.set(globalAttendanceData);
                 } catch (e) {
-                    console.error("출석 DB 연동 오류:", e);
+                    console.error("Attendance database sync failed:", e);
                 }
-            } else {
-                safeSetStorage('yeonZooaAttendanceData', globalAttendanceData);
             }
         }
 
@@ -3016,7 +2948,6 @@
             }
         }
 
-        // 전역 함수 맵핑 바인딩
         window.openProfileEditModal = openProfileEditModal;
         window.closeProfileEditModal = closeProfileEditModal;
         window.saveProfileChanges = saveProfileChanges;
