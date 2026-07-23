@@ -55,6 +55,7 @@
             }
         };
 
+        /* Safe Storage Utilities */
         function safeGetStorage(key, defaultValue) {
             try { 
                 const item = window.localStorage.getItem(key); 
@@ -70,8 +71,7 @@
             } catch (e) {}
         }
 
-        /* Compress Base64 string while preserving PNG transparency and high quality */
-        function compressBase64(dataUrl, maxDim = 1200, quality = 0.88) {
+        function compressBase64(dataUrl, maxDim = 2560, quality = 0.95) {
             if (!dataUrl || !dataUrl.startsWith('data:image')) return Promise.resolve(dataUrl);
 
             return new Promise((resolve) => {
@@ -80,10 +80,13 @@
                 img.onload = () => {
                     let w = img.width;
                     let h = img.height;
+                    
+                    // Preserve original image if already within 2.5K bounds
                     if (w <= maxDim && h <= maxDim && isPng) {
                         resolve(dataUrl);
                         return;
                     }
+
                     if (w > maxDim || h > maxDim) {
                         if (w > h) {
                             h = Math.round((h * maxDim) / w);
@@ -97,7 +100,7 @@
                     canvas.width = w;
                     canvas.height = h;
                     const ctx = canvas.getContext('2d');
-                    ctx.clearRect(0, 0, w, h);
+                    ctx.clearRect(0, 0, w, h); // 100% Alpha Channel Transparency
                     ctx.drawImage(img, 0, 0, w, h);
 
                     const exportFormat = isPng ? 'image/png' : 'image/jpeg';
@@ -108,23 +111,7 @@
             });
         }
 
-        async function sanitizeArrayImages(array, maxDim = 1200, quality = 0.88) {
-            if (!Array.isArray(array)) return array;
-            const sanitized = [];
-            for (let item of array) {
-                const newItem = { ...item };
-                if (newItem.url && newItem.url.startsWith('data:image')) {
-                    newItem.url = await compressBase64(newItem.url, maxDim, quality);
-                }
-                if (newItem.avatarUrl && newItem.avatarUrl.startsWith('data:image')) {
-                    newItem.avatarUrl = await compressBase64(newItem.avatarUrl, 300, quality);
-                }
-                sanitized.push(newItem);
-            }
-            return sanitized;
-        }
-
-        function compressImageFile(file, maxWidth = 1200, maxHeight = 1200, quality = 0.88) {
+        function compressImageFile(file, maxWidth = 2560, maxHeight = 1440, quality = 0.95) {
             return new Promise((resolve) => {
                 if (!file) { resolve(null); return; }
                 const isPng = file.type === 'image/png' || (file.name && file.name.toLowerCase().endsWith('.png'));
@@ -149,7 +136,7 @@
                         canvas.width = width;
                         canvas.height = height;
                         const ctx = canvas.getContext('2d');
-                        ctx.clearRect(0, 0, width, height);
+                        ctx.clearRect(0, 0, width, height); // Preserve clear PNG background
                         ctx.drawImage(img, 0, 0, width, height);
 
                         const exportFormat = isPng ? 'image/png' : 'image/jpeg';
@@ -285,21 +272,36 @@
                 if (loadingInd) loadingInd.classList.remove('hidden');
                 try {
                     const keys = ['profile', 'upbo', 'notice', 'schedule', 'bangsell', 'sigpoong'];
-                    const promises = keys.map(key => db.collection('zooaProfile').doc(key).get());
-                    const docs = await Promise.all(promises);
+                    
+                    for (const key of keys) {
+                        const docRef = db.collection('zooaProfile').doc(key);
+                        const docSnap = await docRef.get();
 
-                    docs.forEach((doc, idx) => {
-                        const key = keys[idx];
-                        if (doc.exists && doc.data() && doc.data().data !== undefined) {
-                            const parsedData = doc.data().data;
-                            if (key === 'profile') globalProfileData = parsedData;
-                            else if (key === 'upbo') globalUpboData = parsedData;
-                            else if (key === 'notice') globalNoticeData = parsedData;
-                            else if (key === 'schedule') globalScheduleData = parsedData;
-                            else if (key === 'bangsell') globalBangsellData = parsedData;
-                            else if (key === 'sigpoong') globalSigpoongData = parsedData;
+                        if (docSnap.exists) {
+                            const docData = docSnap.data();
+                            
+                            // Check if document items are stored in subcollection
+                            if (docData && docData.isSubcollection) {
+                                const subSnap = await docRef.collection('items').get();
+                                const subData = [];
+                                subSnap.forEach(sDoc => subData.push(sDoc.data()));
+                                
+                                if (key === 'upbo') globalUpboData = subData;
+                                else if (key === 'notice') globalNoticeData = subData;
+                                else if (key === 'schedule') globalScheduleData = subData;
+                                else if (key === 'bangsell') globalBangsellData = subData;
+                                else if (key === 'sigpoong') globalSigpoongData = subData;
+                            } else if (docData && docData.data !== undefined) {
+                                const parsedData = docData.data;
+                                if (key === 'profile') globalProfileData = parsedData;
+                                else if (key === 'upbo') globalUpboData = parsedData;
+                                else if (key === 'notice') globalNoticeData = parsedData;
+                                else if (key === 'schedule') globalScheduleData = parsedData;
+                                else if (key === 'bangsell') globalBangsellData = parsedData;
+                                else if (key === 'sigpoong') globalSigpoongData = parsedData;
+                            }
                         }
-                    });
+                    }
 
                     saveAllToLocal();
                     renderAll();
@@ -311,10 +313,6 @@
         }
 
         async function updateFirestore(key, data) {
-            if (Array.isArray(data)) {
-                data = await sanitizeArrayImages(data, 1200, 0.88);
-            }
-
             if (key === 'profile') globalProfileData = data;
             else if (key === 'upbo') globalUpboData = data;
             else if (key === 'notice') globalNoticeData = data;
@@ -324,21 +322,65 @@
 
             safeSetStorage(`yeonZooa${key.charAt(0).toUpperCase() + key.slice(1)}Data`, data);
 
-            if (db) {
-                try {
-                    await db.collection('zooaProfile').doc(key).set({ data: data, lastUpdated: Date.now() }, { merge: true });
-                    return true;
-                } catch (e) { 
-                    console.error("Firestore 저장 실패:", e);
-                    if (e.message && e.message.includes('exceeds the maximum allowed size')) {
-                        showToast('⚠️ Firestore 1MB 제한 초과! 이미지 크기를 조금만 줄여서 등록해보세요.');
-                    } else {
-                        showToast('❌ 저장 실패: ' + (e.message || '오류 발생'));
+            if (!db) return true;
+
+            try {
+                if (Array.isArray(data)) {
+                    const jsonStr = JSON.stringify(data);
+                    const sizeInBytes = new Blob([jsonStr]).size;
+
+                    // If total size exceeds ~600KB, automatically route to subcollection
+                    if (sizeInBytes > 600000) {
+                        return await saveToSubcollection(key, data);
                     }
-                    return false;
                 }
+
+                // Standard document save
+                await db.collection('zooaProfile').doc(key).set({ data: data, isSubcollection: false, lastUpdated: Date.now() });
+                return true;
+            } catch (e) {
+                console.warn("Primary save failed, trying subcollection fallback:", e);
+                if (Array.isArray(data)) {
+                    return await saveToSubcollection(key, data);
+                }
+                showToast('❌ 저장 실패: ' + (e.message || '오류 발생'));
+                return false;
             }
-            return true;
+        }
+
+        async function saveToSubcollection(key, data) {
+            try {
+                const itemsRef = db.collection('zooaProfile').doc(key).collection('items');
+                const existingDocs = await itemsRef.get();
+                const currentIds = new Set();
+
+                for (let i = 0; i < data.length; i++) {
+                    const item = data[i];
+                    const itemId = item.id || `item_${i}_${Date.now()}`;
+                    item.id = itemId;
+                    await itemsRef.doc(itemId).set(item);
+                    currentIds.add(itemId);
+                }
+
+                // Delete removed items
+                existingDocs.forEach(doc => {
+                    if (!currentIds.has(doc.id)) {
+                        doc.ref.delete();
+                    }
+                });
+
+                // Update main document header
+                await db.collection('zooaProfile').doc(key).set({
+                    isSubcollection: true,
+                    count: data.length,
+                    lastUpdated: Date.now()
+                });
+                return true;
+            } catch (err) {
+                console.error("Subcollection save error:", err);
+                showToast('❌ 서브컬렉션 저장 오류: ' + err.message);
+                return false;
+            }
         }
 
         function getUserAvatarUrl(user) {
@@ -814,7 +856,7 @@
 
             if (avatarFile) {
                 try {
-                    const compressed = await compressImageFile(avatarFile, 400, 400, 0.88);
+                    const compressed = await compressImageFile(avatarFile, 400, 400, 0.90);
                     if (compressed) avatarUrl = compressed;
                 } catch(e) { console.error(e); }
             }
@@ -892,7 +934,7 @@
 
             if (fileInput && fileInput.files && fileInput.files[0]) {
                 try {
-                    const uploadedDataUrl = await compressImageFile(fileInput.files[0], 1200, 600, 0.88);
+                    const uploadedDataUrl = await compressImageFile(fileInput.files[0], 2560, 1440, 0.95);
                     if (uploadedDataUrl) bannerVal = uploadedDataUrl;
                 } catch(e) { console.error(e); }
             }
@@ -1064,7 +1106,7 @@
             const fileInput = document.getElementById('new-bangsell-file');
             if (fileInput && fileInput.files && fileInput.files[0]) {
                 try {
-                    const uploadedDataUrl = await compressImageFile(fileInput.files[0], 1000, 1200, 0.88);
+                    const uploadedDataUrl = await compressImageFile(fileInput.files[0], 1200, 1200, 0.90);
                     if (uploadedDataUrl) url = uploadedDataUrl;
                 } catch(e) { console.error(e); }
             }
@@ -1072,7 +1114,8 @@
             if (!url) url = 'https://placehold.co/400x500/dcfce7/15803d?text=Outfit';
             if (!title) { showToast('의상 이름을 입력해주세요!'); return; }
 
-            globalBangsellData.push({ title, category, description, url });
+            const newItem = { id: 'bang_' + Date.now(), title, category, description, url };
+            globalBangsellData.push(newItem);
             document.getElementById('new-bangsell-title').value = '';
             document.getElementById('new-bangsell-description').value = '';
             document.getElementById('new-bangsell-url').value = '';
@@ -1128,7 +1171,7 @@
             const fileInput = document.getElementById('new-sigpoong-file');
             if (fileInput && fileInput.files && fileInput.files[0]) {
                 try {
-                    const uploadedDataUrl = await compressImageFile(fileInput.files[0], 1000, 600, 0.88);
+                    const uploadedDataUrl = await compressImageFile(fileInput.files[0], 1200, 1200, 0.90);
                     if (uploadedDataUrl) url = uploadedDataUrl;
                 } catch(e) { console.error(e); }
             }
@@ -1136,7 +1179,8 @@
             if (!url) url = 'https://placehold.co/293x164/ecfdf5/047857?text=293x164+Balloon';
             if (!title) { showToast('시그풍 제목을 입력해주세요!'); return; }
 
-            globalSigpoongData.push({ count: count || "100", title, description, url });
+            const newItem = { id: 'sig_' + Date.now(), count: count || "100", title, description, url };
+            globalSigpoongData.push(newItem);
             document.getElementById('new-sigpoong-count').value = '';
             document.getElementById('new-sigpoong-title').value = '';
             document.getElementById('new-sigpoong-description').value = '';
@@ -1174,10 +1218,10 @@
                     const file = e.target.files[0];
                     if (file) {
                         try {
-                            const dataUrl = await compressImageFile(file, 1200, 600, 0.88);
+                            const dataUrl = await compressImageFile(file, 2560, 1440, 0.95);
                             if (dataUrl) {
                                 document.getElementById('edit-profile-banner').value = dataUrl;
-                                showToast('배너 이미지가 첨부되었습니다! 🍀');
+                                showToast('고화질 배너 이미지가 첨부되었습니다! 🍀');
                             }
                         } catch(err) { console.error(err); }
                     }
@@ -1296,6 +1340,7 @@
 </head>
 <body class="text-gray-800 dark:text-gray-100 min-h-screen flex flex-col relative overflow-x-hidden p-3 sm:p-6 transition-colors duration-300">
 
+    <!-- GPU Accelerated Clover Background -->
     <div class="bg-clover-container">
         <div class="clover-particle p-fall-1" style="left: 5%; animation-delay: 0s;">🍀</div>
         <div class="clover-particle p-fall-2" style="left: 18%; animation-delay: 3s;">☘️</div>
