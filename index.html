@@ -71,6 +71,17 @@
             } catch (e) {}
         }
 
+        /* 원본 파일 100% 손실 없이 읽기 (배너 등 고화질 보존용) */
+        function readFileAsDataURL(file) {
+            return new Promise((resolve, reject) => {
+                if (!file) { resolve(null); return; }
+                const reader = new FileReader();
+                reader.onload = (e) => resolve(e.target.result);
+                reader.onerror = (e) => reject(e);
+                reader.readAsDataURL(file);
+            });
+        }
+
         function compressBase64(dataUrl, maxDim = 2560, quality = 0.95) {
             if (!dataUrl || !dataUrl.startsWith('data:image')) return Promise.resolve(dataUrl);
 
@@ -934,7 +945,8 @@
 
             if (fileInput && fileInput.files && fileInput.files[0]) {
                 try {
-                    const uploadedDataUrl = await compressImageFile(fileInput.files[0], 2560, 1440, 0.95);
+                    /* 배너 이미지는 캔버스 압축 없이 원본 100% 화질 보존 */
+                    const uploadedDataUrl = await readFileAsDataURL(fileInput.files[0]);
                     if (uploadedDataUrl) bannerVal = uploadedDataUrl;
                 } catch(e) { console.error(e); }
             }
@@ -1218,10 +1230,11 @@
                     const file = e.target.files[0];
                     if (file) {
                         try {
-                            const dataUrl = await compressImageFile(file, 2560, 1440, 0.95);
+                            /* 배너 이미지 100% 원본 화질 읽기 */
+                            const dataUrl = await readFileAsDataURL(file);
                             if (dataUrl) {
                                 document.getElementById('edit-profile-banner').value = dataUrl;
-                                showToast('고화질 배너 이미지가 첨부되었습니다! 🍀');
+                                showToast('원본 고화질 배너 이미지가 첨부되었습니다! 🍀');
                             }
                         } catch(err) { console.error(err); }
                     }
