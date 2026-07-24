@@ -21,6 +21,7 @@
     <!-- Firebase SDK (Compat) -->
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 
     <script>
         tailwind.config = {
@@ -82,46 +83,6 @@
             });
         }
 
-        function compressBase64(dataUrl, maxDim = 2560, quality = 0.95) {
-            if (!dataUrl || !dataUrl.startsWith('data:image')) return Promise.resolve(dataUrl);
-
-            return new Promise((resolve) => {
-                const isPng = dataUrl.startsWith('data:image/png');
-                const img = new Image();
-                img.onload = () => {
-                    let w = img.width;
-                    let h = img.height;
-                    
-                    // Preserve original image if already within 2.5K bounds
-                    if (w <= maxDim && h <= maxDim && isPng) {
-                        resolve(dataUrl);
-                        return;
-                    }
-
-                    if (w > maxDim || h > maxDim) {
-                        if (w > h) {
-                            h = Math.round((h * maxDim) / w);
-                            w = maxDim;
-                        } else {
-                            w = Math.round((w * maxDim) / h);
-                            h = maxDim;
-                        }
-                    }
-                    const canvas = document.createElement('canvas');
-                    canvas.width = w;
-                    canvas.height = h;
-                    const ctx = canvas.getContext('2d');
-                    ctx.clearRect(0, 0, w, h); // 100% Alpha Channel Transparency
-                    ctx.drawImage(img, 0, 0, w, h);
-
-                    const exportFormat = isPng ? 'image/png' : 'image/jpeg';
-                    resolve(canvas.toDataURL(exportFormat, isPng ? undefined : quality));
-                };
-                img.onerror = () => resolve(dataUrl);
-                img.src = dataUrl;
-            });
-        }
-
         function compressImageFile(file, maxWidth = 2560, maxHeight = 1440, quality = 0.95) {
             return new Promise((resolve) => {
                 if (!file) { resolve(null); return; }
@@ -147,7 +108,7 @@
                         canvas.width = width;
                         canvas.height = height;
                         const ctx = canvas.getContext('2d');
-                        ctx.clearRect(0, 0, width, height); // Preserve clear PNG background
+                        ctx.clearRect(0, 0, width, height);
                         ctx.drawImage(img, 0, 0, width, height);
 
                         const exportFormat = isPng ? 'image/png' : 'image/jpeg';
@@ -171,6 +132,7 @@
         };
 
         let db = null;
+        let auth = null;
 
         function initFirebase() {
             try {
@@ -180,6 +142,18 @@
                             firebase.initializeApp(firebaseConfig);
                         }
                         db = firebase.firestore();
+                        auth = firebase.auth();
+
+                        // 인증 상태 리스너 등록
+                        auth.onAuthStateChanged((user) => {
+                            if (user) {
+                                isAdminMode = true;
+                                updateAdminUI(true, user.email);
+                            } else {
+                                isAdminMode = false;
+                                updateAdminUI(false);
+                            }
+                        });
                         return true;
                     }
                 }
@@ -291,7 +265,6 @@
                         if (docSnap.exists) {
                             const docData = docSnap.data();
                             
-                            // Check if document items are stored in subcollection
                             if (docData && docData.isSubcollection) {
                                 const subSnap = await docRef.collection('items').get();
                                 const subData = [];
@@ -340,13 +313,11 @@
                     const jsonStr = JSON.stringify(data);
                     const sizeInBytes = new Blob([jsonStr]).size;
 
-                    // If total size exceeds ~600KB, automatically route to subcollection
                     if (sizeInBytes > 600000) {
                         return await saveToSubcollection(key, data);
                     }
                 }
 
-                // Standard document save
                 await db.collection('zooaProfile').doc(key).set({ data: data, isSubcollection: false, lastUpdated: Date.now() });
                 return true;
             } catch (e) {
@@ -354,7 +325,7 @@
                 if (Array.isArray(data)) {
                     return await saveToSubcollection(key, data);
                 }
-                showToast('❌ 저장 실패: ' + (e.message || '오류 발생'));
+                showToast('❌ 저장 실패: ' + (e.message || '권한 부족 또는 오류 발생'));
                 return false;
             }
         }
@@ -373,14 +344,12 @@
                     currentIds.add(itemId);
                 }
 
-                // Delete removed items
                 existingDocs.forEach(doc => {
                     if (!currentIds.has(doc.id)) {
                         doc.ref.delete();
                     }
                 });
 
-                // Update main document header
                 await db.collection('zooaProfile').doc(key).set({
                     isSubcollection: true,
                     count: data.length,
@@ -389,7 +358,7 @@
                 return true;
             } catch (err) {
                 console.error("Subcollection save error:", err);
-                showToast('❌ 서브컬렉션 저장 오류: ' + err.message);
+                showToast('❌ 저장 오류: ' + err.message);
                 return false;
             }
         }
@@ -720,13 +689,23 @@
             }
         }
 
+        /* 🔒 안전한 Firebase 인증 관리자 로그인 시스템 */
         function openAdminLoginModal() {
+            if (isAdminMode && auth && auth.currentUser) {
+                if (confirm(`현재 [${auth.currentUser.email}] 계정으로 로그인되어 있습니다.\n로그아웃 하시겠습니까?`)) {
+                    auth.signOut().then(() => {
+                        showToast('로그아웃 되었습니다.');
+                    });
+                }
+                return;
+            }
             const m = document.getElementById('admin-login-modal');
             if (m) {
                 m.classList.remove('opacity-0', 'pointer-events-none');
                 m.classList.add('opacity-100');
             }
         }
+
         function closeAdminLoginModal() {
             const m = document.getElementById('admin-login-modal');
             if (m) {
@@ -735,23 +714,59 @@
             }
         }
 
-        function checkAdminPin() {
-            const pin = document.getElementById('admin-pin').value;
-            if (pin === '09230923') {
-                isAdminMode = true;
-                closeAdminLoginModal();
-                showToast('관리자 모드가 활성화되었습니다! 🍀');
-                
-                document.querySelectorAll('#admin-profile-edit-btn, #admin-notice-edit-btn, #admin-schedule-edit-btn, #admin-bangsell-edit-btn, #admin-sigpoong-edit-btn, #admin-add-user-btn')
-                    .forEach(btn => btn.classList.remove('hidden'));
+        async function handleAdminLogin() {
+            const email = document.getElementById('admin-email').value.trim();
+            const password = document.getElementById('admin-password').value;
 
-                renderUpbo(globalUpboData);
-            } else {
-                showToast('비밀번호가 일치하지 않습니다.');
+            if (!email || !password) {
+                showToast('이메일과 비밀번호를 모두 입력해주세요.');
+                return;
+            }
+
+            if (!auth) {
+                showToast('Firebase Auth가 초기화되지 않았습니다.');
+                return;
+            }
+
+            try {
+                await auth.signInWithEmailAndPassword(email, password);
+                closeAdminLoginModal();
+                showToast('관리자로 로그인되었습니다! 🍀');
+                document.getElementById('admin-password').value = '';
+            } catch (error) {
+                console.error("Login failed:", error);
+                let msg = '로그인에 실패했습니다.';
+                if (error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') {
+                    msg = '계정 정보가 올바르지 않습니다.';
+                }
+                showToast('❌ ' + msg);
             }
         }
 
+        function updateAdminUI(isLoggedIn, userEmail = '') {
+            const adminButtons = document.querySelectorAll('#admin-profile-edit-btn, #admin-notice-edit-btn, #admin-schedule-edit-btn, #admin-bangsell-edit-btn, #admin-sigpoong-edit-btn, #admin-add-user-btn');
+            const gearBtn = document.getElementById('admin-gear-icon');
+
+            if (isLoggedIn) {
+                adminButtons.forEach(btn => btn.classList.remove('hidden'));
+                if (gearBtn) {
+                    gearBtn.classList.remove('bg-emerald-100', 'text-emerald-700', 'dark:bg-emerald-900/60', 'dark:text-emerald-200');
+                    gearBtn.classList.add('bg-emerald-500', 'text-white');
+                    gearBtn.title = `관리자 로그인 됨 (${userEmail}) - 클릭 시 로그아웃`;
+                }
+            } else {
+                adminButtons.forEach(btn => btn.classList.add('hidden'));
+                if (gearBtn) {
+                    gearBtn.classList.remove('bg-emerald-500', 'text-white');
+                    gearBtn.classList.add('bg-emerald-100', 'text-emerald-700', 'dark:bg-emerald-900/60', 'dark:text-emerald-200');
+                    gearBtn.title = '관리자 로그인';
+                }
+            }
+            renderUpbo(globalUpboData);
+        }
+
         function openUpboEditModal(userId) {
+            if (!isAdminMode) return;
             currentEditingUserId = userId;
             const user = globalUpboData.find(u => u.id === userId);
             if (!user) return;
@@ -945,7 +960,6 @@
 
             if (fileInput && fileInput.files && fileInput.files[0]) {
                 try {
-                    /* 배너 이미지는 캔버스 압축 없이 원본 100% 화질 보존 */
                     const uploadedDataUrl = await readFileAsDataURL(fileInput.files[0]);
                     if (uploadedDataUrl) bannerVal = uploadedDataUrl;
                 } catch(e) { console.error(e); }
@@ -1230,7 +1244,6 @@
                     const file = e.target.files[0];
                     if (file) {
                         try {
-                            /* 배너 이미지 100% 원본 화질 읽기 */
                             const dataUrl = await readFileAsDataURL(file);
                             if (dataUrl) {
                                 document.getElementById('edit-profile-banner').value = dataUrl;
@@ -1315,7 +1328,6 @@
         .card-front, .card-back { backface-visibility: hidden; position: absolute; inset: 0; }
         .card-back { transform: rotateY(180deg); }
 
-        /* Hardware Accelerated GPU Clover Background Animations */
         .bg-clover-container {
             position: fixed;
             inset: 0;
@@ -1353,7 +1365,6 @@
 </head>
 <body class="text-gray-800 dark:text-gray-100 min-h-screen flex flex-col relative overflow-x-hidden p-3 sm:p-6 transition-colors duration-300">
 
-    <!-- GPU Accelerated Clover Background -->
     <div class="bg-clover-container">
         <div class="clover-particle p-fall-1" style="left: 5%; animation-delay: 0s;">🍀</div>
         <div class="clover-particle p-fall-2" style="left: 18%; animation-delay: 3s;">☘️</div>
@@ -1364,10 +1375,8 @@
         <div class="clover-particle p-fall-1" style="left: 90%; animation-delay: 4s;">✨</div>
     </div>
 
-    <!-- MAIN APPLICATION CONTAINER -->
     <div class="max-w-5xl mx-auto w-full soft-card rounded-3xl relative z-10 my-2 flex flex-col flex-grow overflow-hidden border border-emerald-200/60 dark:border-emerald-800/40 shadow-2xl">
         
-        <!-- Header Top Bar -->
         <div class="bg-gradient-to-r from-emerald-500/10 via-teal-500/10 to-emerald-500/10 dark:from-emerald-900/30 dark:to-teal-900/30 px-5 py-3 border-b border-emerald-100 dark:border-emerald-800/50 flex items-center justify-between select-none">
             <div class="flex items-center gap-2.5">
                 <div class="w-8 h-8 rounded-full bg-emerald-100 dark:bg-emerald-900/60 flex items-center justify-center text-emerald-600 dark:text-emerald-300">
@@ -1425,7 +1434,6 @@
             </a>
         </nav>
 
-        <!-- MAIN CONTENT AREA -->
         <main class="p-4 sm:p-8 space-y-8 flex-grow">
 
             <section id="profile" class="scroll-mt-32 space-y-6">
@@ -1681,7 +1689,7 @@
                             <div id="loading-indicator" class="hidden text-xs font-bold text-emerald-600 animate-pulse">
                                 동기화 중...
                             </div>
-                            <button onclick="openAdminLoginModal()" class="soft-button w-8 h-8 rounded-full bg-emerald-100 dark:bg-emerald-900/60 text-emerald-700 dark:text-emerald-200 text-xs flex items-center justify-center" title="관리자 설정">
+                            <button id="admin-gear-icon" onclick="openAdminLoginModal()" class="soft-button w-8 h-8 rounded-full bg-emerald-100 dark:bg-emerald-900/60 text-emerald-700 dark:text-emerald-200 text-xs flex items-center justify-center" title="관리자 로그인">
                                 <i class="fa-solid fa-gear"></i>
                             </button>
                             <span class="text-xs bg-emerald-100/80 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-200 px-3 py-1 rounded-full font-bold">
@@ -1718,14 +1726,18 @@
             </div>
         </div>
 
+        <!-- 🔒 관리자 인증 모달 (Firebase Auth 지원) -->
         <div id="admin-login-modal" class="fixed inset-0 z-[110] flex items-center justify-center bg-black/40 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-200">
             <div class="soft-card w-11/12 max-w-sm p-6 text-center">
                 <h3 class="text-base font-bold text-emerald-950 dark:text-emerald-100 mb-2"><i class="fa-solid fa-lock text-emerald-500 mr-1"></i> 관리자 인증</h3>
-                <p class="text-xs text-emerald-600 dark:text-emerald-400 mb-4">내용 편집 권한을 위해 PIN 코드를 입력하세요.</p>
-                <input type="password" id="admin-pin" class="w-full soft-card-inset p-3 text-center text-sm tracking-widest mb-4 outline-none focus:ring-2 focus:ring-emerald-400" placeholder="PIN CODE">
+                <p class="text-xs text-emerald-600 dark:text-emerald-400 mb-4">관리자 계정(이메일/비밀번호)으로 로그인하세요.</p>
+                <div class="space-y-2 mb-4 text-left">
+                    <input type="email" id="admin-email" class="w-full soft-card-inset p-2.5 text-xs outline-none focus:ring-2 focus:ring-emerald-400" placeholder="관리자 이메일">
+                    <input type="password" id="admin-password" class="w-full soft-card-inset p-2.5 text-xs outline-none focus:ring-2 focus:ring-emerald-400" placeholder="비밀번호" onkeydown="if(event.key==='Enter') handleAdminLogin()">
+                </div>
                 <div class="flex justify-end gap-2">
                     <button onclick="closeAdminLoginModal()" class="soft-button px-4 py-2 text-xs rounded-xl bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200">취소</button>
-                    <button onclick="checkAdminPin()" class="soft-button px-4 py-2 text-xs rounded-xl bg-emerald-500 text-white font-bold">확인</button>
+                    <button onclick="handleAdminLogin()" class="soft-button px-4 py-2 text-xs rounded-xl bg-emerald-500 text-white font-bold">로그인</button>
                 </div>
             </div>
         </div>
@@ -1923,7 +1935,6 @@
             </div>
         </div>
 
-        <!-- Toast Notification Popup -->
         <div id="toast-message" class="fixed bottom-8 right-6 z-[150] soft-card px-5 py-3 text-xs font-bold text-emerald-950 bg-emerald-300 dark:bg-emerald-700 dark:text-emerald-100 transform translate-y-16 opacity-0 transition-all duration-300 flex items-center gap-2 shadow-lg">
             <i class="fa-solid fa-circle-check text-emerald-800 dark:text-emerald-200 text-sm"></i>
             <span id="toast-text">작업이 정상적으로 처리되었습니다! 🍀</span>
