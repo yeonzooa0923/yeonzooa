@@ -72,7 +72,6 @@
             } catch (e) {}
         }
 
-        /* 원본 이미지 및 데이터 URL 변환 함수 */
         function readFileAsDataURL(file) {
             return new Promise((resolve, reject) => {
                 if (!file) { resolve(null); return; }
@@ -100,7 +99,7 @@
                                 width = maxWidth;
                             } else {
                                 width = Math.round((width * maxHeight) / height);
-                                width = maxHeight;
+                                height = maxHeight;
                             }
                         }
 
@@ -210,14 +209,16 @@
 
         const defaultWeflabConfig = {
             overlayUrl: "https://weflab.com/page/guPK2ODAl2hwY3I",
+            rouletteBalloons: "33, 124",
+            ignoreKeywords: [
+                "꽝", "다음 기회에", "아쉽네요", "노템", 
+                "자몽이 간식비", "구름이 간식비", "메롱", "사랑해", 
+                "볼빵빵", "윙크", "발박수", "만세", "oo체"
+            ],
             starRules: [
                 { count: 700, item: "방셀 확정 (단컷 1장)" },
                 { count: 1424, item: "방셀 확정 (의상 2벌+인생네컷)" }
-            ],
-            rouletteRules: {
-                balloonCount: 33,
-                ignoreKeywords: "꽝, 다음 기회에, 아쉽네요, 노템"
-            }
+            ]
         };
         
         const defaultProfileData = {
@@ -712,7 +713,6 @@
             }
         }
 
-        /* 행운 점치기 문구 관리 모달 */
         function openFortuneEditModal() {
             const list = document.getElementById('fortune-edit-list');
             if (!list) return;
@@ -770,7 +770,6 @@
             showToast('행운 점치기 문구가 저장되었습니다! 🍀');
         }
 
-        /* 🔒 안전한 Firebase 인증 관리자 로그인 시스템 */
         function openAdminLoginModal() {
             if (isAdminMode && auth && auth.currentUser) {
                 if (confirm(`현재 [${auth.currentUser.email}] 계정으로 로그인되어 있습니다.\n로그아웃 하시겠습니까?`)) {
@@ -848,6 +847,16 @@
 
         function openWeflabModal() {
             document.getElementById('weflab-url-input').value = globalWeflabConfig.overlayUrl || 'https://weflab.com/page/guPK2ODAl2hwY3I';
+            document.getElementById('weflab-roulette-balloons').value = globalWeflabConfig.rouletteBalloons || '33, 124';
+            
+            const keywordsStr = Array.isArray(globalWeflabConfig.ignoreKeywords) 
+                ? globalWeflabConfig.ignoreKeywords.join(', ')
+                : (globalWeflabConfig.ignoreKeywords || "꽝, 다음 기회에, 자몽이 간식비, 구름이 간식비, 메롱, 사랑해, 볼빵빵, 윙크, 발박수, 만세, oo체");
+            
+            document.getElementById('weflab-ignore-keywords').value = keywordsStr;
+
+            renderStarRulesList();
+
             const m = document.getElementById('weflab-modal');
             if (m) m.classList.remove('opacity-0', 'pointer-events-none');
         }
@@ -857,22 +866,74 @@
             if (m) m.classList.add('opacity-0', 'pointer-events-none');
         }
 
-        function saveWeflabSettings() {
-            const url = document.getElementById('weflab-url-input').value.trim();
-            if (url) globalWeflabConfig.overlayUrl = url;
+        function renderStarRulesList() {
+            const list = document.getElementById('weflab-starrules-list');
+            if (!list) return;
+            const rules = globalWeflabConfig.starRules || defaultWeflabConfig.starRules;
             
-            updateFirestore('weflab', globalWeflabConfig);
-            closeWeflabModal();
-            showToast('위플랩 연동 주소가 저장되었습니다! 🍀');
+            list.innerHTML = rules.map((r, idx) => `
+                <div class="flex items-center gap-2 text-xs p-1.5 soft-card-inset">
+                    <input type="number" class="star-rule-count w-20 soft-card-inset p-1 text-center font-bold" value="${r.count}" placeholder="개수">
+                    <span class="font-bold">개 ➔</span>
+                    <input type="text" class="star-rule-item flex-grow soft-card-inset p-1 font-bold" value="${r.item}" placeholder="업보 등록 이름">
+                    <button onclick="removeStarRule(${idx})" class="text-red-500 font-bold px-1.5">✕</button>
+                </div>
+            `).join('');
         }
 
-        function processAutoKarma(donorId, donorNick, itemName) {
+        function addStarRuleRow() {
+            if (!globalWeflabConfig.starRules) globalWeflabConfig.starRules = [];
+            globalWeflabConfig.starRules.push({ count: 100, item: "방셀 확정 (기본)" });
+            renderStarRulesList();
+        }
+
+        function removeStarRule(idx) {
+            if (globalWeflabConfig.starRules) {
+                globalWeflabConfig.starRules.splice(idx, 1);
+                renderStarRulesList();
+            }
+        }
+
+        function saveWeflabSettings() {
+            const url = document.getElementById('weflab-url-input').value.trim();
+            const balloons = document.getElementById('weflab-roulette-balloons').value.trim();
+            const rawKeywords = document.getElementById('weflab-ignore-keywords').value;
+
+            if (url) globalWeflabConfig.overlayUrl = url;
+            globalWeflabConfig.rouletteBalloons = balloons || "33, 124";
+
+            globalWeflabConfig.ignoreKeywords = rawKeywords.split(',')
+                .map(k => k.trim())
+                .filter(Boolean);
+
+            const counts = document.querySelectorAll('.star-rule-count');
+            const items = document.querySelectorAll('.star-rule-item');
+            const newStarRules = [];
+
+            for (let i = 0; i < counts.length; i++) {
+                const cnt = parseInt(counts[i].value, 10);
+                const itm = items[i].value.trim();
+                if (!isNaN(cnt) && itm) {
+                    newStarRules.push({ count: cnt, item: itm });
+                }
+            }
+            globalWeflabConfig.starRules = newStarRules;
+
+            updateFirestore('weflab', globalWeflabConfig);
+            closeWeflabModal();
+            showToast('위플랩 자동연동 및 스킵 규칙이 저장되었습니다! 🍀');
+        }
+
+        function processAutoKarma(donorId, donorNick, itemName, count = 0) {
             if (!donorNick || !itemName) return;
             
-            const ignores = (globalWeflabConfig.rouletteRules?.ignoreKeywords || "꽝, 다음 기회에, 아쉽네요").split(',').map(k => k.trim());
+            const ignores = Array.isArray(globalWeflabConfig.ignoreKeywords) 
+                ? globalWeflabConfig.ignoreKeywords 
+                : (globalWeflabConfig.ignoreKeywords || "꽝,다음 기회에,자몽이 간식비").split(',').map(k => k.trim());
+            
             for (const kw of ignores) {
                 if (kw && itemName.includes(kw)) {
-                    showToast(`⚠️ [${donorNick}]님 스킵: '${itemName}' (꽝/제외 키워드)`);
+                    showToast(`⚠️ [${donorNick}]님 스킵: '${itemName}' (스킵 지정 항목)`);
                     return;
                 }
             }
@@ -902,13 +963,13 @@
             const type = document.getElementById('sim-type').value;
 
             if (type === '700') {
-                processAutoKarma('sim_' + Date.now(), donorNick, '방셀 확정 (단컷 1장)');
+                processAutoKarma('sim_' + Date.now(), donorNick, '방셀 확정 (단컷 1장)', 700);
             } else if (type === '1424') {
-                processAutoKarma('sim_' + Date.now(), donorNick, '방셀 확정 (의상 2벌+인생네컷)');
+                processAutoKarma('sim_' + Date.now(), donorNick, '방셀 확정 (의상 2벌+인생네컷)', 1424);
             } else if (type === 'roulette_win') {
-                processAutoKarma('sim_' + Date.now(), donorNick, '바니걸 방셀');
+                processAutoKarma('sim_' + Date.now(), donorNick, '바니걸 방셀', 33);
             } else if (type === 'roulette_fail') {
-                processAutoKarma('sim_' + Date.now(), donorNick, '꽝 (다음기회에)');
+                processAutoKarma('sim_' + Date.now(), donorNick, '자몽이 간식비', 33);
             }
         }
 
@@ -1895,11 +1956,11 @@
             </div>
         </div>
 
-        <!-- ⚡ 위플랩 연동 설정 및 테스트 모달 -->
+        <!-- ⚡ 위플랩 연동 설정 및 예외 키워드 편집 모달 -->
         <div id="weflab-modal" class="fixed inset-0 z-[110] flex items-center justify-center bg-black/40 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-200">
             <div class="soft-card w-11/12 max-w-md p-6 space-y-4 max-h-[85vh] flex flex-col">
                 <div class="flex justify-between items-center pb-2 border-b border-emerald-100 dark:border-emerald-800">
-                    <h3 class="text-base font-bold text-emerald-950 dark:text-emerald-100 flex items-center gap-1.5"><i class="fa-solid fa-bolt text-amber-500"></i> 위플랩 자동연동 설정</h3>
+                    <h3 class="text-base font-bold text-emerald-950 dark:text-emerald-100 flex items-center gap-1.5"><i class="fa-solid fa-bolt text-amber-500"></i> 위플랩 연동 & 스킵 키워드 설정</h3>
                     <button onclick="closeWeflabModal()" class="text-gray-400 font-bold">✕</button>
                 </div>
                 <div class="overflow-y-auto space-y-3 text-xs flex-grow pr-1">
@@ -1907,19 +1968,33 @@
                         <label class="block mb-1 font-bold">위플랩 브라우저 소스 URL:</label>
                         <input type="text" id="weflab-url-input" class="w-full soft-card-inset p-2.5 outline-none font-mono text-[11px]" placeholder="https://weflab.com/page/...">
                     </div>
-                    <div class="p-3 soft-card-inset space-y-1">
-                        <span class="font-bold text-emerald-700 dark:text-emerald-300 block">✨ 자동 적립 규칙</span>
-                        <p class="text-[11px] text-gray-600 dark:text-gray-300">• <b>33풍 룰렛</b>: 당첨 결과 중 '꽝'이 포함되지 않은 방셀/선물만 자동으로 업보 추가</p>
-                        <p class="text-[11px] text-gray-600 dark:text-gray-300">• <b>700개</b>: '방셀 확정 (단컷 1장)' 자동 등록</p>
-                        <p class="text-[11px] text-gray-600 dark:text-gray-300">• <b>1424개</b>: '방셀 확정 (의상 2벌+인생네컷)' 자동 등록</p>
+
+                    <div>
+                        <label class="block mb-1 font-bold">룰렛 대상 별풍선 개수 (쉼표 구분):</label>
+                        <input type="text" id="weflab-roulette-balloons" class="w-full soft-card-inset p-2 outline-none font-bold text-emerald-700 dark:text-emerald-300" placeholder="33, 124">
                     </div>
+
+                    <div>
+                        <label class="block mb-1 font-bold text-red-500">🚫 업보에 안 적을 룰렛 항목/스킵 키워드 (쉼표 구분):</label>
+                        <p class="text-[10px] text-gray-500 mb-1">아래 입력한 단어가 들어간 룰렛 결과는 업보에 자동으로 추가되지 않고 스킵됩니다.</p>
+                        <textarea id="weflab-ignore-keywords" rows="3" class="w-full soft-card-inset p-2.5 outline-none text-xs leading-relaxed resize-none"></textarea>
+                    </div>
+
+                    <div class="p-3 soft-card-inset space-y-2">
+                        <div class="flex justify-between items-center">
+                            <span class="font-bold text-emerald-800 dark:text-emerald-200">✨ 별풍선 확정 적립 규칙</span>
+                            <button onclick="addStarRuleRow()" class="text-[10px] bg-emerald-500 text-white font-bold px-2 py-0.5 rounded">+ 규칙 추가</button>
+                        </div>
+                        <div id="weflab-starrules-list" class="space-y-1.5"></div>
+                    </div>
+
                     <div class="p-3 soft-card-inset space-y-2 border border-emerald-300">
-                        <span class="font-bold text-emerald-800 dark:text-emerald-200 block">🧪 후원 수신 테스트 시뮬레이터</span>
+                        <span class="font-bold text-emerald-800 dark:text-emerald-200 block">🧪 후원 수신 시뮬레이터</span>
                         <div class="flex gap-2">
                             <input type="text" id="sim-donor-nick" class="w-1/2 soft-card-inset p-1.5 text-xs" placeholder="후원자 닉네임" value="행운네잎이">
                             <select id="sim-type" class="w-1/2 soft-card-inset p-1.5 text-xs">
-                                <option value="33_win">33풍 (바니걸 방셀 당첨)</option>
-                                <option value="33_fail">33풍 (꽝 스킵 테스트)</option>
+                                <option value="roulette_win">33풍 (바니걸 방셀 당첨)</option>
+                                <option value="roulette_fail">33풍 (자몽이 간식비 - 스킵 테스트)</option>
                                 <option value="700">700개 (단컷 1장 확정)</option>
                                 <option value="1424">1424개 (의상2벌+네컷 확정)</option>
                             </select>
