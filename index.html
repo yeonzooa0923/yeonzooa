@@ -72,7 +72,7 @@
             } catch (e) {}
         }
 
-        /* 원본 파일 손실 없이 읽기 */
+        /* 원본 파일 100% 손실 없이 읽기 (배너 등 고화질 보존용) */
         function readFileAsDataURL(file) {
             return new Promise((resolve, reject) => {
                 if (!file) { resolve(null); return; }
@@ -144,6 +144,7 @@
                         db = firebase.firestore();
                         auth = firebase.auth();
 
+                        // 인증 상태 리스너 등록
                         auth.onAuthStateChanged((user) => {
                             if (user) {
                                 isAdminMode = true;
@@ -199,28 +200,6 @@
             { count: "486", title: "사랑해주아", description: "온 세상 클로버 가득 사랑의 손가락 하트 🫶", url: "https://placehold.co/293x164/ecfdf5/047857?text=486+Balloon" },
             { count: "1004", title: "천사주아", description: "우리를 지켜주는 은혜로운 수호천사 등장 👼", url: "https://placehold.co/293x164/ecfdf5/047857?text=1004+Balloon" }
         ];
-
-        const defaultFortuneOptions = [
-            { emoji: '🍀', title: '대박 행운 클로버', desc: '오늘 연주아 방송에서 레전드 매치가 펼쳐집니다! 기회가 올 때 망설이지 마세요.' },
-            { emoji: '💚', title: '달콤 상콤 하트', desc: '주아님의 텐션이 폭발하는 하루! 채팅 한 번으로 심쿵 팬서비스를 받을 확률 99%.' },
-            { emoji: '⭐', title: '반짝이는 슈퍼스타', desc: '당신의 업보가 빛을 발하는 날! 원하는 방셀이나 시그풍을 획득할 기운이 가득합니다.' },
-            { emoji: '🍃', title: '싱그러운 소소행', desc: '소소하지만 확실한 행복! 좋아하는 음료를 마시며 편안하게 주아 방송을 즐겨보세요.' },
-            { emoji: '🎁', title: '깜짝 선물 상자', desc: '생각지도 못한 깜짝 소식이 찾아옵니다! 방송 공지를 놓치지 말고 체크하세요.' }
-        ];
-
-        const defaultWeflabConfig = {
-            overlayUrl: "https://weflab.com/page/guPK2ODAl2hwY3I",
-            rouletteBalloons: "33, 124",
-            ignoreKeywords: [
-                "꽝", "다음 기회에", "아쉽네요", "노템", 
-                "자몽이 간식비", "구름이 간식비", "메롱", "사랑해", 
-                "볼빵빵", "윙크", "발박수", "만세", "oo체"
-            ],
-            starRules: [
-                { count: 700, item: "방셀 확정 (단컷 1장)" },
-                { count: 1424, item: "방셀 확정 (의상 2벌+인생네컷)" }
-            ]
-        };
         
         const defaultProfileData = {
             bannerUrl: "https://images.unsplash.com/photo-1528183429752-a97d0bf99b5a?q=80&w=1200&auto=format&fit=crop",
@@ -245,13 +224,10 @@
         let globalScheduleData = [];
         let globalBangsellData = [];
         let globalSigpoongData = [];
-        let globalFortuneData = [];
-        let globalWeflabConfig = {};
         let globalProfileData = {};
         
         let isAdminMode = false;
         let currentEditingUserId = null;
-        let weflabSocket = null;
 
         function fallbackToLocal() {
             globalUpboData = safeGetStorage('yeonZooaUpboData', null) || JSON.parse(JSON.stringify(defaultUpboData));
@@ -260,8 +236,6 @@
             globalProfileData = safeGetStorage('yeonZooaProfileData', null) || JSON.parse(JSON.stringify(defaultProfileData));
             globalBangsellData = safeGetStorage('yeonZooaBangsellData', null) || JSON.parse(JSON.stringify(defaultBangsellData));
             globalSigpoongData = safeGetStorage('yeonZooaSigpoongData', null) || JSON.parse(JSON.stringify(defaultSigpoongData));
-            globalFortuneData = safeGetStorage('yeonZooaFortuneData', null) || JSON.parse(JSON.stringify(defaultFortuneOptions));
-            globalWeflabConfig = safeGetStorage('yeonZooaWeflabConfig', null) || JSON.parse(JSON.stringify(defaultWeflabConfig));
         }
 
         function saveAllToLocal() {
@@ -271,8 +245,6 @@
             safeSetStorage('yeonZooaProfileData', globalProfileData);
             safeSetStorage('yeonZooaBangsellData', globalBangsellData);
             safeSetStorage('yeonZooaSigpoongData', globalSigpoongData);
-            safeSetStorage('yeonZooaFortuneData', globalFortuneData);
-            safeSetStorage('yeonZooaWeflabConfig', globalWeflabConfig);
         }
 
         async function fetchSiteData() {
@@ -280,12 +252,11 @@
             initFirebase();
             fallbackToLocal();
             renderAll();
-            initWeflabLiveConnection();
 
             if (db) {
                 if (loadingInd) loadingInd.classList.remove('hidden');
                 try {
-                    const keys = ['profile', 'upbo', 'notice', 'schedule', 'bangsell', 'sigpoong', 'fortune', 'weflab'];
+                    const keys = ['profile', 'upbo', 'notice', 'schedule', 'bangsell', 'sigpoong'];
                     
                     for (const key of keys) {
                         const docRef = db.collection('zooaProfile').doc(key);
@@ -304,7 +275,6 @@
                                 else if (key === 'schedule') globalScheduleData = subData;
                                 else if (key === 'bangsell') globalBangsellData = subData;
                                 else if (key === 'sigpoong') globalSigpoongData = subData;
-                                else if (key === 'fortune') globalFortuneData = subData;
                             } else if (docData && docData.data !== undefined) {
                                 const parsedData = docData.data;
                                 if (key === 'profile') globalProfileData = parsedData;
@@ -313,15 +283,12 @@
                                 else if (key === 'schedule') globalScheduleData = parsedData;
                                 else if (key === 'bangsell') globalBangsellData = parsedData;
                                 else if (key === 'sigpoong') globalSigpoongData = parsedData;
-                                else if (key === 'fortune') globalFortuneData = parsedData;
-                                else if (key === 'weflab') globalWeflabConfig = parsedData;
                             }
                         }
                     }
 
                     saveAllToLocal();
                     renderAll();
-                    initWeflabLiveConnection();
                 } catch (error) {
                     console.error("Data sync error:", error);
                 }
@@ -336,8 +303,6 @@
             else if (key === 'schedule') globalScheduleData = data;
             else if (key === 'bangsell') globalBangsellData = data;
             else if (key === 'sigpoong') globalSigpoongData = data;
-            else if (key === 'fortune') globalFortuneData = data;
-            else if (key === 'weflab') globalWeflabConfig = data;
 
             safeSetStorage(`yeonZooa${key.charAt(0).toUpperCase() + key.slice(1)}Data`, data);
 
@@ -396,118 +361,6 @@
                 showToast('❌ 저장 오류: ' + err.message);
                 return false;
             }
-        }
-
-        function initWeflabLiveConnection() {
-            const url = globalWeflabConfig.overlayUrl || 'https://weflab.com/page/guPK2ODAl2hwY3I';
-            const statusElem = document.getElementById('weflab-live-status');
-            const pageKey = url.split('/page/')[1] || 'guPK2ODAl2hwY3I';
-
-            if (statusElem) {
-                statusElem.innerHTML = `<span class="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-ping mr-1"></span> 실시간 Weflab 연결됨 (${pageKey})`;
-            }
-
-            // 웹소켓 메시지 수신 핸들러 (위플랩 전용 오버레이 수신기)
-            window.addEventListener('message', (e) => {
-                try {
-                    if (e.data && e.data.type === 'WEFLAB_DONATION_EVENT') {
-                        const { donorId, donorNick, itemName, count } = e.data;
-                        handleWeflabDonation(donorId, donorNick, itemName, count);
-                    }
-                } catch(err) {}
-            });
-
-            // 히든 iframe 업데이트
-            let hiddenFrame = document.getElementById('weflab-live-iframe');
-            if (!hiddenFrame) {
-                hiddenFrame = document.createElement('iframe');
-                hiddenFrame.id = 'weflab-live-iframe';
-                hiddenFrame.style.display = 'none';
-                document.body.appendChild(hiddenFrame);
-            }
-            if (hiddenFrame.src !== url) {
-                hiddenFrame.src = url;
-            }
-        }
-
-        function handleWeflabDonation(donorId, donorNick, itemName, balloonCount) {
-            if (!donorNick) return;
-
-            // 1. 별풍선 수량 기반 확정 규칙 확인 (700개, 1424개 등)
-            const starRules = globalWeflabConfig.starRules || defaultWeflabConfig.starRules;
-            const matchedRule = starRules.find(r => parseInt(r.count, 10) === parseInt(balloonCount, 10));
-            
-            if (matchedRule) {
-                processAutoKarma(donorId, donorNick, matchedRule.item, balloonCount);
-                return;
-            }
-
-            // 2. 룰렛 항목 스킵 키워드 체크 ('꽝', '간식비' 등)
-            if (itemName) {
-                processAutoKarma(donorId, donorNick, itemName, balloonCount);
-            }
-        }
-
-        function processAutoKarma(donorId, donorNick, itemName, count = 0) {
-            if (!donorNick || !itemName) return;
-            
-            const ignores = Array.isArray(globalWeflabConfig.ignoreKeywords) 
-                ? globalWeflabConfig.ignoreKeywords 
-                : (globalWeflabConfig.ignoreKeywords || "꽝,다음 기회에,자몽이 간식비").split(',').map(k => k.trim());
-            
-            for (const kw of ignores) {
-                if (kw && itemName.includes(kw)) {
-                    showToast(`⚠️ [${donorNick}]님 스킵: '${itemName}' (스킵 지정 항목)`);
-                    return;
-                }
-            }
-
-            const cleanId = donorId || 'neipy_' + Date.now();
-            let user = globalUpboData.find(u => u.id === cleanId || u.nickname === donorNick);
-
-            if (!user) {
-                user = { id: cleanId, nickname: donorNick, items: [] };
-                globalUpboData.push(user);
-            }
-
-            let existingItem = user.items.find(i => i.name === itemName);
-            if (existingItem) {
-                existingItem.count += 1;
-            } else {
-                user.items.push({ name: itemName, count: 1 });
-            }
-
-            updateFirestore('upbo', globalUpboData);
-            renderUpbo(globalUpboData);
-            showToast(`🎉 [${donorNick}]님 업보 적립 완료: ${itemName}`);
-        }
-
-        function parseBatchWeflabText() {
-            const rawText = document.getElementById('batch-weflab-input').value;
-            if (!rawText.trim()) {
-                showToast('위플랩 후원 텍스트를 입력해 주세요.');
-                return;
-            }
-
-            const lines = rawText.split('\n');
-            let addedCount = 0;
-
-            for (const line of lines) {
-                if (!line.trim()) continue;
-                // 예: "연도움 - 33개 (바니걸 방셀)" 또는 "세계: 1424개"
-                const match = line.match(/([가-힣a-zA-A0-9_]+)\s*[:\-\s]\s*(\d+)개?\s*\(?([^\)]*)\)?/);
-                if (match) {
-                    const nick = match[1].trim();
-                    const cnt = parseInt(match[2], 10);
-                    const item = match[3].trim() || `${cnt}개 풍`;
-                    
-                    processAutoKarma('batch_' + Date.now(), nick, item, cnt);
-                    addedCount++;
-                }
-            }
-
-            document.getElementById('batch-weflab-input').value = '';
-            showToast(`✅ 일괄 분석 완료! (${addedCount}건 처리)`);
         }
 
         function getUserAvatarUrl(user) {
@@ -582,6 +435,15 @@
             }
         }
 
+        function renderAll() {
+            renderProfile();
+            renderUpbo(globalUpboData);
+            renderNotice();
+            renderSchedule();
+            renderBangsell();
+            renderSigpoong();
+        }
+
         function calculateDDayString(type, dateStr) {
             const today = new Date();
             today.setHours(0,0,0,0);
@@ -625,15 +487,6 @@
                 else if (diffDays > 0) return `<span class="text-emerald-600 dark:text-emerald-400 font-bold text-xs sm:text-sm">D-${diffDays}</span>`;
                 else return `<span class="text-gray-400 text-xs">ENDED (D+${Math.abs(diffDays)})</span>`;
             }
-        }
-
-        function renderAll() {
-            renderProfile();
-            renderUpbo(globalUpboData);
-            renderNotice();
-            renderSchedule();
-            renderBangsell();
-            renderSigpoong();
         }
 
         function renderProfile() {
@@ -799,6 +652,14 @@
             if (elem) elem.scrollBy({ left: dir * 240, behavior: 'smooth' });
         }
 
+        const fortuneOptions = [
+            { emoji: '🍀', title: '대박 행운 클로버', desc: '오늘 연주아 방송에서 레전드 매치가 펼쳐집니다! 기회가 올 때 망설이지 마세요.' },
+            { emoji: '💚', title: '달콤 상콤 하트', desc: '주아님의 텐션이 폭발하는 하루! 채팅 한 번으로 심쿵 팬서비스를 받을 확률 99%.' },
+            { emoji: '⭐', title: '반짝이는 슈퍼스타', desc: '당신의 업보가 빛을 발하는 날! 원하는 방셀이나 시그풍을 획득할 기운이 가득합니다.' },
+            { emoji: '🍃', title: '싱그러운 소소행', desc: '소소하지만 확실한 행복! 좋아하는 음료를 마시며 편안하게 주아 방송을 즐겨보세요.' },
+            { emoji: '🎁', title: '깜짝 선물 상자', desc: '생각지도 못한 깜짝 소식이 찾아옵니다! 방송 공지를 놓치지 말고 체크하세요.' }
+        ];
+
         function resetFortuneCards() {
             for (let i = 0; i < 3; i++) {
                 const card = document.getElementById(`fortune-card-${i}`);
@@ -812,8 +673,7 @@
             const card = document.getElementById(`fortune-card-${idx}`);
             if (!card || card.classList.contains('card-flipped')) return;
 
-            const opts = (globalFortuneData && globalFortuneData.length > 0) ? globalFortuneData : defaultFortuneOptions;
-            const shuffled = [...opts].sort(() => 0.5 - Math.random());
+            const shuffled = [...fortuneOptions].sort(() => 0.5 - Math.random());
             const selected = shuffled[0];
 
             document.getElementById(`fortune-emoji-${idx}`).innerText = selected.emoji;
@@ -829,63 +689,7 @@
             }
         }
 
-        function openFortuneEditModal() {
-            const list = document.getElementById('fortune-edit-list');
-            if (!list) return;
-
-            const opts = (globalFortuneData && globalFortuneData.length > 0) ? globalFortuneData : defaultFortuneOptions;
-            list.innerHTML = opts.map((f, idx) => `
-                <div class="p-2.5 soft-card-inset text-xs space-y-2">
-                    <div class="flex items-center justify-between gap-2">
-                        <input type="text" class="fortune-emoji w-12 text-center soft-card-inset p-1.5 font-bold" value="${f.emoji}">
-                        <input type="text" class="fortune-title flex-grow soft-card-inset p-1.5 font-bold" value="${f.title}">
-                        <button onclick="removeFortuneItem(${idx})" class="text-red-500 font-bold px-2">✕</button>
-                    </div>
-                    <textarea class="fortune-desc w-full soft-card-inset p-2 text-xs outline-none resize-none" rows="2">${f.desc}</textarea>
-                </div>
-            `).join('');
-
-            const m = document.getElementById('fortune-edit-modal');
-            if (m) m.classList.remove('opacity-0', 'pointer-events-none');
-        }
-
-        function closeFortuneEditModal() {
-            const m = document.getElementById('fortune-edit-modal');
-            if (m) m.classList.add('opacity-0', 'pointer-events-none');
-        }
-
-        function removeFortuneItem(idx) {
-            if (!globalFortuneData) globalFortuneData = [...defaultFortuneOptions];
-            globalFortuneData.splice(idx, 1);
-            openFortuneEditModal();
-        }
-
-        function addNewFortuneItem() {
-            if (!globalFortuneData) globalFortuneData = [...defaultFortuneOptions];
-            globalFortuneData.push({ emoji: '🍀', title: '행운 만점', desc: '오늘 방송에서 즐거운 행운이 연주아님과 네잎이들에게 가득할 예정입니다!' });
-            openFortuneEditModal();
-        }
-
-        function saveFortuneChanges() {
-            const emojis = document.querySelectorAll('.fortune-emoji');
-            const titles = document.querySelectorAll('.fortune-title');
-            const descs = document.querySelectorAll('.fortune-desc');
-
-            const newFortune = [];
-            for (let i = 0; i < emojis.length; i++) {
-                newFortune.push({
-                    emoji: emojis[i].value.trim() || '🍀',
-                    title: titles[i].value.trim() || '행운',
-                    desc: descs[i].value.trim() || '오늘도 해피한 하루!'
-                });
-            }
-
-            globalFortuneData = newFortune;
-            updateFirestore('fortune', globalFortuneData);
-            closeFortuneEditModal();
-            showToast('행운 점치기 문구가 저장되었습니다! 🍀');
-        }
-
+        /* 🔒 안전한 Firebase 인증 관리자 로그인 시스템 */
         function openAdminLoginModal() {
             if (isAdminMode && auth && auth.currentUser) {
                 if (confirm(`현재 [${auth.currentUser.email}] 계정으로 로그인되어 있습니다.\n로그아웃 하시겠습니까?`)) {
@@ -940,7 +744,7 @@
         }
 
         function updateAdminUI(isLoggedIn, userEmail = '') {
-            const adminButtons = document.querySelectorAll('#admin-profile-edit-btn, #admin-notice-edit-btn, #admin-schedule-edit-btn, #admin-bangsell-edit-btn, #admin-sigpoong-edit-btn, #admin-add-user-btn, #admin-fortune-edit-btn, #admin-weflab-btn, #admin-quick-tracker-panel');
+            const adminButtons = document.querySelectorAll('#admin-profile-edit-btn, #admin-notice-edit-btn, #admin-schedule-edit-btn, #admin-bangsell-edit-btn, #admin-sigpoong-edit-btn, #admin-add-user-btn');
             const gearBtn = document.getElementById('admin-gear-icon');
 
             if (isLoggedIn) {
@@ -959,119 +763,6 @@
                 }
             }
             renderUpbo(globalUpboData);
-        }
-
-        function openWeflabModal() {
-            document.getElementById('weflab-url-input').value = globalWeflabConfig.overlayUrl || 'https://weflab.com/page/guPK2ODAl2hwY3I';
-            document.getElementById('weflab-roulette-balloons').value = globalWeflabConfig.rouletteBalloons || '33, 124';
-            
-            const keywordsStr = Array.isArray(globalWeflabConfig.ignoreKeywords) 
-                ? globalWeflabConfig.ignoreKeywords.join(', ')
-                : (globalWeflabConfig.ignoreKeywords || "꽝, 다음 기회에, 자몽이 간식비, 구름이 간식비, 메롱, 사랑해, 볼빵빵, 윙크, 발박수, 만세, oo체");
-            
-            document.getElementById('weflab-ignore-keywords').value = keywordsStr;
-
-            renderStarRulesList();
-
-            const m = document.getElementById('weflab-modal');
-            if (m) m.classList.remove('opacity-0', 'pointer-events-none');
-        }
-
-        function closeWeflabModal() {
-            const m = document.getElementById('weflab-modal');
-            if (m) m.classList.add('opacity-0', 'pointer-events-none');
-        }
-
-        function renderStarRulesList() {
-            const list = document.getElementById('weflab-starrules-list');
-            if (!list) return;
-            const rules = globalWeflabConfig.starRules || defaultWeflabConfig.starRules;
-            
-            list.innerHTML = rules.map((r, idx) => `
-                <div class="flex items-center gap-2 text-xs p-1.5 soft-card-inset">
-                    <input type="number" class="star-rule-count w-20 soft-card-inset p-1 text-center font-bold" value="${r.count}" placeholder="개수">
-                    <span class="font-bold">개 ➔</span>
-                    <input type="text" class="star-rule-item flex-grow soft-card-inset p-1 font-bold" value="${r.item}" placeholder="업보 등록 이름">
-                    <button onclick="removeStarRule(${idx})" class="text-red-500 font-bold px-1.5">✕</button>
-                </div>
-            `).join('');
-        }
-
-        function addStarRuleRow() {
-            if (!globalWeflabConfig.starRules) globalWeflabConfig.starRules = [];
-            globalWeflabConfig.starRules.push({ count: 100, item: "방셀 확정 (기본)" });
-            renderStarRulesList();
-        }
-
-        function removeStarRule(idx) {
-            if (globalWeflabConfig.starRules) {
-                globalWeflabConfig.starRules.splice(idx, 1);
-                renderStarRulesList();
-            }
-        }
-
-        function saveWeflabSettings() {
-            const url = document.getElementById('weflab-url-input').value.trim();
-            const balloons = document.getElementById('weflab-roulette-balloons').value.trim();
-            const rawKeywords = document.getElementById('weflab-ignore-keywords').value;
-
-            if (url) globalWeflabConfig.overlayUrl = url;
-            globalWeflabConfig.rouletteBalloons = balloons || "33, 124";
-
-            globalWeflabConfig.ignoreKeywords = rawKeywords.split(',')
-                .map(k => k.trim())
-                .filter(Boolean);
-
-            const counts = document.querySelectorAll('.star-rule-count');
-            const items = document.querySelectorAll('.star-rule-item');
-            const newStarRules = [];
-
-            for (let i = 0; i < counts.length; i++) {
-                const cnt = parseInt(counts[i].value, 10);
-                const itm = items[i].value.trim();
-                if (!isNaN(cnt) && itm) {
-                    newStarRules.push({ count: cnt, item: itm });
-                }
-            }
-            globalWeflabConfig.starRules = newStarRules;
-
-            updateFirestore('weflab', globalWeflabConfig);
-            initWeflabLiveConnection();
-            closeWeflabModal();
-            showToast('위플랩 자동연동 및 스킵 규칙이 저장되었습니다! 🍀');
-        }
-
-        function quickAddKarma(type) {
-            const donorNick = document.getElementById('quick-donor-nick').value.trim();
-            if (!donorNick) {
-                showToast('네잎이 닉네임을 입력해 주세요!');
-                return;
-            }
-
-            if (type === '700') {
-                processAutoKarma('quick_' + Date.now(), donorNick, '방셀 확정 (단컷 1장)', 700);
-            } else if (type === '1424') {
-                processAutoKarma('quick_' + Date.now(), donorNick, '방셀 확정 (의상 2벌+인생네컷)', 1424);
-            } else if (type === 'custom') {
-                const selectElem = document.getElementById('quick-custom-item');
-                const customVal = selectElem ? selectElem.value : '바니걸 방셀';
-                processAutoKarma('quick_' + Date.now(), donorNick, customVal, 33);
-            }
-        }
-
-        function simulateDonation() {
-            const donorNick = document.getElementById('sim-donor-nick').value.trim() || '테스트네잎이';
-            const type = document.getElementById('sim-type').value;
-
-            if (type === '700') {
-                processAutoKarma('sim_' + Date.now(), donorNick, '방셀 확정 (단컷 1장)', 700);
-            } else if (type === '1424') {
-                processAutoKarma('sim_' + Date.now(), donorNick, '방셀 확정 (의상 2벌+인생네컷)', 1424);
-            } else if (type === 'roulette_win') {
-                processAutoKarma('sim_' + Date.now(), donorNick, '바니걸 방셀', 33);
-            } else if (type === 'roulette_fail') {
-                processAutoKarma('sim_' + Date.now(), donorNick, '자몽이 간식비', 33);
-            }
         }
 
         function openUpboEditModal(userId) {
@@ -1095,7 +786,7 @@
                 <div class="space-y-1.5">
                     ${user.items.map((item, idx) => `
                         <div class="flex items-center justify-between p-2 soft-card-inset text-xs">
-                            <span class="font-semibold text-emerald-950 dark:text-emerald-100">${item.name}</span>
+                            <span>${item.name}</span>
                             <div class="flex items-center gap-1.5">
                                 <button onclick="changeItemCount(${idx}, -1)" class="soft-button w-5 h-5 rounded bg-gray-200 dark:bg-gray-700 font-bold flex items-center justify-center">-</button>
                                 <span class="font-bold text-emerald-700 dark:text-emerald-300 px-1">${item.count}</span>
@@ -1715,7 +1406,7 @@
                 ANNOUNCEMENT
             </span>
             <marquee behavior="scroll" direction="left" scrollamount="5" class="font-semibold text-emerald-800 dark:text-emerald-200">
-                Welcome to Yeon Zooa's World! 🍀 오늘도 행운이 가득한 하루가 되길 바래 !
+                🍀 Welcome to Yeon Zooa's World! 🍀 팬닉: 네잎이 | 방송시간: 저녁시간대 | 데뷔일: 2025.05.31 | 생일: 09.23 | 오늘도 행운 가득한 하루 되세요! ✨✨
             </marquee>
         </div>
 
@@ -1920,7 +1611,7 @@
                 <div class="soft-card p-5">
                     <div class="flex justify-between items-center mb-4 pb-2 border-b border-emerald-100 dark:border-emerald-800/50">
                         <span class="font-bold text-emerald-900 dark:text-emerald-200 text-sm flex items-center gap-2">
-                            <i class="fa-solid fa-balloon text-emerald-500"></i> SIGNATURE BALLOONS 🎈
+                            <i class="fa-solid fa-balloon text-emerald-500"></i> SIGNATURE BALLOONS 🎈 <span class="text-[10px] text-emerald-600 font-normal">(293×164 규격 지원)</span>
                         </span>
                         <div class="flex items-center gap-1.5">
                             <button onclick="scrollSlider('sigpoong-slider', -1)" class="soft-button w-7 h-7 rounded-full bg-emerald-100 dark:bg-emerald-900 text-emerald-800 dark:text-emerald-200 text-xs flex items-center justify-center"><i class="fa-solid fa-chevron-left"></i></button>
@@ -1933,10 +1624,7 @@
             </section>
 
             <section id="playground" class="scroll-mt-32">
-                <div class="soft-card p-6 text-center max-w-xl mx-auto relative">
-                    <button id="admin-fortune-edit-btn" onclick="openFortuneEditModal()" class="hidden absolute top-4 right-4 text-xs text-emerald-600 dark:text-emerald-400 hover:underline font-bold">
-                        <i class="fa-solid fa-pen-to-square"></i> 편집
-                    </button>
+                <div class="soft-card p-6 text-center max-w-xl mx-auto">
                     <h3 class="text-xl font-bold font-cute mb-1 text-emerald-800 dark:text-emerald-200">🍀 오늘의 클로버 행운 점치기 🃏</h3>
                     <p class="text-xs text-emerald-600 dark:text-emerald-400 mb-6">하루에 한 번! 아래 3장의 주아 행운 카드 중 1장을 클릭해보세요.</p>
 
@@ -1990,23 +1678,17 @@
             </section>
 
             <section id="karma" class="scroll-mt-32">
-                <div class="soft-card p-5 sm:p-6 space-y-4">
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-emerald-100 dark:border-emerald-800/50">
+                <div class="soft-card p-5 sm:p-6">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 pb-3 border-b border-emerald-100 dark:border-emerald-800/50">
                         <div>
                             <h2 class="text-xl font-bold font-cute text-emerald-950 dark:text-white flex items-center gap-2">
                                 <i class="fa-solid fa-database text-emerald-500"></i> 네잎이 업보 현황
                             </h2>
-                            <p id="weflab-live-status" class="text-[11px] text-emerald-600 dark:text-emerald-400 mt-0.5">
-                                <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-ping mr-1"></span> 실시간 Weflab 연결 준비 완료
-                            </p>
                         </div>
                         <div class="flex items-center gap-2">
                             <div id="loading-indicator" class="hidden text-xs font-bold text-emerald-600 animate-pulse">
                                 동기화 중...
                             </div>
-                            <button id="admin-weflab-btn" onclick="openWeflabModal()" class="hidden soft-button px-3 py-1.5 rounded-full bg-emerald-100 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-200 text-xs font-bold flex items-center gap-1.5" title="위플랩 연동 및 스킵 설정">
-                                <i class="fa-solid fa-bolt text-amber-500"></i> 위플랩 설정
-                            </button>
                             <button id="admin-gear-icon" onclick="openAdminLoginModal()" class="soft-button w-8 h-8 rounded-full bg-emerald-100 dark:bg-emerald-900/60 text-emerald-700 dark:text-emerald-200 text-xs flex items-center justify-center" title="관리자 로그인">
                                 <i class="fa-solid fa-gear"></i>
                             </button>
@@ -2016,48 +1698,12 @@
                         </div>
                     </div>
 
-                    <!-- ⚡ 방송 중 실시간 1초 간편 적립 패널 -->
-                    <div id="admin-quick-tracker-panel" class="hidden p-3.5 soft-card-inset border-2 border-emerald-400 bg-emerald-50/80 dark:bg-emerald-950/80 space-y-2">
-                        <div class="flex items-center justify-between text-xs font-bold text-emerald-900 dark:text-emerald-200">
-                            <span>⚡ 방송 중 실시간 1초 업보 간편 적립기</span>
-                            <span class="text-[10px] text-emerald-600 dark:text-emerald-400 font-normal">닉네임 작성 ➔ 1클릭 즉시 반영!</span>
-                        </div>
-                        <div class="flex flex-col sm:flex-row items-center gap-2">
-                            <input type="text" id="quick-donor-nick" class="w-full sm:w-44 soft-card-inset p-2 text-xs font-bold outline-none" placeholder="네잎이 닉네임...">
-                            <div class="flex flex-wrap items-center gap-1.5 w-full sm:w-auto">
-                                <select id="quick-custom-item" class="soft-card-inset p-2 text-xs font-bold outline-none">
-                                    <option value="바니걸 방셀">바니걸 방셀 (33풍)</option>
-                                    <option value="비키니 방셀">비키니 방셀 (33풍)</option>
-                                    <option value="네컷 방셀">네컷 방셀 (33풍)</option>
-                                    <option value="움짤 방셀">움짤 방셀 (33풍)</option>
-                                    <option value="랜덤 얼빡 방셀">랜덤 얼빡 방셀 (33풍)</option>
-                                </select>
-                                <button onclick="quickAddKarma('custom')" class="soft-button px-3 py-2 bg-emerald-500 text-white font-bold rounded-xl text-xs flex-1 sm:flex-none">
-                                    + 선택 항목 적립
-                                </button>
-                                <button onclick="quickAddKarma('700')" class="soft-button px-3 py-2 bg-teal-600 text-white font-bold rounded-xl text-xs flex-1 sm:flex-none">
-                                    + 700풍 (단컷 1장)
-                                </button>
-                                <button onclick="quickAddKarma('1424')" class="soft-button px-3 py-2 bg-indigo-600 text-white font-bold rounded-xl text-xs flex-1 sm:flex-none">
-                                    + 1424풍 (의상2벌+네컷)
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="pt-2 border-t border-emerald-200 dark:border-emerald-800 flex flex-col sm:flex-row items-center gap-2">
-                            <input type="text" id="batch-weflab-input" class="w-full soft-card-inset p-1.5 text-xs outline-none" placeholder="위플랩 후원 텍스트 복사-붙여넣기 (예: 연도움 - 33개 (바니걸 방셀))">
-                            <button onclick="parseBatchWeflabText()" class="soft-button px-3 py-1.5 bg-emerald-600 text-white font-bold rounded-lg text-xs whitespace-nowrap">
-                                📋 텍스트 일괄 추출
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="flex flex-col sm:flex-row gap-2">
+                    <div class="flex flex-col sm:flex-row gap-2 mb-4">
                         <div class="relative flex-grow">
                             <input type="text" id="upbo-search" class="w-full soft-card-inset px-4 py-2 text-xs outline-none focus:ring-2 focus:ring-emerald-400 transition-all" placeholder="닉네임 또는 SOOP ID 검색...">
                         </div>
                         <button id="admin-add-user-btn" onclick="openAddUserModal()" class="hidden soft-button px-4 py-2 rounded-xl text-xs font-bold bg-emerald-500 text-white flex items-center justify-center gap-1.5">
-                            <i class="fa-solid fa-user-plus"></i> 네잎이 직접 추가
+                            <i class="fa-solid fa-user-plus"></i> 네잎이 추가
                         </button>
                     </div>
 
@@ -2080,6 +1726,7 @@
             </div>
         </div>
 
+        <!-- 🔒 관리자 인증 모달 (Firebase Auth 지원) -->
         <div id="admin-login-modal" class="fixed inset-0 z-[110] flex items-center justify-center bg-black/40 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-200">
             <div class="soft-card w-11/12 max-w-sm p-6 text-center">
                 <h3 class="text-base font-bold text-emerald-950 dark:text-emerald-100 mb-2"><i class="fa-solid fa-lock text-emerald-500 mr-1"></i> 관리자 인증</h3>
@@ -2091,72 +1738,6 @@
                 <div class="flex justify-end gap-2">
                     <button onclick="closeAdminLoginModal()" class="soft-button px-4 py-2 text-xs rounded-xl bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200">취소</button>
                     <button onclick="handleAdminLogin()" class="soft-button px-4 py-2 text-xs rounded-xl bg-emerald-500 text-white font-bold">로그인</button>
-                </div>
-            </div>
-        </div>
-
-        <div id="weflab-modal" class="fixed inset-0 z-[110] flex items-center justify-center bg-black/40 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-200">
-            <div class="soft-card w-11/12 max-w-md p-6 space-y-4 max-h-[85vh] flex flex-col">
-                <div class="flex justify-between items-center pb-2 border-b border-emerald-100 dark:border-emerald-800">
-                    <h3 class="text-base font-bold text-emerald-950 dark:text-emerald-100 flex items-center gap-1.5"><i class="fa-solid fa-bolt text-amber-500"></i> 위플랩 연동 & 스킵 키워드 설정</h3>
-                    <button onclick="closeWeflabModal()" class="text-gray-400 font-bold">✕</button>
-                </div>
-                <div class="overflow-y-auto space-y-3 text-xs flex-grow pr-1">
-                    <div>
-                        <label class="block mb-1 font-bold">내 위플랩 브라우저 소스 URL:</label>
-                        <input type="text" id="weflab-url-input" class="w-full soft-card-inset p-2.5 outline-none font-mono text-[11px]" placeholder="https://weflab.com/page/guPK2ODAl2hwY3I">
-                    </div>
-
-                    <div>
-                        <label class="block mb-1 font-bold">룰렛 대상 별풍선 개수 (쉼표 구분):</label>
-                        <input type="text" id="weflab-roulette-balloons" class="w-full soft-card-inset p-2 outline-none font-bold text-emerald-700 dark:text-emerald-300" placeholder="33, 124">
-                    </div>
-
-                    <div>
-                        <label class="block mb-1 font-bold text-red-500">🚫 업보에 안 적을 룰렛 항목/스킵 키워드 (쉼표 구분):</label>
-                        <p class="text-[10px] text-gray-500 mb-1">입력한 단어가 들어간 룰렛 결과는 업보에 추가되지 않고 자동 스킵됩니다.</p>
-                        <textarea id="weflab-ignore-keywords" rows="3" class="w-full soft-card-inset p-2.5 outline-none text-xs leading-relaxed resize-none"></textarea>
-                    </div>
-
-                    <div class="p-3 soft-card-inset space-y-2">
-                        <div class="flex justify-between items-center">
-                            <span class="font-bold text-emerald-800 dark:text-emerald-200">✨ 별풍선 확정 적립 규칙</span>
-                            <button onclick="addStarRuleRow()" class="text-[10px] bg-emerald-500 text-white font-bold px-2 py-0.5 rounded">+ 규칙 추가</button>
-                        </div>
-                        <div id="weflab-starrules-list" class="space-y-1.5"></div>
-                    </div>
-
-                    <div class="p-3 soft-card-inset space-y-2 border border-emerald-300">
-                        <span class="font-bold text-emerald-800 dark:text-emerald-200 block">🧪 후원 수신 시뮬레이터</span>
-                        <div class="flex gap-2">
-                            <input type="text" id="sim-donor-nick" class="w-1/2 soft-card-inset p-1.5 text-xs" placeholder="후원자 닉네임" value="행운네잎이">
-                            <select id="sim-type" class="w-1/2 soft-card-inset p-1.5 text-xs">
-                                <option value="roulette_win">33풍 (바니걸 방셀 당첨)</option>
-                                <option value="roulette_fail">33풍 (자몽이 간식비 - 스킵 테스트)</option>
-                                <option value="700">700개 (단컷 1장 확정)</option>
-                                <option value="1424">1424개 (의상2벌+네컷 확정)</option>
-                            </select>
-                        </div>
-                        <button onclick="simulateDonation()" class="w-full soft-button py-1.5 bg-emerald-500 text-white font-bold rounded-lg text-xs">시뮬레이션 실행하기</button>
-                    </div>
-                </div>
-                <div class="flex justify-end gap-2 pt-2 border-t border-emerald-100 dark:border-emerald-800">
-                    <button onclick="closeWeflabModal()" class="soft-button px-4 py-2 text-xs rounded-xl bg-gray-200 dark:bg-gray-700">취소</button>
-                    <button onclick="saveWeflabSettings()" class="soft-button px-4 py-2 text-xs rounded-xl bg-emerald-500 text-white font-bold">저장</button>
-                </div>
-            </div>
-        </div>
-
-        <div id="fortune-edit-modal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-200">
-            <div class="soft-card w-11/12 max-w-md p-6 flex flex-col max-h-[85vh]">
-                <div class="flex justify-between items-center pb-3 border-b border-emerald-100 dark:border-emerald-800/50 mb-3">
-                    <h3 class="text-sm font-bold text-emerald-950 dark:text-emerald-100"><i class="fa-solid fa-clover text-emerald-500 mr-1"></i> 행운 점치기 문구 편집</h3>
-                    <button onclick="closeFortuneEditModal()" class="text-gray-400 hover:text-gray-600 font-bold">✕</button>
-                </div>
-                <div class="overflow-y-auto flex-grow space-y-2 pr-1" id="fortune-edit-list"></div>
-                <div class="pt-3 border-t border-emerald-100 dark:border-emerald-800/50 mt-3 flex justify-between gap-2">
-                    <button onclick="addNewFortuneItem()" class="soft-button px-3 py-1.5 text-xs font-bold rounded-xl bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200">+ 항목 추가</button>
-                    <button onclick="saveFortuneChanges()" class="soft-button px-5 py-1.5 text-xs font-bold rounded-xl bg-emerald-500 text-white">저장하기</button>
                 </div>
             </div>
         </div>
@@ -2332,7 +1913,7 @@
         <div id="sigpoong-edit-modal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-200">
             <div class="soft-card w-11/12 max-w-lg p-6 flex flex-col max-h-[85vh]">
                 <div class="flex justify-between items-center pb-3 border-b border-emerald-100 dark:border-emerald-800/50 mb-3">
-                    <h3 class="text-sm font-bold text-emerald-950 dark:text-emerald-100"><i class="fa-solid fa-balloon text-emerald-500 mr-1"></i> 시그풍 항목 편집</h3>
+                    <h3 class="text-sm font-bold text-emerald-950 dark:text-emerald-100"><i class="fa-solid fa-balloon text-emerald-500 mr-1"></i> 시그풍 항목 편집 (권장: 293×164px)</h3>
                     <button onclick="closeSigpoongEditModal()" class="text-gray-400 hover:text-gray-600 font-bold">✕</button>
                 </div>
                 <div class="overflow-y-auto flex-grow space-y-2 pr-1" id="sigpoong-edit-list"></div>
@@ -2345,7 +1926,7 @@
                         <input type="text" id="new-sigpoong-description" class="w-full soft-card-inset p-2 outline-none" placeholder="설명">
                     </div>
                     <div class="space-y-1">
-                        <label class="block font-bold text-[11px] text-emerald-800 dark:text-emerald-300"><i class="fa-solid fa-file-image"></i> PNG/이미지 업로드:</label>
+                        <label class="block font-bold text-[11px] text-emerald-800 dark:text-emerald-300"><i class="fa-solid fa-file-image"></i> PNG/이미지 업로드 (293*164 권장):</label>
                         <input type="text" id="new-sigpoong-url" class="w-full soft-card-inset p-2 outline-none" placeholder="이미지 URL (선택)">
                         <input type="file" id="new-sigpoong-file" accept="image/*" class="w-full text-xs text-gray-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-emerald-500 file:text-white hover:file:bg-emerald-600 cursor-pointer">
                     </div>
