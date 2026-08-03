@@ -72,7 +72,6 @@
             } catch (e) {}
         }
 
-        /* 원본 파일 100% 손실 없이 읽기 (배너 등 고화질 보존용) */
         function readFileAsDataURL(file) {
             return new Promise((resolve, reject) => {
                 if (!file) { resolve(null); return; }
@@ -122,6 +121,7 @@
             });
         }
 
+        /* Firebase Configuration & State */
         const firebaseConfig = {
             apiKey: "AIzaSyD5s5HIUlfcV8ksiEsagpZWqOtbXg3zX_Q",
             authDomain: "zooa-profile.firebaseapp.com",
@@ -144,7 +144,6 @@
                         db = firebase.firestore();
                         auth = firebase.auth();
 
-                        // 인증 상태 리스너 등록
                         auth.onAuthStateChanged((user) => {
                             if (user) {
                                 isAdminMode = true;
@@ -200,6 +199,13 @@
             { count: "486", title: "사랑해주아", description: "온 세상 클로버 가득 사랑의 손가락 하트 🫶", url: "https://placehold.co/293x164/ecfdf5/047857?text=486+Balloon" },
             { count: "1004", title: "천사주아", description: "우리를 지켜주는 은혜로운 수호천사 등장 👼", url: "https://placehold.co/293x164/ecfdf5/047857?text=1004+Balloon" }
         ];
+
+        /* 마스코트 네잎이 단일 프로필 데이터 */
+        const defaultMascotData = {
+            title: '네잎이 🍀',
+            description: '내용을 자유롭게 수정해서 입력해 보세요 💚',
+            url: 'https://placehold.co/600x600/dcfce7/15803d?text=Neipy+Mascot'
+        };
         
         const defaultProfileData = {
             bannerUrl: "https://images.unsplash.com/photo-1528183429752-a97d0bf99b5a?q=80&w=1200&auto=format&fit=crop",
@@ -224,6 +230,7 @@
         let globalScheduleData = [];
         let globalBangsellData = [];
         let globalSigpoongData = [];
+        let globalMascotData = {};
         let globalProfileData = {};
         
         let isAdminMode = false;
@@ -236,6 +243,7 @@
             globalProfileData = safeGetStorage('yeonZooaProfileData', null) || JSON.parse(JSON.stringify(defaultProfileData));
             globalBangsellData = safeGetStorage('yeonZooaBangsellData', null) || JSON.parse(JSON.stringify(defaultBangsellData));
             globalSigpoongData = safeGetStorage('yeonZooaSigpoongData', null) || JSON.parse(JSON.stringify(defaultSigpoongData));
+            globalMascotData = safeGetStorage('yeonZooaMascotData', null) || JSON.parse(JSON.stringify(defaultMascotData));
         }
 
         function saveAllToLocal() {
@@ -245,6 +253,7 @@
             safeSetStorage('yeonZooaProfileData', globalProfileData);
             safeSetStorage('yeonZooaBangsellData', globalBangsellData);
             safeSetStorage('yeonZooaSigpoongData', globalSigpoongData);
+            safeSetStorage('yeonZooaMascotData', globalMascotData);
         }
 
         async function fetchSiteData() {
@@ -256,7 +265,7 @@
             if (db) {
                 if (loadingInd) loadingInd.classList.remove('hidden');
                 try {
-                    const keys = ['profile', 'upbo', 'notice', 'schedule', 'bangsell', 'sigpoong'];
+                    const keys = ['profile', 'upbo', 'notice', 'schedule', 'bangsell', 'sigpoong', 'mascot'];
                     
                     for (const key of keys) {
                         const docRef = db.collection('zooaProfile').doc(key);
@@ -283,6 +292,7 @@
                                 else if (key === 'schedule') globalScheduleData = parsedData;
                                 else if (key === 'bangsell') globalBangsellData = parsedData;
                                 else if (key === 'sigpoong') globalSigpoongData = parsedData;
+                                else if (key === 'mascot') globalMascotData = parsedData;
                             }
                         }
                     }
@@ -303,6 +313,7 @@
             else if (key === 'schedule') globalScheduleData = data;
             else if (key === 'bangsell') globalBangsellData = data;
             else if (key === 'sigpoong') globalSigpoongData = data;
+            else if (key === 'mascot') globalMascotData = data;
 
             safeSetStorage(`yeonZooa${key.charAt(0).toUpperCase() + key.slice(1)}Data`, data);
 
@@ -321,44 +332,8 @@
                 await db.collection('zooaProfile').doc(key).set({ data: data, isSubcollection: false, lastUpdated: Date.now() });
                 return true;
             } catch (e) {
-                console.warn("Primary save failed, trying subcollection fallback:", e);
-                if (Array.isArray(data)) {
-                    return await saveToSubcollection(key, data);
-                }
+                console.warn("Primary save failed:", e);
                 showToast('❌ 저장 실패: ' + (e.message || '권한 부족 또는 오류 발생'));
-                return false;
-            }
-        }
-
-        async function saveToSubcollection(key, data) {
-            try {
-                const itemsRef = db.collection('zooaProfile').doc(key).collection('items');
-                const existingDocs = await itemsRef.get();
-                const currentIds = new Set();
-
-                for (let i = 0; i < data.length; i++) {
-                    const item = data[i];
-                    const itemId = item.id || `item_${i}_${Date.now()}`;
-                    item.id = itemId;
-                    await itemsRef.doc(itemId).set(item);
-                    currentIds.add(itemId);
-                }
-
-                existingDocs.forEach(doc => {
-                    if (!currentIds.has(doc.id)) {
-                        doc.ref.delete();
-                    }
-                });
-
-                await db.collection('zooaProfile').doc(key).set({
-                    isSubcollection: true,
-                    count: data.length,
-                    lastUpdated: Date.now()
-                });
-                return true;
-            } catch (err) {
-                console.error("Subcollection save error:", err);
-                showToast('❌ 저장 오류: ' + err.message);
                 return false;
             }
         }
@@ -437,6 +412,7 @@
 
         function renderAll() {
             renderProfile();
+            renderMascot();
             renderUpbo(globalUpboData);
             renderNotice();
             renderSchedule();
@@ -543,6 +519,61 @@
                 if (yt) yt.href = globalProfileData.socials.youtube || '#';
                 if (cafe) cafe.href = globalProfileData.socials.cafe || '#';
             }
+        }
+
+        function renderMascot() {
+            const titleEl = document.getElementById('mascot-display-title');
+            const descEl = document.getElementById('mascot-display-desc');
+            const imgEl = document.getElementById('mascot-display-img');
+
+            if (titleEl) titleEl.innerText = globalMascotData.title || '';
+            if (descEl) descEl.innerText = globalMascotData.description || '';
+            if (imgEl && globalMascotData.url) imgEl.src = globalMascotData.url;
+        }
+
+        function openMascotModal() {
+            if (!isAdminMode) {
+                showToast('🔒 관리자 권한이 필요합니다.');
+                return;
+            }
+            document.getElementById('edit-mascot-title').value = globalMascotData.title || '';
+            document.getElementById('edit-mascot-desc').value = globalMascotData.description || '';
+            document.getElementById('edit-mascot-url').value = globalMascotData.url || '';
+            
+            const m = document.getElementById('mascot-edit-modal');
+            if (m) m.classList.remove('opacity-0', 'pointer-events-none');
+        }
+
+        function closeMascotModal() {
+            const m = document.getElementById('mascot-edit-modal');
+            if (m) m.classList.add('opacity-0', 'pointer-events-none');
+        }
+
+        async function saveMascotChanges() {
+            if (!isAdminMode) return;
+
+            const title = document.getElementById('edit-mascot-title').value.trim();
+            const desc = document.getElementById('edit-mascot-desc').value.trim();
+            let url = document.getElementById('edit-mascot-url').value.trim();
+            const fileInput = document.getElementById('edit-mascot-file');
+
+            if (fileInput && fileInput.files && fileInput.files[0]) {
+                try {
+                    const compressed = await compressImageFile(fileInput.files[0], 1200, 1200, 0.90);
+                    if (compressed) url = compressed;
+                } catch(e) { console.error(e); }
+            }
+
+            globalMascotData = {
+                title: title,
+                description: desc,
+                url: url || 'https://placehold.co/600x600/dcfce7/15803d?text=Neipy+Mascot'
+            };
+
+            updateFirestore('mascot', globalMascotData);
+            closeMascotModal();
+            renderMascot();
+            showToast('네잎이 정보가 수정되었습니다! 🍀');
         }
 
         function renderNotice() {
@@ -689,7 +720,6 @@
             }
         }
 
-        /* 🔒 안전한 Firebase 인증 관리자 로그인 시스템 */
         function openAdminLoginModal() {
             if (isAdminMode && auth && auth.currentUser) {
                 if (confirm(`현재 [${auth.currentUser.email}] 계정으로 로그인되어 있습니다.\n로그아웃 하시겠습니까?`)) {
@@ -744,7 +774,7 @@
         }
 
         function updateAdminUI(isLoggedIn, userEmail = '') {
-            const adminButtons = document.querySelectorAll('#admin-profile-edit-btn, #admin-notice-edit-btn, #admin-schedule-edit-btn, #admin-bangsell-edit-btn, #admin-sigpoong-edit-btn, #admin-add-user-btn');
+            const adminButtons = document.querySelectorAll('#admin-profile-edit-btn, #admin-notice-edit-btn, #admin-schedule-edit-btn, #admin-bangsell-edit-btn, #admin-sigpoong-edit-btn, #admin-add-user-btn, #admin-mascot-edit-btn');
             const gearBtn = document.getElementById('admin-gear-icon');
 
             if (isLoggedIn) {
@@ -763,6 +793,7 @@
                 }
             }
             renderUpbo(globalUpboData);
+            renderMascot();
         }
 
         function openUpboEditModal(userId) {
@@ -1346,17 +1377,13 @@
         }
 
         @keyframes clover-fall-1 {
-            0% { transform: translate3d(0, -10vh, 0) rotate(0deg); opacity: 0; }
-            10% { opacity: 0.7; }
-            90% { opacity: 0.7; }
-            100% { transform: translate3d(20px, 110vh, 0) rotate(360deg); opacity: 0; }
+            0% { transform: translate3d(0, -5vh, 0) rotate(0deg); opacity: 0.7; }
+            100% { transform: translate3d(25px, 105vh, 0) rotate(360deg); opacity: 0.1; }
         }
 
         @keyframes clover-fall-2 {
-            0% { transform: translate3d(0, -10vh, 0) rotate(0deg); opacity: 0; }
-            10% { opacity: 0.6; }
-            90% { opacity: 0.6; }
-            100% { transform: translate3d(-30px, 110vh, 0) rotate(-360deg); opacity: 0; }
+            0% { transform: translate3d(0, -5vh, 0) rotate(0deg); opacity: 0.6; }
+            100% { transform: translate3d(-25px, 105vh, 0) rotate(-360deg); opacity: 0.1; }
         }
 
         .p-fall-1 { animation: clover-fall-1 12s linear infinite; }
@@ -1366,13 +1393,13 @@
 <body class="text-gray-800 dark:text-gray-100 min-h-screen flex flex-col relative overflow-x-hidden p-3 sm:p-6 transition-colors duration-300">
 
     <div class="bg-clover-container">
-        <div class="clover-particle p-fall-1" style="left: 5%; animation-delay: 0s;">🍀</div>
-        <div class="clover-particle p-fall-2" style="left: 18%; animation-delay: 3s;">☘️</div>
-        <div class="clover-particle p-fall-1" style="left: 32%; animation-delay: 7s;">🍃</div>
-        <div class="clover-particle p-fall-2" style="left: 48%; animation-delay: 2s;">💚</div>
-        <div class="clover-particle p-fall-1" style="left: 62%; animation-delay: 5s;">🍀</div>
-        <div class="clover-particle p-fall-2" style="left: 76%; animation-delay: 9s;">☘️</div>
-        <div class="clover-particle p-fall-1" style="left: 90%; animation-delay: 4s;">✨</div>
+        <div class="clover-particle p-fall-1" style="left: 5%; animation-delay: -1s;">🍀</div>
+        <div class="clover-particle p-fall-2" style="left: 18%; animation-delay: -5s;">☘️</div>
+        <div class="clover-particle p-fall-1" style="left: 32%; animation-delay: -9s;">🍃</div>
+        <div class="clover-particle p-fall-2" style="left: 48%; animation-delay: -3s;">💚</div>
+        <div class="clover-particle p-fall-1" style="left: 62%; animation-delay: -7s;">🍀</div>
+        <div class="clover-particle p-fall-2" style="left: 76%; animation-delay: -11s;">☘️</div>
+        <div class="clover-particle p-fall-1" style="left: 90%; animation-delay: -4s;">✨</div>
     </div>
 
     <div class="max-w-5xl mx-auto w-full soft-card rounded-3xl relative z-10 my-2 flex flex-col flex-grow overflow-hidden border border-emerald-200/60 dark:border-emerald-800/40 shadow-2xl">
@@ -1414,6 +1441,9 @@
             <a href="#profile" class="soft-button px-4 py-1.5 rounded-full text-xs font-bold bg-white dark:bg-emerald-900/60 text-emerald-900 dark:text-emerald-100 border border-emerald-200 dark:border-emerald-800 flex items-center gap-1.5">
                 <i class="fa-solid fa-id-card text-emerald-500"></i> 프로필
             </a>
+            <a href="#mascot" class="soft-button px-4 py-1.5 rounded-full text-xs font-bold bg-emerald-500 text-white shadow-sm flex items-center gap-1.5">
+                <i class="fa-solid fa-clover text-white"></i> 네잎이🍀
+            </a>
             <a href="#notice" class="soft-button px-4 py-1.5 rounded-full text-xs font-bold bg-white dark:bg-emerald-900/60 text-emerald-900 dark:text-emerald-100 border border-emerald-200 dark:border-emerald-800 flex items-center gap-1.5">
                 <i class="fa-solid fa-bullhorn text-emerald-500"></i> 공지사항
             </a>
@@ -1424,7 +1454,7 @@
                 <i class="fa-solid fa-shirt text-emerald-500"></i> 의상👗
             </a>
             <a href="#sigpoong" class="soft-button px-4 py-1.5 rounded-full text-xs font-bold bg-white dark:bg-emerald-900/60 text-emerald-900 dark:text-emerald-100 border border-emerald-200 dark:border-emerald-800 flex items-center gap-1.5">
-                <i class="fa-solid fa-balloon text-emerald-500"></i> 시그풍🎈
+                <i class="fa-solid fa-gifts text-emerald-500"></i> 시그풍🎈
             </a>
             <a href="#playground" class="soft-button px-4 py-1.5 rounded-full text-xs font-bold bg-white dark:bg-emerald-900/60 text-emerald-900 dark:text-emerald-100 border border-emerald-200 dark:border-emerald-800 flex items-center gap-1.5">
                 <i class="fa-solid fa-clover text-emerald-500"></i> 운세🃏
@@ -1442,10 +1472,6 @@
                         <img id="profile-banner-img" src="" 
                              onerror="this.src='https://images.unsplash.com/photo-1528183429752-a97d0bf99b5a?q=80&w=1200&auto=format&fit=crop'" 
                              class="w-full h-full object-cover absolute inset-0 opacity-90 transition-opacity duration-300" alt="방송국 배너">
-                        <div class="absolute top-3 left-3 bg-emerald-900/75 backdrop-blur-md text-emerald-200 px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1.5">
-                            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-                            STREAM STATION 🍀
-                        </div>
                     </div>
 
                     <div class="flex flex-col sm:flex-row items-center sm:items-start gap-6 relative">
@@ -1557,6 +1583,34 @@
                 </div>
             </section>
 
+            <section id="mascot" class="scroll-mt-32">
+                <div class="soft-card p-6 relative">
+                    <div class="flex items-center justify-between mb-4 pb-3 border-b border-emerald-100 dark:border-emerald-800/50">
+                        <h2 class="text-xl font-bold font-cute text-emerald-950 dark:text-white flex items-center gap-2">
+                            <i class="fa-solid fa-clover text-emerald-500"></i> 네잎 팬캐릭터 🍀
+                        </h2>
+                        <button id="admin-mascot-edit-btn" onclick="openMascotModal()" class="hidden soft-button px-3.5 py-1.5 rounded-xl text-xs font-bold bg-emerald-500 text-white flex items-center gap-1.5 shadow-sm">
+                            <i class="fa-solid fa-pen-to-square"></i> 네잎이 수정
+                        </button>
+                    </div>
+
+                    <div class="flex flex-col md:flex-row items-center gap-6 p-4 soft-card-inset">
+                        <div onclick="openImageViewer(globalMascotData.url, globalMascotData.title, '네잎 팬캐릭터', globalMascotData.description)" 
+                             class="w-48 h-48 sm:w-60 sm:h-60 flex-shrink-0 rounded-2xl overflow-hidden cursor-pointer relative group bg-emerald-50 dark:bg-emerald-950/40 shadow-sm border border-emerald-200/80 dark:border-emerald-800">
+                            <img id="mascot-display-img" src="" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200" alt="네잎 캐릭터">
+                            <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-bold">
+                                <i class="fa-solid fa-magnifying-glass-plus text-base mr-1"></i> 크게 보기
+                            </div>
+                        </div>
+
+                        <div class="flex-grow space-y-3 text-center md:text-left">
+                            <h3 id="mascot-display-title" class="text-2xl font-bold font-cute text-emerald-950 dark:text-emerald-100"></h3>
+                            <p id="mascot-display-desc" class="text-xs sm:text-sm text-emerald-900 dark:text-emerald-200 leading-relaxed whitespace-pre-wrap max-w-xl"></p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <section id="notice" class="scroll-mt-32">
                     <div class="soft-card p-5 h-full flex flex-col justify-between">
@@ -1595,7 +1649,7 @@
                 <div class="soft-card p-5">
                     <div class="flex justify-between items-center mb-4 pb-2 border-b border-emerald-100 dark:border-emerald-800/50">
                         <span class="font-bold text-emerald-900 dark:text-emerald-200 text-sm flex items-center gap-2">
-                            <i class="fa-solid fa-shirt text-emerald-500"></i> OUTFIT CATALOG 👗 <span class="text-[10px] text-emerald-600 font-normal">(클릭 시 원본 확대)</span>
+                            <i class="fa-solid fa-shirt text-emerald-500"></i> OUTFIT CATALOG 👗
                         </span>
                         <div class="flex items-center gap-1.5">
                             <button onclick="scrollSlider('bangsell-slider', -1)" class="soft-button w-7 h-7 rounded-full bg-emerald-100 dark:bg-emerald-900 text-emerald-800 dark:text-emerald-200 text-xs flex items-center justify-center"><i class="fa-solid fa-chevron-left"></i></button>
@@ -1611,7 +1665,7 @@
                 <div class="soft-card p-5">
                     <div class="flex justify-between items-center mb-4 pb-2 border-b border-emerald-100 dark:border-emerald-800/50">
                         <span class="font-bold text-emerald-900 dark:text-emerald-200 text-sm flex items-center gap-2">
-                            <i class="fa-solid fa-balloon text-emerald-500"></i> SIGNATURE BALLOONS 🎈 <span class="text-[10px] text-emerald-600 font-normal">(293×164 규격 지원)</span>
+                            <i class="fa-solid fa-gifts text-emerald-500"></i> SIGNATURE BALLOONS 🎈
                         </span>
                         <div class="flex items-center gap-1.5">
                             <button onclick="scrollSlider('sigpoong-slider', -1)" class="soft-button w-7 h-7 rounded-full bg-emerald-100 dark:bg-emerald-900 text-emerald-800 dark:text-emerald-200 text-xs flex items-center justify-center"><i class="fa-solid fa-chevron-left"></i></button>
@@ -1726,7 +1780,36 @@
             </div>
         </div>
 
-        <!-- 🔒 관리자 인증 모달 (Firebase Auth 지원) -->
+        <!-- Single Mascot Edit Modal (Admin Only) -->
+        <div id="mascot-edit-modal" class="fixed inset-0 z-[110] flex items-center justify-center bg-black/40 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-200">
+            <div class="soft-card w-11/12 max-w-md p-6 space-y-4">
+                <div class="flex justify-between items-center pb-2 border-b border-emerald-100 dark:border-emerald-800/50">
+                    <h3 class="text-base font-bold text-emerald-950 dark:text-emerald-100"><i class="fa-solid fa-clover text-emerald-500 mr-1"></i> 네잎 팬캐릭터 수정</h3>
+                    <button onclick="closeMascotModal()" class="text-gray-400 hover:text-gray-600 font-bold">✕</button>
+                </div>
+                <div class="space-y-3 text-xs">
+                    <div>
+                        <label class="block mb-1 font-bold">캐릭터 이름/제목:</label>
+                        <input type="text" id="edit-mascot-title" class="w-full soft-card-inset p-2.5 outline-none" placeholder="예: 클로버 요정 네잎이">
+                    </div>
+                    <div>
+                        <label class="block mb-1 font-bold">캐릭터 설명:</label>
+                        <textarea id="edit-mascot-desc" rows="3" class="w-full soft-card-inset p-2.5 outline-none resize-none" placeholder="네잎이 캐릭터 설명을 적어주세요."></textarea>
+                    </div>
+                    <div class="space-y-1">
+                        <label class="block font-bold"><i class="fa-solid fa-image text-emerald-500 mr-1"></i> 네잎이 이미지 업로드 또는 URL:</label>
+                        <input type="text" id="edit-mascot-url" class="w-full soft-card-inset p-2.5 outline-none mb-1" placeholder="이미지 URL (선택)">
+                        <input type="file" id="edit-mascot-file" accept="image/*" class="w-full text-xs text-gray-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-emerald-500 file:text-white hover:file:bg-emerald-600 cursor-pointer">
+                    </div>
+                </div>
+                <div class="flex justify-end gap-2 pt-2">
+                    <button onclick="closeMascotModal()" class="soft-button px-4 py-2 text-xs rounded-xl bg-gray-200 dark:bg-gray-700">취소</button>
+                    <button onclick="saveMascotChanges()" class="soft-button px-4 py-2 text-xs rounded-xl bg-emerald-500 text-white font-bold">저장하기</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Admin Login Modal -->
         <div id="admin-login-modal" class="fixed inset-0 z-[110] flex items-center justify-center bg-black/40 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-200">
             <div class="soft-card w-11/12 max-w-sm p-6 text-center">
                 <h3 class="text-base font-bold text-emerald-950 dark:text-emerald-100 mb-2"><i class="fa-solid fa-lock text-emerald-500 mr-1"></i> 관리자 인증</h3>
@@ -1742,6 +1825,7 @@
             </div>
         </div>
 
+        <!-- Upbo Edit Modal -->
         <div id="upbo-edit-modal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-200">
             <div class="soft-card w-11/12 max-w-md p-6 flex flex-col max-h-[85vh]">
                 <div class="flex justify-between items-center pb-3 border-b border-emerald-100 dark:border-emerald-800/50 mb-3">
@@ -1759,6 +1843,7 @@
             </div>
         </div>
 
+        <!-- Add User Modal -->
         <div id="add-user-modal" class="fixed inset-0 z-[110] flex items-center justify-center bg-black/40 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-200">
             <div class="soft-card w-11/12 max-w-sm p-6 space-y-4">
                 <h3 class="text-base font-bold text-emerald-950 dark:text-emerald-100"><i class="fa-solid fa-user-plus text-emerald-500 mr-1"></i> 네잎이 등록</h3>
@@ -1787,6 +1872,7 @@
             </div>
         </div>
 
+        <!-- Notice Edit Modal -->
         <div id="notice-edit-modal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-200">
             <div class="soft-card w-11/12 max-w-lg p-6 flex flex-col max-h-[85vh]">
                 <div class="flex justify-between items-center pb-3 border-b border-emerald-100 dark:border-emerald-800/50 mb-3">
@@ -1808,6 +1894,7 @@
             </div>
         </div>
 
+        <!-- Schedule Edit Modal -->
         <div id="schedule-edit-modal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-200">
             <div class="soft-card w-11/12 max-w-md p-6 flex flex-col max-h-[85vh]">
                 <div class="flex justify-between items-center pb-3 border-b border-emerald-100 dark:border-emerald-800/50 mb-3">
@@ -1821,6 +1908,7 @@
             </div>
         </div>
 
+        <!-- Profile Edit Modal -->
         <div id="profile-edit-modal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-200">
             <div class="soft-card w-11/12 max-w-lg p-6 flex flex-col max-h-[90vh]">
                 <div class="flex justify-between items-center pb-3 border-b border-emerald-100 dark:border-emerald-800/50 mb-3">
@@ -1881,6 +1969,7 @@
             </div>
         </div>
 
+        <!-- Bangsell Edit Modal -->
         <div id="bangsell-edit-modal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-200">
             <div class="soft-card w-11/12 max-w-lg p-6 flex flex-col max-h-[85vh]">
                 <div class="flex justify-between items-center pb-3 border-b border-emerald-100 dark:border-emerald-800/50 mb-3">
@@ -1910,10 +1999,11 @@
             </div>
         </div>
 
+        <!-- Sigpoong Edit Modal -->
         <div id="sigpoong-edit-modal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-200">
             <div class="soft-card w-11/12 max-w-lg p-6 flex flex-col max-h-[85vh]">
                 <div class="flex justify-between items-center pb-3 border-b border-emerald-100 dark:border-emerald-800/50 mb-3">
-                    <h3 class="text-sm font-bold text-emerald-950 dark:text-emerald-100"><i class="fa-solid fa-balloon text-emerald-500 mr-1"></i> 시그풍 항목 편집 (권장: 293×164px)</h3>
+                    <h3 class="text-sm font-bold text-emerald-950 dark:text-emerald-100"><i class="fa-solid fa-gifts text-emerald-500 mr-1"></i> 시그풍 항목 편집 (권장: 293×164px)</h3>
                     <button onclick="closeSigpoongEditModal()" class="text-gray-400 hover:text-gray-600 font-bold">✕</button>
                 </div>
                 <div class="overflow-y-auto flex-grow space-y-2 pr-1" id="sigpoong-edit-list"></div>
@@ -1935,11 +2025,13 @@
             </div>
         </div>
 
+        <!-- Toast Notification -->
         <div id="toast-message" class="fixed bottom-8 right-6 z-[150] soft-card px-5 py-3 text-xs font-bold text-emerald-950 bg-emerald-300 dark:bg-emerald-700 dark:text-emerald-100 transform translate-y-16 opacity-0 transition-all duration-300 flex items-center gap-2 shadow-lg">
             <i class="fa-solid fa-circle-check text-emerald-800 dark:text-emerald-200 text-sm"></i>
             <span id="toast-text">작업이 정상적으로 처리되었습니다! 🍀</span>
         </div>
 
+        <!-- Footer -->
         <footer class="bg-emerald-50/50 dark:bg-emerald-950/40 border-t border-emerald-100 dark:border-emerald-900/30 p-4 text-xs text-center text-emerald-800 dark:text-emerald-300 rounded-b-3xl select-none mt-auto">
             <span>© 2026 YEON ZOOA. All rights reserved. 🍀</span>
         </footer>
