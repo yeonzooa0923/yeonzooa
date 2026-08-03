@@ -423,10 +423,11 @@
             const today = new Date();
             today.setHours(0,0,0,0);
             
+            const cleaned = dateStr.replace(/[^0-9]/g, '-');
+            const parts = cleaned.split('-').filter(p => p !== '');
+            if (parts.length === 0) return "날짜 오류";
+
             if (type === 'birthday') {
-                const cleaned = dateStr.replace(/[^0-9]/g, '-');
-                const parts = cleaned.split('-');
-                if (parts.length < 2) return "날짜 오류";
                 const month = parseInt(parts[0], 10) - 1;
                 const day = parseInt(parts[1], 10);
                 
@@ -434,30 +435,30 @@
                 let targetDate = new Date(targetYear, month, day);
                 if (targetDate < today) targetDate.setFullYear(targetYear + 1);
                 
-                const diffTime = targetDate - today;
-                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                const diffDays = Math.ceil((targetDate - today) / (1000 * 60 * 60 * 24));
                 if (diffDays === 0) return '<span class="text-emerald-600 dark:text-emerald-300 font-bold text-xs">[TODAY!] 🎉</span>';
                 return `<span class="text-emerald-700 dark:text-emerald-300 font-bold text-xs sm:text-sm">D-${diffDays}</span>`;
-            } else if (type === 'anniversary') {
-                const cleaned = dateStr.replace(/[^0-9]/g, '-');
-                const parts = cleaned.split('-').filter(p => p !== '');
-                if (parts.length < 3) return "날짜 오류";
-                const targetDate = new Date(parts[0], parseInt(parts[1], 10) - 1, parts[2]);
-                
-                const diffTime = today - targetDate;
-                const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
-                if (diffDays <= 0) return `<span class="text-gray-400 text-xs">D-Day 대기</span>`;
-                return `<span class="text-emerald-600 dark:text-emerald-300 font-bold text-xs sm:text-sm">+${diffDays} DAYS</span>`;
+            } 
+
+            if (parts.length < 3) return "날짜 오류";
+            const targetDate = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
+            targetDate.setHours(0,0,0,0);
+
+            const diffTime = targetDate - today;
+            const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+
+            if (type === 'anniversary') {
+                // 지나온 과거 날짜(예: 데뷔일)인 경우 -> +DAYS 카운트
+                if (diffDays < 0) {
+                    const passedDays = Math.abs(diffDays) + 1;
+                    return `<span class="text-emerald-600 dark:text-emerald-300 font-bold text-xs sm:text-sm">+${passedDays} DAYS</span>`;
+                } else if (diffDays === 0) {
+                    return `<span class="text-emerald-600 dark:text-emerald-300 font-bold text-xs">[TODAY!] 🎉</span>`;
+                } else {
+                    // 다가올 미래 날짜(예: 500일 기념일)인 경우 -> D-카운트 자동 표시
+                    return `<span class="text-emerald-600 dark:text-emerald-400 font-bold text-xs sm:text-sm">D-${diffDays}</span>`;
+                }
             } else {
-                const cleaned = dateStr.replace(/[^0-9]/g, '-');
-                const parts = cleaned.split('-').filter(p => p !== '');
-                if (parts.length < 3) return "날짜 오류";
-                const targetDate = new Date(parts[0], parseInt(parts[1], 10) - 1, parts[2]);
-                targetDate.setHours(0,0,0,0);
-                
-                const diffTime = targetDate - today;
-                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                
                 if (diffDays === 0) return '<span class="text-emerald-600 font-bold text-xs">[D-DAY!] 🍀</span>';
                 else if (diffDays > 0) return `<span class="text-emerald-600 dark:text-emerald-400 font-bold text-xs sm:text-sm">D-${diffDays}</span>`;
                 else return `<span class="text-gray-400 text-xs">ENDED (D+${Math.abs(diffDays)})</span>`;
@@ -965,19 +966,92 @@
                         <option value="anniversary" ${d.type === 'anniversary' ? 'selected' : ''}>기념일</option>
                         <option value="custom" ${d.type === 'custom' ? 'selected' : ''}>일반</option>
                     </select>
-                    <input type="text" class="dday-date soft-card-inset p-1 text-xs w-20" value="${d.date}">
+                    <input type="text" class="dday-date soft-card-inset p-1 text-xs w-24" value="${d.date}">
                     <button type="button" onclick="removeDdayRow(${idx})" class="text-red-500 font-bold px-1">✕</button>
                 </div>
             `).join('');
         }
 
+        function syncDdaysFromDOM() {
+            const titles = document.querySelectorAll('.dday-title');
+            const types = document.querySelectorAll('.dday-type');
+            const dates = document.querySelectorAll('.dday-date');
+            
+            if (titles.length > 0) {
+                globalProfileData.ddays = [];
+                for (let i = 0; i < titles.length; i++) {
+                    globalProfileData.ddays.push({
+                        title: titles[i].value,
+                        type: types[i].value,
+                        date: dates[i].value
+                    });
+                }
+            }
+        }
+
+        function addCalculatedDday(daysCount) {
+            syncDdaysFromDOM();
+            
+            const baseInput = document.getElementById('calc-base-date');
+            const baseDateStr = baseInput ? baseInput.value.trim() : '2025-05-31';
+            
+            const cleaned = baseDateStr.replace(/[^0-9]/g, '-');
+            const parts = cleaned.split('-').filter(p => p !== '');
+            if (parts.length < 3) {
+                showToast('올바른 기준 날짜(YYYY-MM-DD)를 입력해주세요.');
+                return;
+            }
+
+            const year = parseInt(parts[0], 10);
+            const month = parseInt(parts[1], 10) - 1;
+            const day = parseInt(parts[2], 10);
+
+            const baseDate = new Date(year, month, day);
+            if (isNaN(baseDate.getTime())) {
+                showToast('올바른 기준 날짜를 입력해주세요.');
+                return;
+            }
+
+            // 한국식 기념일 계산: 시작일이 1일차이므로 N일차 = 기준일 + (N - 1)일
+            const targetDate = new Date(baseDate);
+            targetDate.setDate(targetDate.getDate() + (daysCount - 1));
+
+            const targetYear = targetDate.getFullYear();
+            const targetMonth = String(targetDate.getMonth() + 1).padStart(2, '0');
+            const targetDay = String(targetDate.getDate()).padStart(2, '0');
+            const formattedDate = `${targetYear}-${targetMonth}-${targetDay}`;
+
+            if (!globalProfileData.ddays) globalProfileData.ddays = [];
+            globalProfileData.ddays.push({
+                title: `🍀 ${daysCount}일`,
+                type: 'anniversary',
+                date: formattedDate
+            });
+
+            renderEditDdays();
+            showToast(`기준일 기준 ${daysCount}일 뒤(${formattedDate})가 추가되었습니다! 🍀`);
+        }
+
+        function addCustomCalculatedDday() {
+            const numInput = document.getElementById('calc-custom-days');
+            const val = parseInt(numInput ? numInput.value : '', 10);
+            if (!val || isNaN(val) || val <= 0) {
+                showToast('계산할 일수(숫자)를 입력해주세요.');
+                return;
+            }
+            addCalculatedDday(val);
+            if (numInput) numInput.value = '';
+        }
+
         function addEditDdayRow() {
+            syncDdaysFromDOM();
             if (!globalProfileData.ddays) globalProfileData.ddays = [];
             globalProfileData.ddays.push({ title: '🍀 이벤트', type: 'custom', date: '2026-08-01' });
             renderEditDdays();
         }
 
         function removeDdayRow(idx) {
+            syncDdaysFromDOM();
             if (globalProfileData.ddays) {
                 globalProfileData.ddays.splice(idx, 1);
                 renderEditDdays();
@@ -1939,8 +2013,34 @@
                     <div>
                         <div class="flex justify-between items-center mb-2">
                             <label class="font-bold">D-Day 항목:</label>
-                            <button type="button" onclick="addEditDdayRow()" class="text-[10px] text-emerald-600 font-bold">+ D-Day 추가</button>
+                            <button type="button" onclick="addEditDdayRow()" class="text-[10px] text-emerald-600 font-bold">+ D-Day 직접 추가</button>
                         </div>
+
+                        <!-- 기념일 자동 계산 도구 -->
+                        <div class="p-2.5 soft-card-inset mb-3 space-y-2">
+                            <div class="flex items-center justify-between text-[11px]">
+                                <span class="font-bold text-emerald-800 dark:text-emerald-300">
+                                    <i class="fa-solid fa-calculator text-emerald-500 mr-1"></i> 기념일 자동 계산 생성
+                                </span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="text-[10px] text-gray-500 whitespace-nowrap">기준일(데뷔일):</span>
+                                <input type="text" id="calc-base-date" class="soft-card-inset p-1 text-xs flex-1 outline-none font-bold text-emerald-900 dark:text-emerald-200" value="2025-05-31" placeholder="YYYY-MM-DD">
+                            </div>
+                            <div class="flex flex-wrap gap-1">
+                                <button type="button" onclick="addCalculatedDday(100)" class="soft-button px-2 py-1 bg-emerald-100 dark:bg-emerald-900/80 text-emerald-800 dark:text-emerald-200 text-[10px] rounded-lg font-bold">+100일</button>
+                                <button type="button" onclick="addCalculatedDday(200)" class="soft-button px-2 py-1 bg-emerald-100 dark:bg-emerald-900/80 text-emerald-800 dark:text-emerald-200 text-[10px] rounded-lg font-bold">+200일</button>
+                                <button type="button" onclick="addCalculatedDday(300)" class="soft-button px-2 py-1 bg-emerald-100 dark:bg-emerald-900/80 text-emerald-800 dark:text-emerald-200 text-[10px] rounded-lg font-bold">+300일</button>
+                                <button type="button" onclick="addCalculatedDday(500)" class="soft-button px-2 py-1 bg-emerald-100 dark:bg-emerald-900/80 text-emerald-800 dark:text-emerald-200 text-[10px] rounded-lg font-bold">+500일</button>
+                                <button type="button" onclick="addCalculatedDday(1000)" class="soft-button px-2 py-1 bg-emerald-100 dark:bg-emerald-900/80 text-emerald-800 dark:text-emerald-200 text-[10px] rounded-lg font-bold">+1000일</button>
+                            </div>
+                            <div class="flex items-center gap-1.5 pt-1">
+                                <input type="number" id="calc-custom-days" class="soft-card-inset p-1 text-xs w-20 outline-none" placeholder="숫자 입력">
+                                <span class="text-[10px] text-gray-500">일 뒤</span>
+                                <button type="button" onclick="addCustomCalculatedDday()" class="soft-button px-2.5 py-1 bg-emerald-500 text-white text-[10px] rounded-lg font-bold">자동 생성</button>
+                            </div>
+                        </div>
+
                         <div id="edit-dday-list" class="space-y-2"></div>
                     </div>
                     <hr class="border-emerald-100 dark:border-emerald-800">
