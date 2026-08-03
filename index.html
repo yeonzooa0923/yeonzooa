@@ -121,7 +121,6 @@
             });
         }
 
-        /* Firebase Configuration & State */
         const firebaseConfig = {
             apiKey: "AIzaSyD5s5HIUlfcV8ksiEsagpZWqOtbXg3zX_Q",
             authDomain: "zooa-profile.firebaseapp.com",
@@ -1377,13 +1376,17 @@
         }
 
         @keyframes clover-fall-1 {
-            0% { transform: translate3d(0, -5vh, 0) rotate(0deg); opacity: 0.7; }
-            100% { transform: translate3d(25px, 105vh, 0) rotate(360deg); opacity: 0.1; }
+            0% { transform: translate3d(0, -10vh, 0) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.7; }
+            90% { opacity: 0.7; }
+            100% { transform: translate3d(20px, 110vh, 0) rotate(360deg); opacity: 0; }
         }
 
         @keyframes clover-fall-2 {
-            0% { transform: translate3d(0, -5vh, 0) rotate(0deg); opacity: 0.6; }
-            100% { transform: translate3d(-25px, 105vh, 0) rotate(-360deg); opacity: 0.1; }
+            0% { transform: translate3d(0, -10vh, 0) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.6; }
+            90% { opacity: 0.6; }
+            100% { transform: translate3d(-30px, 110vh, 0) rotate(-360deg); opacity: 0; }
         }
 
         .p-fall-1 { animation: clover-fall-1 12s linear infinite; }
@@ -1393,13 +1396,13 @@
 <body class="text-gray-800 dark:text-gray-100 min-h-screen flex flex-col relative overflow-x-hidden p-3 sm:p-6 transition-colors duration-300">
 
     <div class="bg-clover-container">
-        <div class="clover-particle p-fall-1" style="left: 5%; animation-delay: -1s;">🍀</div>
-        <div class="clover-particle p-fall-2" style="left: 18%; animation-delay: -5s;">☘️</div>
-        <div class="clover-particle p-fall-1" style="left: 32%; animation-delay: -9s;">🍃</div>
-        <div class="clover-particle p-fall-2" style="left: 48%; animation-delay: -3s;">💚</div>
-        <div class="clover-particle p-fall-1" style="left: 62%; animation-delay: -7s;">🍀</div>
-        <div class="clover-particle p-fall-2" style="left: 76%; animation-delay: -11s;">☘️</div>
-        <div class="clover-particle p-fall-1" style="left: 90%; animation-delay: -4s;">✨</div>
+        <div class="clover-particle p-fall-1" style="left: 5%; animation-delay: 0s;">🍀</div>
+        <div class="clover-particle p-fall-2" style="left: 18%; animation-delay: 3s;">☘️</div>
+        <div class="clover-particle p-fall-1" style="left: 32%; animation-delay: 7s;">🍃</div>
+        <div class="clover-particle p-fall-2" style="left: 48%; animation-delay: 2s;">💚</div>
+        <div class="clover-particle p-fall-1" style="left: 62%; animation-delay: 5s;">🍀</div>
+        <div class="clover-particle p-fall-2" style="left: 76%; animation-delay: 9s;">☘️</div>
+        <div class="clover-particle p-fall-1" style="left: 90%; animation-delay: 4s;">✨</div>
     </div>
 
     <div class="max-w-5xl mx-auto w-full soft-card rounded-3xl relative z-10 my-2 flex flex-col flex-grow overflow-hidden border border-emerald-200/60 dark:border-emerald-800/40 shadow-2xl">
@@ -1441,8 +1444,8 @@
             <a href="#profile" class="soft-button px-4 py-1.5 rounded-full text-xs font-bold bg-white dark:bg-emerald-900/60 text-emerald-900 dark:text-emerald-100 border border-emerald-200 dark:border-emerald-800 flex items-center gap-1.5">
                 <i class="fa-solid fa-id-card text-emerald-500"></i> 프로필
             </a>
-            <a href="#mascot" class="soft-button px-4 py-1.5 rounded-full text-xs font-bold bg-emerald-500 text-white shadow-sm flex items-center gap-1.5">
-                <i class="fa-solid fa-clover text-white"></i> 네잎이🍀
+            <a href="#mascot" class="soft-button px-4 py-1.5 rounded-full text-xs font-bold bg-white dark:bg-emerald-900/60 text-emerald-900 dark:text-emerald-100 border border-emerald-200 dark:border-emerald-800 flex items-center gap-1.5">
+                <i class="fa-solid fa-clover text-emerald-500"></i> 네잎이🍀
             </a>
             <a href="#notice" class="soft-button px-4 py-1.5 rounded-full text-xs font-bold bg-white dark:bg-emerald-900/60 text-emerald-900 dark:text-emerald-100 border border-emerald-200 dark:border-emerald-800 flex items-center gap-1.5">
                 <i class="fa-solid fa-bullhorn text-emerald-500"></i> 공지사항
@@ -1518,7 +1521,9 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- 3-Column Profile Cards Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Col 1: ABOUT ZOOA -->
                     <div class="soft-card p-5 flex flex-col justify-between">
                         <div>
                             <div class="flex justify-between items-center mb-3 pb-2 border-b border-emerald-100 dark:border-emerald-800/50">
@@ -1534,6 +1539,32 @@
                         <div id="profile-tags-container" class="flex flex-wrap gap-1.5 pt-3 border-t border-dashed border-emerald-200 dark:border-emerald-800"></div>
                     </div>
 
+                    <!-- Col 2: 팬 캐릭터 (네잎이) -->
+                    <div id="mascot" class="soft-card p-5 flex flex-col justify-between scroll-mt-32">
+                        <div>
+                            <div class="flex justify-between items-center mb-3 pb-2 border-b border-emerald-100 dark:border-emerald-800/50">
+                                <span class="font-bold text-emerald-900 dark:text-emerald-200 text-sm flex items-center gap-2">
+                                    <i class="fa-solid fa-clover text-emerald-500"></i> 팬 캐릭터
+                                </span>
+                                <button id="admin-mascot-edit-btn" onclick="openMascotModal()" class="hidden text-xs text-emerald-600 dark:text-emerald-400 hover:underline font-bold">
+                                    <i class="fa-solid fa-pen-to-square"></i> 편집
+                                </button>
+                            </div>
+                            <div onclick="openImageViewer(globalMascotData.url, globalMascotData.title, '팬 캐릭터', globalMascotData.description)" 
+                                 class="border-2 border-dashed border-emerald-200 dark:border-emerald-800/80 hover:border-emerald-400 dark:hover:border-emerald-500 rounded-2xl p-3 flex flex-col items-center justify-center text-center cursor-pointer transition-all bg-emerald-50/50 dark:bg-emerald-950/30 group min-h-[170px]">
+                                <div class="w-28 h-28 sm:w-32 sm:h-32 rounded-xl overflow-hidden mb-2 relative bg-emerald-100 dark:bg-emerald-900/40 border border-emerald-200 dark:border-emerald-800">
+                                    <img id="mascot-display-img" src="" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200" alt="네잎 팬캐릭터">
+                                    <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-[10px] font-bold">
+                                        <i class="fa-solid fa-magnifying-glass-plus text-sm mr-1"></i> 확대
+                                    </div>
+                                </div>
+                                <span id="mascot-display-title" class="font-bold text-xs text-emerald-950 dark:text-emerald-100 mb-0.5"></span>
+                                <p id="mascot-display-desc" class="text-[11px] text-emerald-700 dark:text-emerald-300 line-clamp-2 px-1"></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Col 3: D-DAY COUNTER -->
                     <div class="soft-card p-5 flex flex-col justify-between">
                         <div>
                             <div class="flex justify-between items-center mb-3 pb-2 border-b border-emerald-100 dark:border-emerald-800/50">
@@ -1578,34 +1609,6 @@
                         <div class="p-3 soft-card-inset">
                             <p class="text-xs font-bold text-emerald-700 dark:text-emerald-300 mb-2 flex items-center gap-1">🍃 DISLIKE</p>
                             <div id="profile-dislikes-container" class="flex flex-wrap gap-1.5"></div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <section id="mascot" class="scroll-mt-32">
-                <div class="soft-card p-6 relative">
-                    <div class="flex items-center justify-between mb-4 pb-3 border-b border-emerald-100 dark:border-emerald-800/50">
-                        <h2 class="text-xl font-bold font-cute text-emerald-950 dark:text-white flex items-center gap-2">
-                            <i class="fa-solid fa-clover text-emerald-500"></i> 네잎 팬캐릭터 🍀
-                        </h2>
-                        <button id="admin-mascot-edit-btn" onclick="openMascotModal()" class="hidden soft-button px-3.5 py-1.5 rounded-xl text-xs font-bold bg-emerald-500 text-white flex items-center gap-1.5 shadow-sm">
-                            <i class="fa-solid fa-pen-to-square"></i> 네잎이 수정
-                        </button>
-                    </div>
-
-                    <div class="flex flex-col md:flex-row items-center gap-6 p-4 soft-card-inset">
-                        <div onclick="openImageViewer(globalMascotData.url, globalMascotData.title, '네잎 팬캐릭터', globalMascotData.description)" 
-                             class="w-48 h-48 sm:w-60 sm:h-60 flex-shrink-0 rounded-2xl overflow-hidden cursor-pointer relative group bg-emerald-50 dark:bg-emerald-950/40 shadow-sm border border-emerald-200/80 dark:border-emerald-800">
-                            <img id="mascot-display-img" src="" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200" alt="네잎 캐릭터">
-                            <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-bold">
-                                <i class="fa-solid fa-magnifying-glass-plus text-base mr-1"></i> 크게 보기
-                            </div>
-                        </div>
-
-                        <div class="flex-grow space-y-3 text-center md:text-left">
-                            <h3 id="mascot-display-title" class="text-2xl font-bold font-cute text-emerald-950 dark:text-emerald-100"></h3>
-                            <p id="mascot-display-desc" class="text-xs sm:text-sm text-emerald-900 dark:text-emerald-200 leading-relaxed whitespace-pre-wrap max-w-xl"></p>
                         </div>
                     </div>
                 </div>
@@ -1780,7 +1783,6 @@
             </div>
         </div>
 
-        <!-- Single Mascot Edit Modal (Admin Only) -->
         <div id="mascot-edit-modal" class="fixed inset-0 z-[110] flex items-center justify-center bg-black/40 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-200">
             <div class="soft-card w-11/12 max-w-md p-6 space-y-4">
                 <div class="flex justify-between items-center pb-2 border-b border-emerald-100 dark:border-emerald-800/50">
@@ -1809,7 +1811,6 @@
             </div>
         </div>
 
-        <!-- Admin Login Modal -->
         <div id="admin-login-modal" class="fixed inset-0 z-[110] flex items-center justify-center bg-black/40 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-200">
             <div class="soft-card w-11/12 max-w-sm p-6 text-center">
                 <h3 class="text-base font-bold text-emerald-950 dark:text-emerald-100 mb-2"><i class="fa-solid fa-lock text-emerald-500 mr-1"></i> 관리자 인증</h3>
@@ -1825,7 +1826,6 @@
             </div>
         </div>
 
-        <!-- Upbo Edit Modal -->
         <div id="upbo-edit-modal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-200">
             <div class="soft-card w-11/12 max-w-md p-6 flex flex-col max-h-[85vh]">
                 <div class="flex justify-between items-center pb-3 border-b border-emerald-100 dark:border-emerald-800/50 mb-3">
@@ -1843,7 +1843,6 @@
             </div>
         </div>
 
-        <!-- Add User Modal -->
         <div id="add-user-modal" class="fixed inset-0 z-[110] flex items-center justify-center bg-black/40 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-200">
             <div class="soft-card w-11/12 max-w-sm p-6 space-y-4">
                 <h3 class="text-base font-bold text-emerald-950 dark:text-emerald-100"><i class="fa-solid fa-user-plus text-emerald-500 mr-1"></i> 네잎이 등록</h3>
@@ -1872,7 +1871,6 @@
             </div>
         </div>
 
-        <!-- Notice Edit Modal -->
         <div id="notice-edit-modal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-200">
             <div class="soft-card w-11/12 max-w-lg p-6 flex flex-col max-h-[85vh]">
                 <div class="flex justify-between items-center pb-3 border-b border-emerald-100 dark:border-emerald-800/50 mb-3">
@@ -1894,7 +1892,6 @@
             </div>
         </div>
 
-        <!-- Schedule Edit Modal -->
         <div id="schedule-edit-modal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-200">
             <div class="soft-card w-11/12 max-w-md p-6 flex flex-col max-h-[85vh]">
                 <div class="flex justify-between items-center pb-3 border-b border-emerald-100 dark:border-emerald-800/50 mb-3">
@@ -1908,7 +1905,6 @@
             </div>
         </div>
 
-        <!-- Profile Edit Modal -->
         <div id="profile-edit-modal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-200">
             <div class="soft-card w-11/12 max-w-lg p-6 flex flex-col max-h-[90vh]">
                 <div class="flex justify-between items-center pb-3 border-b border-emerald-100 dark:border-emerald-800/50 mb-3">
@@ -1969,7 +1965,6 @@
             </div>
         </div>
 
-        <!-- Bangsell Edit Modal -->
         <div id="bangsell-edit-modal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-200">
             <div class="soft-card w-11/12 max-w-lg p-6 flex flex-col max-h-[85vh]">
                 <div class="flex justify-between items-center pb-3 border-b border-emerald-100 dark:border-emerald-800/50 mb-3">
@@ -1999,11 +1994,10 @@
             </div>
         </div>
 
-        <!-- Sigpoong Edit Modal -->
         <div id="sigpoong-edit-modal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-200">
             <div class="soft-card w-11/12 max-w-lg p-6 flex flex-col max-h-[85vh]">
                 <div class="flex justify-between items-center pb-3 border-b border-emerald-100 dark:border-emerald-800/50 mb-3">
-                    <h3 class="text-sm font-bold text-emerald-950 dark:text-emerald-100"><i class="fa-solid fa-gifts text-emerald-500 mr-1"></i> 시그풍 항목 편집 (권장: 293×164px)</h3>
+                    <h3 class="text-sm font-bold text-emerald-950 dark:text-emerald-100"><i class="fa-solid fa-gifts text-emerald-500 mr-1"></i> 시그풍 항목 편집</h3>
                     <button onclick="closeSigpoongEditModal()" class="text-gray-400 hover:text-gray-600 font-bold">✕</button>
                 </div>
                 <div class="overflow-y-auto flex-grow space-y-2 pr-1" id="sigpoong-edit-list"></div>
@@ -2016,7 +2010,7 @@
                         <input type="text" id="new-sigpoong-description" class="w-full soft-card-inset p-2 outline-none" placeholder="설명">
                     </div>
                     <div class="space-y-1">
-                        <label class="block font-bold text-[11px] text-emerald-800 dark:text-emerald-300"><i class="fa-solid fa-file-image"></i> PNG/이미지 업로드 (293*164 권장):</label>
+                        <label class="block font-bold text-[11px] text-emerald-800 dark:text-emerald-300"><i class="fa-solid fa-file-image"></i> PNG/이미지 업로드:</label>
                         <input type="text" id="new-sigpoong-url" class="w-full soft-card-inset p-2 outline-none" placeholder="이미지 URL (선택)">
                         <input type="file" id="new-sigpoong-file" accept="image/*" class="w-full text-xs text-gray-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-emerald-500 file:text-white hover:file:bg-emerald-600 cursor-pointer">
                     </div>
@@ -2025,13 +2019,11 @@
             </div>
         </div>
 
-        <!-- Toast Notification -->
         <div id="toast-message" class="fixed bottom-8 right-6 z-[150] soft-card px-5 py-3 text-xs font-bold text-emerald-950 bg-emerald-300 dark:bg-emerald-700 dark:text-emerald-100 transform translate-y-16 opacity-0 transition-all duration-300 flex items-center gap-2 shadow-lg">
             <i class="fa-solid fa-circle-check text-emerald-800 dark:text-emerald-200 text-sm"></i>
             <span id="toast-text">작업이 정상적으로 처리되었습니다! 🍀</span>
         </div>
 
-        <!-- Footer -->
         <footer class="bg-emerald-50/50 dark:bg-emerald-950/40 border-t border-emerald-100 dark:border-emerald-900/30 p-4 text-xs text-center text-emerald-800 dark:text-emerald-300 rounded-b-3xl select-none mt-auto">
             <span>© 2026 YEON ZOOA. All rights reserved. 🍀</span>
         </footer>
