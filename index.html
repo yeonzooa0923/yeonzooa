@@ -586,7 +586,7 @@
                         ${item.type}
                     </span>
                     <div class="flex-grow">
-                        <p class="font-medium text-emerald-950 dark:text-emerald-100">${item.content}</p>
+                        <p class="font-medium text-emerald-950 dark:text-emerald-100">${item.content}${item.link ? ` <a href="${item.link}" target="_blank" rel="noopener" class="text-emerald-500 hover:underline"><i class="fa-solid fa-link"></i></a>` : ''}</p>
                         <span class="text-[10px] text-emerald-600 dark:text-emerald-400 block mt-0.5">${item.date}</span>
                     </div>
                 </li>
@@ -1116,6 +1116,7 @@
                         <button onclick="removeNotice(${idx})" class="text-red-500 font-bold">✕</button>
                     </div>
                     <p class="text-emerald-950 dark:text-emerald-100">${n.content}</p>
+                    ${n.link ? `<a href="${n.link}" target="_blank" rel="noopener" class="text-emerald-500 hover:underline break-all"><i class="fa-solid fa-link mr-1"></i>${n.link}</a>` : ''}
                 </div>
             `).join('');
 
@@ -1138,14 +1139,18 @@
         function addNewNotice() {
             const type = document.getElementById('new-notice-type').value;
             const content = document.getElementById('new-notice-content').value.trim();
+            const linkInput = document.getElementById('new-notice-link');
+            let link = linkInput ? linkInput.value.trim() : '';
             if (!content) return;
+            if (link && !/^https?:\/\//i.test(link)) link = 'https://' + link;
 
             const today = new Date();
             const dateStr = `${today.getFullYear()}.${String(today.getMonth() + 1).padStart(2, '0')}.${String(today.getDate()).padStart(2, '0')}`;
 
-            globalNoticeData.unshift({ type, date: dateStr, content, typeColor: type === '필독' ? 'red' : type === '안내' ? 'blue' : 'gray' });
+            globalNoticeData.unshift({ type, date: dateStr, content, link, typeColor: type === '필독' ? 'red' : type === '안내' ? 'blue' : 'gray' });
             document.getElementById('new-notice-content').value = '';
-            
+            if (linkInput) linkInput.value = '';
+
             updateFirestore('notice', globalNoticeData);
             openNoticeEditModal();
             renderNotice();
@@ -1961,6 +1966,7 @@
                         </select>
                         <input type="text" id="new-notice-content" class="flex-grow soft-card-inset p-2 outline-none" placeholder="공지 내용...">
                     </div>
+                    <input type="text" id="new-notice-link" class="w-full soft-card-inset p-2 outline-none" placeholder="링크 (선택, http://...)">
                     <button onclick="addNewNotice()" class="w-full soft-button py-2 text-xs font-bold rounded-xl bg-emerald-500 text-white">공지 추가하기</button>
                 </div>
             </div>
