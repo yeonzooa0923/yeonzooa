@@ -275,6 +275,16 @@
         }
         async function readRemote(doc, key) {
             const meta=doc.data();
+            if(meta.format==='json-chunks-v1') {
+                if(!Number.isInteger(meta.chunkCount)||meta.chunkCount<1) throw new Error('잘못된 사진 저장 정보');
+                const pieces=[];
+                for(let i=0;i<meta.chunkCount;i++) {
+                    const chunk=await doc.ref.collection('items').doc(`${meta.generation}_${i}`).get();
+                    if(!chunk.exists || typeof chunk.data().text!=='string') throw new Error('사진 데이터 일부를 불러오지 못했어요');
+                    pieces.push(chunk.data().text);
+                }
+                return JSON.parse(pieces.join(''));
+            }
             if(meta.isSubcollection) {
                 const query=doc.ref.collection('items');
                 const snap=await (meta.generation?query.where('_generation','==',meta.generation):query).get();
@@ -311,34 +321,17 @@
                 },error=>{syncErrors.add(key);syncStatus('서버 읽기 실패 · 인터넷 또는 Firebase 읽기 권한을 확인해주세요',true);if(loading)loading.classList.add('hidden');}));
             }
         }
-        const uploadedImages=new Map();
-        async function uploadEmbeddedImages(value) {
-            if(typeof value==='string' && /^data:image\//i.test(value)) {
-                if(uploadedImages.has(value)) return uploadedImages.get(value);
-                const blob=await (await fetch(value)).blob();
-                const bytes=await blob.arrayBuffer();
-                const hash=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',bytes)),b=>b.toString(16).padStart(2,'0')).join('');
-                if(typeof firebase.storage!=='function') throw {code:'storage/sdk-unavailable'};
-                const storage=firebase.storage();
-                storage.setMaxUploadRetryTime(60000);
-                storage.setMaxOperationRetryTime(30000);
-                const ref=storage.ref(`profile-media/${auth.currentUser.uid}/${hash}`);
-                const task=ref.put(blob,{contentType:blob.type,cacheControl:'public,max-age=31536000,immutable'});
-                await new Promise((resolve,reject)=>{
-                    let timer, transferred=-1, settled=false;
-                    const finish=(error)=>{if(settled)return;settled=true;clearTimeout(timer);error?reject(error):resolve();};
-                    const restart=()=>{clearTimeout(timer);timer=setTimeout(()=>{finish({code:'storage/upload-stalled'});task.cancel();},60000);};
-                    restart();
-                    task.on('state_changed',snap=>{
-                        if(snap.bytesTransferred!==transferred){transferred=snap.bytesTransferred;restart();}
-                        syncStatus(`사진 업로드 중 · ${Math.round(snap.bytesTransferred/Math.max(1,snap.totalBytes)*100)}% · 잠시 기다려 주세요`);
-                    },error=>finish(error),()=>finish());
-                });
-                const url=await ref.getDownloadURL(); uploadedImages.set(value,url); return url;
+        async function saveChunkedData(key,data) {
+            const text=JSON.stringify(data),width=160000;
+            const count=Math.ceil(text.length/width),generation=crypto.randomUUID();
+            const ref=db.collection('zooaProfile').doc(key);
+            for(let start=0;start<count;start+=20){
+                const batch=db.batch();
+                for(let i=start;i<Math.min(start+20,count);i++) batch.set(ref.collection('items').doc(`${generation}_${i}`),{text:text.slice(i*width,(i+1)*width)});
+                await batch.commit();
+                syncStatus(`사진 데이터 저장 중 · ${Math.round(Math.min(start+20,count)/count*100)}%`);
             }
-            if(Array.isArray(value)) { const result=[]; for(const item of value) result.push(await uploadEmbeddedImages(item)); return result; }
-            if(value && typeof value==='object') {const result={};for(const [key,item] of Object.entries(value)) result[key]=await uploadEmbeddedImages(item);return result;}
-            return value;
+            await ref.set({format:'json-chunks-v1',generation,chunkCount:count,isSubcollection:false,lastUpdated:Date.now()});
         }
         async function saveToSubcollection(key,data) {
             const ref=db.collection('zooaProfile').doc(key);
@@ -366,8 +359,8 @@
             buttons.forEach(b=>b.disabled=true);
             syncStatus('서버에 저장 중…');
             try {
-                const clean=await uploadEmbeddedImages(copyData(data));
-                if(Array.isArray(clean) && new Blob([JSON.stringify(clean)]).size>600000) await saveToSubcollection(key,clean);
+                const clean=copyData(data);
+                if(new Blob([JSON.stringify(clean)]).size>600000) await saveChunkedData(key,clean);
                 else await db.collection('zooaProfile').doc(key).set({data:clean,isSubcollection:false,lastUpdated:Date.now()});
                 assignData(key,clean);confirmedData[key]=copyData(clean);safeSetStorage(cacheKey(key),clean);
                 syncStatus('서버 저장 완료 · 모바일에도 반영됩니다');return true;
